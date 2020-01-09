@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, ReactElement } from "react"
-import { Switch, Route, Router } from 'react-router-dom'
+import { Switch, Route, Router, Redirect } from 'react-router-dom'
 import { createHashHistory } from "history"
 import {routeConfig, RouteConfig} from '../config/route.config'
 import './index.less'
@@ -25,6 +25,7 @@ export const App: React.FC = ({ }) => {
     <Router history={history}>
       <Switch>
         {getRoute(routeConfig, '', []) }
+        <Redirect to="/paint"></Redirect>
       </Switch>
     </Router>
   </Suspense>

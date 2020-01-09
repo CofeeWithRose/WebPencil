@@ -4,7 +4,7 @@ import { useCallback, useEffect } from 'react'
 import { ToolState } from './consts'
 import { Vector2, PainterDrawer, OffsetPosition } from './interface'
 import pencil from '../draws/pencil'
-import { Omit } from 'react-router';
+
 export type painterOptions = {
   width: number;
   height: number;
