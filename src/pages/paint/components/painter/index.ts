@@ -2,8 +2,9 @@
 import styles from './index.less'
 import { useCallback, useEffect } from 'react'
 import { ToolState } from './consts'
-import { Vector2, PainterDrawer } from './interface'
+import { Vector2, PainterDrawer, OffsetPosition } from './interface'
 import pencil from '../draws/pencil'
+import { Omit } from 'react-router';
 export type painterOptions = {
   width: number;
   height: number;
@@ -31,7 +32,7 @@ export class Painter {
 
   protected painter: PainterDrawer = pencil
 
-  protected scaleRate: Vector2
+  protected offsetPosition: OffsetPosition
 
   
 
@@ -47,11 +48,12 @@ export class Painter {
       canvas.addEventListener('pointerup', this.onPointerup)
       canvas.addEventListener('pointerout', this.onPointerup)
       canvas.addEventListener('touchmove', this.onTouchmove)
-      const {width, height} = getComputedStyle(canvas)
-      console.log(width, height)
-      // this.scaleRate = {
-      //   x: this.canvas.width/
-      // }
+      this.offsetPosition = {
+        x: this.canvas.width/canvas.clientWidth,
+        y: this.canvas.height/canvas.clientHeight,
+        offsetX: canvas.offsetLeft,
+        offsetY: canvas.offsetTop
+      }
     } else {
       throw 'failed create canvas'
     }
@@ -66,7 +68,8 @@ export class Painter {
     if (!this.isPaintting) {
       return
     }
-    let { x,  y, pressure } = e
+    const  { pressure, x: x1, y:y1 } = e
+    const {x,y} = this.getCanvasePosition({x:x1, y:y1})
     this.painter(this.context, {x, y, pressure}, { lastPoint: this.lastPoint, lineWidthState: this.lineWidthState})
     this.lastPoint = {x,y}
   }
@@ -74,7 +77,7 @@ export class Painter {
   onPointerdown = (e: PointerEvent) => {
     e.preventDefault();
     const { x, y } = e
-    this.lastPoint = { x, y }
+    this.lastPoint =this.getCanvasePosition({x, y})
     this.isPaintting = true
   }
 
@@ -95,7 +98,8 @@ export class Painter {
 
   getCanvasePosition = ({x,y}:Vector2) => {
     return {
-      x: x * this.canvas.width/
+      x: x * this.offsetPosition.x - this.offsetPosition.offsetX,
+      y: y * this.offsetPosition.y - this.offsetPosition.offsetY,
     }
   }
 }
