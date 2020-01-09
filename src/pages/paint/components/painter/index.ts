@@ -1,12 +1,14 @@
 
 import styles from './index.less'
 import { useCallback, useEffect } from 'react'
+import { ToolState } from './consts'
+import { Vector2, PainterDrawer } from './interface'
+import pencil from '../draws/pencil'
 export type painterOptions = {
   width: number;
   height: number;
 }
 
-export type Vector2 = { x: number, y: number }
 export class Painter {
 
   static createPainter(container: HTMLElement, option: painterOptions) {
@@ -21,14 +23,17 @@ export class Painter {
 
   protected context: CanvasRenderingContext2D
 
-  protected lineWidthState = 10
+  protected lineWidthState = 5
 
   protected isPaintting = false
 
-  protected lastPoint: Vector2 | null = null
+  protected lastPoint: Vector2| null = null
+
+  protected painter: PainterDrawer = pencil
 
 
   protected constructor(
+
     protected canvas: HTMLCanvasElement
   ) {
     const ctx = canvas.getContext('2d')
@@ -42,7 +47,7 @@ export class Painter {
     } else {
       throw 'failed create canvas'
     }
-  }
+  };
 
   onTouchmove = (e: TouchEvent) => {
     e.preventDefault()
@@ -54,13 +59,14 @@ export class Painter {
       return
     }
     const { x, y, pressure } = e
-    this.draw(x, y, pressure)
+    this.painter(this.context, {x, y, pressure}, { lastPoint: this.lastPoint, lineWidthState: this.lineWidthState})
+    this.lastPoint = {x,y}
   }
 
   onPointerdown = (e: PointerEvent) => {
     e.preventDefault();
     const { x, y } = e
-    this.lastPoint = { x, y}
+    this.lastPoint = { x, y }
     this.isPaintting = true
   }
 
@@ -70,32 +76,30 @@ export class Painter {
     this.isPaintting = false
   }
 
-  draw = (x: number, y: number, pressure: number) => {
-    if(this.lastPoint){
-      this.context.beginPath()
-      this.context.moveTo(this.lastPoint.x, this.lastPoint.y)
-      this.context.lineWidth = pressure * this.lineWidthState
-      this.context.lineTo(x, y)
-      this.context.stroke()
-      this.context.closePath()
-      this.lastPoint = {x,y }
+  
+
+  setPaintDrawer = async ( type: ToolState ) => {
+    const mod = await import(`../draws/${type}`)
+    if(mod){
+      const drawer = mod.default
+      this.painter = drawer
     }
   }
 
 }
 
 export const usePainter = () => {
-  let painter
+  let painter:Painter
   const container = useCallback(container => {
     painter = Painter.createPainter(container, { width: screen.width, height: screen.height })
   }, [])
 
-  // useEffect(()=> {
-  //   const fun = (e: ) => {
-  //     e.preventDefault();
-  //   }
-  //   document.body.addEventListener('po', fun ,{ passive: false });
-  // })
+  const  onSelectTool = async ( type: ToolState ) => {
+    painter.setPaintDrawer(type)
+  }
 
-  return { container }
+  return { 
+    container,  
+    onSelectTool,
+  }
 }
