@@ -31,6 +31,9 @@ export class Painter {
 
   protected painter: PainterDrawer = pencil
 
+  protected scaleRate: Vector2
+
+  
 
   protected constructor(
 
@@ -44,6 +47,11 @@ export class Painter {
       canvas.addEventListener('pointerup', this.onPointerup)
       canvas.addEventListener('pointerout', this.onPointerup)
       canvas.addEventListener('touchmove', this.onTouchmove)
+      const {width, height} = getComputedStyle(canvas)
+      console.log(width, height)
+      // this.scaleRate = {
+      //   x: this.canvas.width/
+      // }
     } else {
       throw 'failed create canvas'
     }
@@ -58,7 +66,7 @@ export class Painter {
     if (!this.isPaintting) {
       return
     }
-    const { x, y, pressure } = e
+    let { x,  y, pressure } = e
     this.painter(this.context, {x, y, pressure}, { lastPoint: this.lastPoint, lineWidthState: this.lineWidthState})
     this.lastPoint = {x,y}
   }
@@ -76,7 +84,6 @@ export class Painter {
     this.isPaintting = false
   }
 
-  
 
   setPaintDrawer = async ( type: ToolState ) => {
     const mod = await import(`../draws/${type}`)
@@ -86,7 +93,14 @@ export class Painter {
     }
   }
 
+  getCanvasePosition = ({x,y}:Vector2) => {
+    return {
+      x: x * this.canvas.width/
+    }
+  }
 }
+
+
 
 export const usePainter = () => {
   let painter:Painter

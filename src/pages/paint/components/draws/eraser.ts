@@ -7,8 +7,8 @@ const draw:PainterDrawer = ( context ,{x, y, pressure}, {lastPoint, lineWidthSta
     console.log('eraser...')
     context.beginPath()
     context.moveTo(lastPoint.x, lastPoint.y)
-    context.strokeStyle = 'rgba(0,0,0,0)'
-    context.lineWidth = pressure * lineWidthState
+    context.strokeStyle = 'rgb(255,255,255)'
+    context.lineWidth = lineWidthState
     context.lineTo(x, y)
     context.stroke()
     context.closePath()
