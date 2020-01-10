@@ -26,3 +26,35 @@ export interface  ToolValues {
   [ToolTypes.COLOR] : string
 
 }
+
+export class RGBA {
+
+  static Lerp(from: RGBA, to: RGBA, number: number){
+    const result:RGBA[] = []
+    const dtR = (to.r-from.r)/number
+    const dtG = (to.g-from.g)/number
+    const dtB = (to.b-from.b)/number
+    const dtA = (to.a-from.a)/number
+    for(let i =0; i< number; i++){
+      result.push(new RGBA(
+        from.r + dtR *i,
+        from.g + dtG *i,
+        from.b + dtB *i,
+        from.a + dtA *i,
+      ))
+    }
+    return result
+  }
+
+  constructor(
+    public r: number,
+    public g: number,
+    public b: number,
+    public a: number = 1,
+  ){}
+
+  toColorString(){
+    return `rgba(${this.r},${this.g},${this.b},${this.a})`
+  }
+
+}

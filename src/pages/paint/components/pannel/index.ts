@@ -1,6 +1,6 @@
 
 import styles from './index.less'
-import { useCallback } from 'react'
+import { useCallback, useRef, useEffect, useState } from 'react'
 import { Vector2, PainterDrawer, OffsetPosition, OnSelectTool } from './interface'
 import pencil from '../tools/pencil/pencil'
 import { ToolTypes, ToolValues } from './consts'
@@ -97,6 +97,9 @@ export class Painter {
       this.painter = <ToolValues[ToolTypes.ERASER | ToolTypes.PENCIL]>value
       return
     }
+    if(type === ToolTypes.COLOR){
+      this.color = <ToolValues[ToolTypes.COLOR]>value
+    }
     this.onError(`not inmpement ${type}`)
   }
 
@@ -113,17 +116,19 @@ export class Painter {
 }
 
 
-
 export const usePainter = () => {
-  let painter:Painter
-  const container = useCallback(container => {
-    painter = Painter.createPainter(container, { width: screen.width, height: screen.height })
+  const container = useRef<HTMLDivElement>(null)
+  const [painter, setPainter] = useState()
+
+  useEffect(() => {
+    if(container.current){
+      setPainter(Painter.createPainter(container.current, { width: screen.width, height: screen.height }))
+    }
   }, [])
 
   const  onSelectTool: OnSelectTool = ( type, value ) => {
     painter.setPaintDrawer(type, value)
   }
-
   return { 
     container,  
     onSelectTool,

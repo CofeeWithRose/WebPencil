@@ -22,6 +22,7 @@ export default ({onSelectTool, onActiveTool, curState}: PainterTooolProps)=> {
         
         </div>
          <Drawer
+            title="colors"
             visible={showColorPanel}
             onClose={handleShow}
         >

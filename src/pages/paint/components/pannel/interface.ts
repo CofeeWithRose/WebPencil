@@ -5,6 +5,8 @@ export interface PaintInfo {
 }
 export type Vector2 = { x: number, y: number }
 
+
+
 export interface PaintContex {
   lastPoint: Vector2| null,
   lineWidthState: number
