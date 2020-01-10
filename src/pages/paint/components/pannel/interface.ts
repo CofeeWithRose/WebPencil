@@ -1,4 +1,4 @@
-import { ToolValues, ToolState } from "./consts"
+import { ToolValues, ToolTypes } from "./consts"
 
 export interface PaintInfo {
   x: number, y: number, pressure: number
@@ -17,11 +17,16 @@ export interface OffsetPosition extends Vector2 {
 
 export type OnSelectTool = <T extends keyof ToolValues>(type: T, value: ToolValues[T]) => void
 
-export type OnActiveTool = (type: ToolValues ) => void
+export type OnActiveTool = (type: ToolTypes ) => void
+
+export type PainterTooolProps = {
+  onSelectTool: OnSelectTool, 
+  onActiveTool: OnActiveTool,
+  curState: ToolTypes,
+}
+
+export type PainterToool = React.FC<PainterTooolProps>
 
 export interface ToolStatesSetting {
-  [index: string]: {
-    desc:string,
-    onSelectTool: (curState: ToolState,fun: OnSelectTool)=> void 
-  }
+  [index: string]: PainterToool
 }

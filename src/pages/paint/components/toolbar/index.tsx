@@ -1,8 +1,7 @@
 import style from './index.less'
 import React, { useState } from 'react'
-import { ToolState, toolStatesSetting, ToolValues } from '../painter/consts'
-import { OnSelectTool } from '../painter/interface'
-// import {  } from 'antd'
+import { ToolTypes, toolStatesSetting, ToolValues } from '../pannel/consts'
+import { OnSelectTool } from '../pannel/interface'
 
 export interface ToolBarProps {
   onSelectTool: OnSelectTool
@@ -10,26 +9,22 @@ export interface ToolBarProps {
 
 export default function ToolBar({ onSelectTool }: ToolBarProps) {
 
-  const [ curState, setCurState ] = useState(ToolState.PENCIL)
-
-  const [ curModalContent, setModulContent ] = useState();
-
-  const handleClick  = (k: ToolState ) => {
-    toolStatesSetting[k].onSelectTool(curState,onSelectTool)
-    setCurState(k)
-  }
+  const [ curState, setCurState ] = useState(ToolTypes.PENCIL)
 
   return <div className={style.toolBar}>
     {
       Object.keys(toolStatesSetting).map(
-        (k: ToolState) => <span
-          key={k}
-          className={`${style.tooBarItem} ${ curState===k? style.tooBarActiveItem : ''}` }
-          onClick={() =>handleClick(k) }
-        >
-          {toolStatesSetting[k].desc}
-        </span>
+        k => {
+          const Tool = toolStatesSetting[k]
+          return <Tool
+            key={k}
+            curState={curState}
+            onActiveTool={setCurState}
+            onSelectTool={onSelectTool}
+          />
+        }
       )
     }
+    
   </div>
 }

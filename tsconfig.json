@@ -12,5 +12,6 @@
     "allowJs": true,
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
+    "moduleResolution": "Node",
   }
 }

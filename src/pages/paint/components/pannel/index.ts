@@ -1,16 +1,18 @@
 
 import styles from './index.less'
-import { useCallback, useEffect } from 'react'
-import { ToolState } from './consts'
-import { Vector2, PainterDrawer, OffsetPosition } from './interface'
-import pencil from '../draws/pencil'
+import { useCallback } from 'react'
+import { Vector2, PainterDrawer, OffsetPosition, OnSelectTool } from './interface'
+import pencil from '../tools/pencil/pencil'
+import { ToolTypes, ToolValues } from './consts'
 
 export type painterOptions = {
   width: number;
   height: number;
 }
 
+
 export class Painter {
+
 
   static createPainter(container: HTMLElement, option: painterOptions) {
     const canvas = document.createElement('canvas')
@@ -33,6 +35,8 @@ export class Painter {
   protected painter: PainterDrawer = pencil
 
   protected offsetPosition: OffsetPosition
+
+  protected color: string = '#000000'
 
   
 
@@ -59,11 +63,11 @@ export class Painter {
     }
   };
 
-  onTouchmove = (e: TouchEvent) => {
+  protected onTouchmove = (e: TouchEvent) => {
     e.preventDefault()
   }
 
-  onPointermove = (e: PointerEvent) => {
+  protected onPointermove = (e: PointerEvent) => {
     e.preventDefault();
     if (!this.isPaintting) {
       return
@@ -74,29 +78,33 @@ export class Painter {
     this.lastPoint = {x,y}
   }
 
-  onPointerdown = (e: PointerEvent) => {
+  protected onPointerdown = (e: PointerEvent) => {
     e.preventDefault();
     const { x, y } = e
     this.lastPoint =this.getCanvasePosition({x, y})
     this.isPaintting = true
   }
 
-  onPointerup = (e: PointerEvent) => {
+  protected onPointerup = (e: PointerEvent) => {
     e.preventDefault();
     this.lastPoint = null
     this.isPaintting = false
   }
 
 
-  setPaintDrawer = async ( type: ToolState ) => {
-    const mod = await import(`../draws/${type}`)
-    if(mod){
-      const drawer = mod.default
-      this.painter = drawer
+  setPaintDrawer: OnSelectTool = async ( type, value ) => {
+    if(type === ToolTypes.ERASER || ToolTypes.PENCIL){
+      this.painter = <ToolValues[ToolTypes.ERASER | ToolTypes.PENCIL]>value
+      return
     }
+    this.onError(`not inmpement ${type}`)
   }
 
-  getCanvasePosition = ({x,y}:Vector2) => {
+  onError = (message: string) => {
+    console.error(message)
+  }
+
+  protected getCanvasePosition = ({x,y}:Vector2) => {
     return {
       x: x * this.offsetPosition.x - this.offsetPosition.offsetX,
       y: y * this.offsetPosition.y - this.offsetPosition.offsetY,
@@ -112,8 +120,8 @@ export const usePainter = () => {
     painter = Painter.createPainter(container, { width: screen.width, height: screen.height })
   }, [])
 
-  const  onSelectTool = async ( type: ToolState ) => {
-    painter.setPaintDrawer(type)
+  const  onSelectTool: OnSelectTool = ( type, value ) => {
+    painter.setPaintDrawer(type, value)
   }
 
   return { 

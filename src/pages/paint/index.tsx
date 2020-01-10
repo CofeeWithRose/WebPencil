@@ -1,5 +1,5 @@
 import React, { useEffect, Fragment } from 'react'
-import { usePainter } from './components/painter/index'
+import { usePainter } from './components/pannel/index'
 import style from './index.less'
 import ToolBar from './components/toolbar/index'
 export default function Paint(){
