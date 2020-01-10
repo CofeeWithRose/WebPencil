@@ -14,5 +14,7 @@ export default ({onSelectTool, onActiveTool, curState}: PainterTooolProps)=> {
     return <span 
         className={`${style.tooBarItem} ${ curState===ToolTypes.PENCIL? style.tooBarActiveItem : ''}` }
         onClick={handleClick} 
-    >pencil</span>
+    >
+        pencil
+    </span>
 }

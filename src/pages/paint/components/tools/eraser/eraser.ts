@@ -2,9 +2,8 @@
 import { PainterDrawer } from "../../pannel/interface"
 
 
-const draw:PainterDrawer = ( context ,{x, y, pressure}, {lastPoint, lineWidthState} ) => {
+const draw:PainterDrawer = ( context ,{x, y}, {lastPoint, lineWidthState} ) => {
   if(lastPoint){
-    console.log('eraser...')
     context.beginPath()
     context.moveTo(lastPoint.x, lastPoint.y)
     context.strokeStyle = 'rgb(255,255,255)'

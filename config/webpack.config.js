@@ -30,8 +30,8 @@ module.exports = {
             options: {
               modules: {
                 mode: 'local',
-                localIdentName: '[local]_[hash:base64:5]',
-                // context: path.resolve(__dirname, 'src'),
+                localIdentName: '[local]_[hash:5]',
+                context: path.resolve(__dirname, 'src'),
                 hashPrefix: 'web-pencil',
               },
             }
@@ -39,7 +39,22 @@ module.exports = {
           },
           {
             loader: 'less-loader', // compiles Less to CSS
+            options:{
+              javascriptEnabled: true
+            }
           },
+        ],
+      },
+      {
+        test: /\.css$/,
+        exclude: [ path.resolve('../src') ],
+        use: [
+          {
+            loader: 'style-loader', // creates style nodes from JS strings
+          },
+          {
+            loader: 'css-loader', // translates CSS into CommonJS
+          }
         ],
       },
     ],

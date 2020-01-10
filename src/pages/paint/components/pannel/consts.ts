@@ -1,6 +1,7 @@
 import {ToolStatesSetting, PainterDrawer} from './interface'
 import Eraser from '../tools/eraser'
 import Pencil from '../tools/pencil'
+import Color from '../tools/color'
 export const enum  ToolTypes {
   ERASER= 'eraser',
 
@@ -13,7 +14,7 @@ export const toolStatesSetting: ToolStatesSetting = {
   
   [ToolTypes.ERASER]: Eraser,
   [ToolTypes.PENCIL]: Pencil,
-  // [ToolState.COLOR]: 
+  [ToolTypes.COLOR]: Color,
 }
 
 export interface  ToolValues {
