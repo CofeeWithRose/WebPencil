@@ -1,9 +1,9 @@
 import { PainterDrawer } from "../../pannel/interface"
 
 
-const draw:PainterDrawer = ( context ,{x, y, pressure}, {lastPoint, lineWidthState} ) => {
+const draw:PainterDrawer = ( context ,{x, y, pressure}, {lastPoint, lineWidthState, color} ) => {
   if(lastPoint){
-    context.strokeStyle = 'rgb(0,0,0)'
+    context.strokeStyle = color
     context.beginPath()
     context.moveTo(lastPoint.x, lastPoint.y)
     context.lineWidth = pressure * lineWidthState

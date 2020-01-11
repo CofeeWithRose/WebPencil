@@ -74,7 +74,7 @@ export class Painter {
     }
     const  { pressure, x: x1, y:y1 } = e
     const {x,y} = this.getCanvasePosition({x:x1, y:y1})
-    this.painter(this.context, {x, y, pressure}, { lastPoint: this.lastPoint, lineWidthState: this.lineWidthState})
+    this.painter(this.context, {x, y, pressure}, { lastPoint: this.lastPoint, lineWidthState: this.lineWidthState, color:this.color})
     this.lastPoint = {x,y}
   }
 
@@ -93,12 +93,14 @@ export class Painter {
 
 
   setPaintDrawer: OnSelectTool = async ( type, value ) => {
-    if(type === ToolTypes.ERASER || ToolTypes.PENCIL){
+    if(type === ToolTypes.ERASER || 
+      type === ToolTypes.PENCIL){
       this.painter = <ToolValues[ToolTypes.ERASER | ToolTypes.PENCIL]>value
       return
     }
     if(type === ToolTypes.COLOR){
       this.color = <ToolValues[ToolTypes.COLOR]>value
+      return
     }
     this.onError(`not inmpement ${type}`)
   }

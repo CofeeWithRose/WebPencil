@@ -1,21 +1,33 @@
 import { PainterTooolProps } from "../../pannel/interface";
 import React, { useState, Fragment } from 'react'
 import style from './index.less'
-import { Modal, Drawer } from 'antd'
+import { Drawer } from 'antd'
 import ColorPannel from "./ColorPannel";
+import { RGBA, ToolTypes } from "../../pannel/consts";
 
-export default ({onSelectTool, onActiveTool, curState}: PainterTooolProps)=> {
-    const [color, setColor] = useState('#000000')
+export default ({onSelectTool}: PainterTooolProps)=> {
+    const [color, setColor] = useState(new RGBA(0,0,0))
     const [showColorPanel, setShowColorPannel] = useState(false)
-    const handleShow = () => setShowColorPannel(show => !show)
+    const handleShow = () => {
+        
+        setShowColorPannel(true)
+    }
+
+    const handleClose = () => {
+        setShowColorPannel(false)
+        onSelectTool(ToolTypes.COLOR, color.toColorString())
+    }
     // const handleClick = () => {
     //     onActiveTool(ToolTypes.ERASER)
     //     onSelectTool(ToolTypes.ERASER, eraser)
     // }
+    const handleColorChange = (value: RGBA) => {
+        setColor(value)
+    }
     
     return <Fragment>
         <div 
-            style={{backgroundColor: color}}
+            style={{backgroundColor: color.toColorString()}}
             className={style.colorBar}
             onClick={handleShow} 
         >
@@ -24,9 +36,12 @@ export default ({onSelectTool, onActiveTool, curState}: PainterTooolProps)=> {
          <Drawer
             title="colors"
             visible={showColorPanel}
-            onClose={handleShow}
+            onClose={handleClose}
         >
-            <ColorPannel onSelectTool={onSelectTool}/>
+            <ColorPannel 
+                value={color} 
+                onChange={handleColorChange}
+            />
         </Drawer>
     </Fragment>
     

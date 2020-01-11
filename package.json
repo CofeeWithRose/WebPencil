@@ -19,12 +19,14 @@
   "homepage": "https://github.com/CofeeWithRose/WebPencil#readme",
   "dependencies": {
     "antd": "^3.26.6",
+    "lodash": "^4.17.15",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-router": "^5.1.2",
     "react-router-dom": "^5.1.2"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.149",
     "@types/react": "^16.9.17",
     "@types/react-dom": "^16.9.4",
     "@types/react-router-dom": "^5.1.3",

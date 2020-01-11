@@ -8,10 +8,15 @@ export type Vector2 = { x: number, y: number }
 
 
 export interface PaintContex {
-  lastPoint: Vector2| null,
+  lastPoint: Vector2 | null,
   lineWidthState: number
+  color: string
 }
-export type PainterDrawer  = (context: CanvasRenderingContext2D ,{x, y, pressure}: PaintInfo, {lastPoint, lineWidthState}: PaintContex)  => void
+export type PainterDrawer = (
+  context: CanvasRenderingContext2D,
+  { x, y, pressure }: PaintInfo,
+  { lastPoint, lineWidthState }: PaintContex
+) => void
 export interface OffsetPosition extends Vector2 {
   offsetX: number
   offsetY: number
@@ -19,10 +24,10 @@ export interface OffsetPosition extends Vector2 {
 
 export type OnSelectTool = <T extends keyof ToolValues>(type: T, value: ToolValues[T]) => void
 
-export type OnActiveTool = (type: ToolTypes ) => void
+export type OnActiveTool = (type: ToolTypes) => void
 
 export type PainterTooolProps = {
-  onSelectTool: OnSelectTool, 
+  onSelectTool: OnSelectTool,
   onActiveTool: OnActiveTool,
   curState: ToolTypes,
 }
