@@ -67,15 +67,26 @@ export class Painter {
     e.preventDefault()
   }
 
-  protected onPointermove = (e: PointerEvent) => {
+  protected onPointermove = (e: PointerEvent&{getCoalescedEvents : () =>PointerEvent[] }) => {
     e.preventDefault();
     if (!this.isPaintting) {
       return
     }
-    const  { pressure, x: x1, y:y1 } = e
-    const {x,y} = this.getCanvasePosition({x:x1, y:y1})
-    this.painter(this.context, {x, y, pressure}, { lastPoint: this.lastPoint, lineWidthState: this.lineWidthState, color:this.color})
-    this.lastPoint = {x,y}
+    if(e.getCoalescedEvents){
+      const events = e.getCoalescedEvents()
+      events.forEach(e => {
+        const  { pressure, x: x1, y:y1 } = e
+        const {x,y} = this.getCanvasePosition({x:x1, y:y1})
+        this.painter(this.context, {x, y, pressure}, { lastPoint: this.lastPoint, lineWidthState: this.lineWidthState, color:this.color})
+        this.lastPoint = {x,y}
+      })
+    }else{
+      const  { pressure, x: x1, y:y1 } = e
+      const {x,y} = this.getCanvasePosition({x:x1, y:y1})
+      this.painter(this.context, {x, y, pressure}, { lastPoint: this.lastPoint, lineWidthState: this.lineWidthState, color:this.color})
+      this.lastPoint = {x,y}
+    }
+   
   }
 
   protected onPointerdown = (e: PointerEvent) => {
