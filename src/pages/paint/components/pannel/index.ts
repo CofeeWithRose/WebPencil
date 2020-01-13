@@ -5,6 +5,7 @@ import { Vector2, PainterDrawer, OffsetPosition, OnSelectTool, PaintContex, Pain
 import pencil from '../tools/pencil/pencil'
 import { ToolTypes, ToolValues } from './consts'
 
+
 export type painterOptions = {
   width: number;
   height: number;
@@ -24,7 +25,7 @@ export class Painter {
     return new Painter(canvas)
   }
 
-  protected context: CanvasRenderingContext2D
+  public context: CanvasRenderingContext2D
 
   protected lineWidthState = 5
 
@@ -144,7 +145,6 @@ export class Painter {
 export const usePainter = () => {
   const container = useRef<HTMLDivElement>(null)
   const [painter, setPainter] = useState()
-
   useEffect(() => {
     if (container.current) {
       setPainter(Painter.createPainter(container.current, { width: screen.width, height: screen.height }))

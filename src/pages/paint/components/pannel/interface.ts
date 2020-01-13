@@ -1,4 +1,5 @@
 import { ToolValues, ToolTypes } from "./consts"
+import { Painter } from "."
 
 export interface PaintInfo {
   x: number, y: number, pressure: number
