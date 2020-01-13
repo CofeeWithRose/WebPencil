@@ -17,11 +17,13 @@ export default function ToolBar({ onSelectTool }: ToolBarProps) {
         k => {
           const Tool = toolStatesSetting[k]
           return <Tool
-            key={k}
-            curState={curState}
-            onActiveTool={setCurState}
-            onSelectTool={onSelectTool}
-          />
+              key={k}
+              curState={curState}
+              onActiveTool={setCurState}
+              onSelectTool={onSelectTool}
+            />
+
+         
         }
       )
     }

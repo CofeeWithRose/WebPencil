@@ -11,8 +11,11 @@ export default ({onSelectTool, onActiveTool, curState}: PainterTooolProps)=> {
         onSelectTool(ToolTypes.ERASER, eraser)
     }
     
-    return <span 
-        className={`${style.tooBarItem} ${ curState===ToolTypes.ERASER? style.tooBarActiveItem : ''}` }
+    return <span
+        className={
+            `${style.tooBarItem }
+            ${curState === ToolTypes.ERASER ? style.tooBarActiveItem : ''}` 
+        }
         onClick={handleClick} 
     >
         eraser

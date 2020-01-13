@@ -38,6 +38,8 @@ export class Painter {
 
   protected color: string = '#000000'
 
+
+
   
 
   protected constructor(
@@ -47,7 +49,7 @@ export class Painter {
     const ctx = canvas.getContext('2d')
     if (ctx) {
       this.context = ctx
-      canvas.addEventListener('pointermove', this.onPointermove)
+      canvas.addEventListener('pointermove', this.onPointermove,{passive: true})
       canvas.addEventListener('pointerdown', this.onPointerdown)
       canvas.addEventListener('pointerup', this.onPointerup)
       canvas.addEventListener('pointerout', this.onPointerup)
@@ -102,6 +104,10 @@ export class Painter {
       this.color = <ToolValues[ToolTypes.COLOR]>value
       return
     }
+    if(type === ToolTypes.WIDTH){
+      this.lineWidthState = <ToolValues[ToolTypes.WIDTH]>value
+      return
+    }
     this.onError(`not inmpement ${type}`)
   }
 
@@ -120,7 +126,7 @@ export class Painter {
 
 export const usePainter = () => {
   const container = useRef<HTMLDivElement>(null)
-  const [painter, setPainter] = useState()
+  const [painter, setPainter] = useState<Painter>()
 
   useEffect(() => {
     if(container.current){
@@ -129,7 +135,7 @@ export const usePainter = () => {
   }, [])
 
   const  onSelectTool: OnSelectTool = ( type, value ) => {
-    painter.setPaintDrawer(type, value)
+    painter && painter.setPaintDrawer(type, value)
   }
   return { 
     container,  

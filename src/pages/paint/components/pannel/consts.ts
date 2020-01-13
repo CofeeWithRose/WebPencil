@@ -8,6 +8,8 @@ export const enum  ToolTypes {
   PENCIL = 'pencil',
 
   COLOR = 'color',
+
+  WIDTH = 'width',
 };
 
 export const toolStatesSetting: ToolStatesSetting = {
@@ -25,6 +27,7 @@ export interface  ToolValues {
 
   [ToolTypes.COLOR] : string
 
+  [ToolTypes.WIDTH] : number
 }
 
 export class RGBA {
