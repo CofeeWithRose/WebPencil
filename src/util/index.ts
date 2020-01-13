@@ -1,3 +1,4 @@
+import { debounce } from 'lodash'
 const div = document.createElement('div')
 const p = document.createElement('p')
 p.innerHTML = 'logger'
@@ -21,15 +22,22 @@ p.addEventListener('click', ()=> {
 })
 document.body.appendChild(div)
 
-console.log = (...str: object[]) => {
-    str.forEach( o => {
-        const p = document.createElement('pre')
-        if(o instanceof String){
-            p.innerHTML = o as string
-        }
-        if(o instanceof Object){
-            p.innerHTML = JSON.stringify( o as Object )
-        }
-        div.appendChild(p)
+const tempLogs: object[][] = []
+const printLog = debounce (()=>{
+    tempLogs.forEach(msgs => {
+        msgs.forEach( o => {
+            const p = document.createElement('pre')
+            if(o instanceof String){
+                p.innerHTML = o as string
+            }
+            if(o instanceof Object){
+                p.innerHTML = JSON.stringify( o as Object )
+            }
+            div.appendChild(p)
+        }) 
     })
+}, 300)
+console.log = (...msgs: object[]) => {
+    // tempLogs.push(msgs)
+    // printLog()
 }

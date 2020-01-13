@@ -4,7 +4,7 @@ import { ToolTypes, toolStatesSetting, ToolValues } from '../pannel/consts'
 import { OnSelectTool } from '../pannel/interface'
 
 export interface ToolBarProps {
-  onSelectTool: OnSelectTool
+  onSelectTool: OnSelectTool,
 }
 
 export default function ToolBar({ onSelectTool }: ToolBarProps) {

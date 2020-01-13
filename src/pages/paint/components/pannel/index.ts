@@ -1,9 +1,10 @@
 
 import styles from './index.less'
 import { useCallback, useRef, useEffect, useState } from 'react'
-import { Vector2, PainterDrawer, OffsetPosition, OnSelectTool } from './interface'
+import { Vector2, PainterDrawer, OffsetPosition, OnSelectTool, PaintContex, PaintInfo } from './interface'
 import pencil from '../tools/pencil/pencil'
 import { ToolTypes, ToolValues } from './consts'
+
 
 export type painterOptions = {
   width: number;
@@ -24,13 +25,13 @@ export class Painter {
     return new Painter(canvas)
   }
 
-  protected context: CanvasRenderingContext2D
+  public context: CanvasRenderingContext2D
 
   protected lineWidthState = 5
 
   protected isPaintting = false
 
-  protected lastPoint: Vector2| null = null
+  protected lastPoint: Vector2 | null = null
 
   protected painter: PainterDrawer = pencil
 
@@ -55,8 +56,8 @@ export class Painter {
       canvas.addEventListener('pointerout', this.onPointerup)
       canvas.addEventListener('touchmove', this.onTouchmove)
       this.offsetPosition = {
-        x: this.canvas.width/canvas.clientWidth,
-        y: this.canvas.height/canvas.clientHeight,
+        x: this.canvas.width / canvas.clientWidth,
+        y: this.canvas.height / canvas.clientHeight,
         offsetX: canvas.offsetLeft,
         offsetY: canvas.offsetTop
       }
@@ -69,21 +70,47 @@ export class Painter {
     e.preventDefault()
   }
 
-  protected onPointermove = (e: PointerEvent) => {
+  protected onPointermove = (e: PointerEvent & { getCoalescedEvents: () => PointerEvent[] }) => {
     e.preventDefault();
     if (!this.isPaintting) {
       return
     }
-    const  { pressure, x: x1, y:y1 } = e
-    const {x,y} = this.getCanvasePosition({x:x1, y:y1})
-    this.painter(this.context, {x, y, pressure}, { lastPoint: this.lastPoint, lineWidthState: this.lineWidthState, color:this.color})
-    this.lastPoint = {x,y}
+    if('pen' !== e.pointerType){
+      return
+    }
+    if (e.getCoalescedEvents) {
+      const events = e.getCoalescedEvents()
+      events.forEach(e => {
+        const { pressure, x: x1, y: y1 } = e
+        const { x, y } = this.getCanvasePosition({ x: x1, y: y1 })
+        const pointInfo: PaintInfo = { x, y, pressure }
+        const pintContext: PaintContex = {
+          lastPoint: this.lastPoint,
+          lineWidthState: this.lineWidthState,
+          color: this.color
+        }
+        this.painter(this.context, pointInfo, pintContext)
+        this.lastPoint = { x, y }
+      })
+    } else {
+      const { pressure, x: x1, y: y1 } = e
+      const { x, y } = this.getCanvasePosition({ x: x1, y: y1 })
+      const pointInfo: PaintInfo = { x, y, pressure }
+      const pintContext: PaintContex = {
+        lastPoint: this.lastPoint,
+        lineWidthState: this.lineWidthState,
+        color: this.color
+      }
+      this.painter(this.context, pointInfo, pintContext)
+      this.lastPoint = { x, y }
+    }
+
   }
 
   protected onPointerdown = (e: PointerEvent) => {
     e.preventDefault();
     const { x, y } = e
-    this.lastPoint =this.getCanvasePosition({x, y})
+    this.lastPoint = this.getCanvasePosition({ x, y })
     this.isPaintting = true
   }
 
@@ -94,13 +121,13 @@ export class Painter {
   }
 
 
-  setPaintDrawer: OnSelectTool = async ( type, value ) => {
-    if(type === ToolTypes.ERASER || 
-      type === ToolTypes.PENCIL){
+  setPaintDrawer: OnSelectTool = async (type, value) => {
+    if (type === ToolTypes.ERASER ||
+      type === ToolTypes.PENCIL) {
       this.painter = <ToolValues[ToolTypes.ERASER | ToolTypes.PENCIL]>value
       return
     }
-    if(type === ToolTypes.COLOR){
+    if (type === ToolTypes.COLOR) {
       this.color = <ToolValues[ToolTypes.COLOR]>value
       return
     }
@@ -115,7 +142,7 @@ export class Painter {
     console.error(message)
   }
 
-  protected getCanvasePosition = ({x,y}:Vector2) => {
+  protected getCanvasePosition = ({ x, y }: Vector2) => {
     return {
       x: x * this.offsetPosition.x - this.offsetPosition.offsetX,
       y: y * this.offsetPosition.y - this.offsetPosition.offsetY,
@@ -129,16 +156,17 @@ export const usePainter = () => {
   const [painter, setPainter] = useState<Painter>()
 
   useEffect(() => {
-    if(container.current){
+    if (container.current) {
       setPainter(Painter.createPainter(container.current, { width: screen.width, height: screen.height }))
     }
   }, [])
 
   const  onSelectTool: OnSelectTool = ( type, value ) => {
     painter && painter.setPaintDrawer(type, value)
+  
   }
-  return { 
-    container,  
+  return {
+    container,
     onSelectTool,
   }
 }
