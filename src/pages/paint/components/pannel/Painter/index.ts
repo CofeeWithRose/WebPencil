@@ -38,11 +38,11 @@ export class Painter {
   	const ctx = canvas.getContext('2d')
   	if (ctx) {
   		this.context = ctx
-  		canvas.addEventListener('pointermove', this.onPointermove, { passive: true })
-  		canvas.addEventListener('pointerdown', this.onPointerdown, { passive: true })
-  		canvas.addEventListener('pointerup', this.onPointerup, { passive: true })
-  		canvas.addEventListener('pointerout', this.onPointerup, { passive: true })
-  		canvas.addEventListener('touchmove', this.onTouchmove, { passive: true })
+  		canvas.addEventListener('pointermove', this.onPointermove)
+  		canvas.addEventListener('pointerdown', this.onPointerdown)
+  		canvas.addEventListener('pointerup', this.onPointerup)
+  		canvas.addEventListener('pointerout', this.onPointerup)
+  		canvas.addEventListener('touchmove', this.onTouchmove)
   		this.offsetPosition = {
   			x: this.canvas.width / canvas.clientWidth,
   			y: this.canvas.height / canvas.clientHeight,
@@ -61,6 +61,9 @@ export class Painter {
   protected onPointermove = (e: PointerEvent & { getCoalescedEvents: () => PointerEvent[] }) => {
   	e.preventDefault()
   	if (!this.isPaintting) {
+  		return
+  	}
+  	if(e.pointerType !== 'pen'){
   		return
   	}
   	if (e.getCoalescedEvents) {
