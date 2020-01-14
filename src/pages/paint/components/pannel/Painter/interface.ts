@@ -39,7 +39,7 @@ export const enum  ToolTypes {
   COLOR = 'color',
 
   SELECTOR = 'selector',
-};
+}
 
 export interface  ToolValues {
 

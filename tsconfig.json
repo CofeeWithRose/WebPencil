@@ -6,12 +6,12 @@
     "module": "ESNext",
     "target": "es5",
     "lib":[
-      "ES2017", "ES2015","DOM",
+      "ES2017", "ES2015","DOM"
     ],
     "jsx": "react",
     "allowJs": true,
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
-    "moduleResolution": "Node",
+    "moduleResolution": "Node"
   }
 }

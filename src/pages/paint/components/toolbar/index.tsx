@@ -1,10 +1,11 @@
-import style from './index.less'
 import React, { useState } from 'react'
-import { OnSelectTool, ToolTypes } from '../pannel/Painter/interface'
-import Eraser from '../Tools/Eraser'
-import Pencil from '../Tools/Pencil'
-import SelectColor from '../Tools/SelectColor'
-import Color from '../Tools/Color'
+import { OnSelectTool, ToolTypes } from '../pannel/painter/interface'
+import Eraser from '../tools/eraser'
+import Pencil from '../tools/pencil'
+import SelectColor from '../tools/select-color'
+import Color from '../tools/color'
+import style from './style.less'
+
 
 export interface ToolBarProps {
   onSelectTool: OnSelectTool,
@@ -26,30 +27,30 @@ export interface ToolStatesSetting {
 
 export const toolStatesSetting: ToolStatesSetting = {
   
-  [ToolTypes.ERASER]: Eraser,
-  [ToolTypes.PENCIL]: Pencil,
-  [ToolTypes.COLOR]: Color,
-  [ToolTypes.SELECTOR]: SelectColor,
+	[ToolTypes.ERASER]: Eraser,
+	[ToolTypes.PENCIL]: Pencil,
+	[ToolTypes.COLOR]: Color,
+	[ToolTypes.SELECTOR]: SelectColor,
 }
 
 export default function ToolBar({ onSelectTool }: ToolBarProps) {
 
-  const [ curState, setCurState ] = useState(ToolTypes.PENCIL)
+	const [ curState, setCurState ] = useState(ToolTypes.PENCIL)
 
-  return <div className={style.toolBar}>
-    {
-      Object.keys(toolStatesSetting).map(
-        k => {
-          const Tool = toolStatesSetting[k]
-          return <Tool
-            key={k}
-            curState={curState}
-            onActiveTool={setCurState}
-            onSelectTool={onSelectTool}
-          />
-        }
-      )
-    }
+	return <div className={style.toolBar}>
+		{
+			Object.keys(toolStatesSetting).map(
+				k => {
+					const Tool = toolStatesSetting[k]
+					return <Tool
+						key={k}
+						curState={curState}
+						onActiveTool={setCurState}
+						onSelectTool={onSelectTool}
+					/>
+				}
+			)
+		}
     
-  </div>
+	</div>
 }

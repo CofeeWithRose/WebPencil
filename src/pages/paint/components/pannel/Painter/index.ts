@@ -1,19 +1,19 @@
-import { painterOptions, Vector2, OnSelectTool, ToolTypes, ToolValues, PaintInfo, PaintContex, PainterDrawer, OffsetPosition } from "./interface"
-import styles from './index.less'
-import pencil from '../Pens/pencil'
+import { painterOptions, Vector2, OnSelectTool, ToolTypes, ToolValues, PaintInfo, PaintContex, PainterDrawer, OffsetPosition } from './interface'
+import styles from './style.less'
+import pencil from '../pens/pen.pencil'
 
 export class Painter {
 
 
-  static createPainter(container: HTMLElement, option: painterOptions) {
-    const canvas = document.createElement('canvas')
-    const { width, height } = option
-    canvas.width = width
-    canvas.height = height
-    canvas.classList.add(styles.paintCanvas)
-    container.appendChild(canvas)
-    return new Painter(canvas)
-  }
+	static createPainter(container: HTMLElement, option: painterOptions) {
+		const canvas = document.createElement('canvas')
+		const { width, height } = option
+		canvas.width = width
+		canvas.height = height
+		canvas.classList.add(styles.paintCanvas)
+		container.appendChild(canvas)
+		return new Painter(canvas)
+	}
 
   public context: CanvasRenderingContext2D
 
@@ -35,98 +35,98 @@ export class Painter {
 
     protected canvas: HTMLCanvasElement
   ) {
-    const ctx = canvas.getContext('2d')
-    if (ctx) {
-      this.context = ctx
-      canvas.addEventListener('pointermove', this.onPointermove, { passive: true })
-      canvas.addEventListener('pointerdown', this.onPointerdown, { passive: true })
-      canvas.addEventListener('pointerup', this.onPointerup, { passive: true })
-      canvas.addEventListener('pointerout', this.onPointerup, { passive: true })
-      canvas.addEventListener('touchmove', this.onTouchmove, { passive: true })
-      this.offsetPosition = {
-        x: this.canvas.width / canvas.clientWidth,
-        y: this.canvas.height / canvas.clientHeight,
-        offsetX: canvas.offsetLeft,
-        offsetY: canvas.offsetTop
-      }
-    } else {
-      throw 'failed create canvas'
-    }
+  	const ctx = canvas.getContext('2d')
+  	if (ctx) {
+  		this.context = ctx
+  		canvas.addEventListener('pointermove', this.onPointermove, { passive: true })
+  		canvas.addEventListener('pointerdown', this.onPointerdown, { passive: true })
+  		canvas.addEventListener('pointerup', this.onPointerup, { passive: true })
+  		canvas.addEventListener('pointerout', this.onPointerup, { passive: true })
+  		canvas.addEventListener('touchmove', this.onTouchmove, { passive: true })
+  		this.offsetPosition = {
+  			x: this.canvas.width / canvas.clientWidth,
+  			y: this.canvas.height / canvas.clientHeight,
+  			offsetX: canvas.offsetLeft,
+  			offsetY: canvas.offsetTop
+  		}
+  	} else {
+  		throw 'failed create canvas'
+  	}
   };
 
   protected onTouchmove = (e: TouchEvent) => {
-    e.preventDefault()
+  	e.preventDefault()
   }
 
   protected onPointermove = (e: PointerEvent & { getCoalescedEvents: () => PointerEvent[] }) => {
-    e.preventDefault();
-    if (!this.isPaintting) {
-      return
-    }
-    if (e.getCoalescedEvents) {
-      const events = e.getCoalescedEvents()
-      events.forEach(e => {
-        const { pressure, x: x1, y: y1 } = e
-        const { x, y } = this.getCanvasePosition({ x: x1, y: y1 })
-        const pointInfo: PaintInfo = { x, y, pressure }
-        const pintContext: PaintContex = {
-          lastPoint: this.lastPoint,
-          lineWidthState: this.lineWidthState,
-          color: this.color
-        }
-        this.painter(this.context, pointInfo, pintContext)
-        this.lastPoint = { x, y }
-      })
-    } else {
-      const { pressure, x: x1, y: y1 } = e
-      const { x, y } = this.getCanvasePosition({ x: x1, y: y1 })
-      const pointInfo: PaintInfo = { x, y, pressure }
-      const pintContext: PaintContex = {
-        lastPoint: this.lastPoint,
-        lineWidthState: this.lineWidthState,
-        color: this.color
-      }
-      this.painter(this.context, pointInfo, pintContext)
-      this.lastPoint = { x, y }
-    }
+  	e.preventDefault()
+  	if (!this.isPaintting) {
+  		return
+  	}
+  	if (e.getCoalescedEvents) {
+  		const events = e.getCoalescedEvents()
+  		events.forEach(e => {
+  			const { pressure, x: x1, y: y1 } = e
+  			const { x, y } = this.getCanvasePosition({ x: x1, y: y1 })
+  			const pointInfo: PaintInfo = { x, y, pressure }
+  			const pintContext: PaintContex = {
+  				lastPoint: this.lastPoint,
+  				lineWidthState: this.lineWidthState,
+  				color: this.color
+  			}
+  			this.painter(this.context, pointInfo, pintContext)
+  			this.lastPoint = { x, y }
+  		})
+  	} else {
+  		const { pressure, x: x1, y: y1 } = e
+  		const { x, y } = this.getCanvasePosition({ x: x1, y: y1 })
+  		const pointInfo: PaintInfo = { x, y, pressure }
+  		const pintContext: PaintContex = {
+  			lastPoint: this.lastPoint,
+  			lineWidthState: this.lineWidthState,
+  			color: this.color
+  		}
+  		this.painter(this.context, pointInfo, pintContext)
+  		this.lastPoint = { x, y }
+  	}
 
   }
 
   protected onPointerdown = (e: PointerEvent) => {
-    e.preventDefault();
-    const { x, y } = e
-    this.lastPoint = this.getCanvasePosition({ x, y })
-    this.isPaintting = true
+  	e.preventDefault()
+  	const { x, y } = e
+  	this.lastPoint = this.getCanvasePosition({ x, y })
+  	this.isPaintting = true
   }
 
   protected onPointerup = (e: PointerEvent) => {
-    e.preventDefault();
-    this.lastPoint = null
-    this.isPaintting = false
+  	e.preventDefault()
+  	this.lastPoint = null
+  	this.isPaintting = false
   }
 
 
   setPaintDrawer: OnSelectTool = async (type, value) => {
-    if (type === ToolTypes.ERASER ||
+  	if (type === ToolTypes.ERASER ||
       type === ToolTypes.PENCIL) {
-      this.painter = <ToolValues[ToolTypes.ERASER | ToolTypes.PENCIL]>value
-      return
-    }
-    if (type === ToolTypes.COLOR) {
-      this.color = <ToolValues[ToolTypes.COLOR]>value
-      return
-    }
-    this.onError(`not inmpement ${type}`)
+  		this.painter = <ToolValues[ToolTypes.ERASER | ToolTypes.PENCIL]>value
+  		return
+  	}
+  	if (type === ToolTypes.COLOR) {
+  		this.color = <ToolValues[ToolTypes.COLOR]>value
+  		return
+  	}
+  	this.onError(`not inmpement ${type}`)
   }
 
   onError = (message: string) => {
-    console.error(message)
+  	console.error(message)
   }
 
   protected getCanvasePosition = ({ x, y }: Vector2) => {
-    return {
-      x: x * this.offsetPosition.x - this.offsetPosition.offsetX,
-      y: y * this.offsetPosition.y - this.offsetPosition.offsetY,
-    }
+  	return {
+  		x: x * this.offsetPosition.x - this.offsetPosition.offsetX,
+  		y: y * this.offsetPosition.y - this.offsetPosition.offsetY,
+  	}
   }
 }
