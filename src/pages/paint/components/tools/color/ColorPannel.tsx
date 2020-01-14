@@ -1,9 +1,9 @@
 import { ToolBarProps } from "../../toolbar";
 import React, { useCallback, useState, useEffect, useRef, useMemo } from 'react'
 import style from './index.less'
-import { Vector2 } from "../../pannel/interface";
-import { RGBA } from "../../pannel/consts";
 import { debounce} from 'lodash'
+import { Vector2 } from "../../pannel/Painter/interface";
+import { RGBA } from "../../pannel/RGBA";
 
 type CircleInfo = Vector2 & { r: number, width: number }
 

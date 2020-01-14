@@ -1,8 +1,8 @@
-import { PainterTooolProps } from "../../pannel/interface";
 import React from 'react'
-import { ToolTypes } from "../../pannel/consts";
-import pencil from './pencil'
 import style from '../index.less'
+import { PainterTooolProps } from '../../toolbar'
+import { ToolTypes } from '../../pannel/Painter/interface'
+import pencil from '../../Pannel/Pens/pencil'
 
 export default ({onSelectTool, onActiveTool, curState}: PainterTooolProps)=> {
 

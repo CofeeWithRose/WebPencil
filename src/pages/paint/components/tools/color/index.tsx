@@ -1,9 +1,10 @@
-import { PainterTooolProps } from "../../pannel/interface";
 import React, { useState, Fragment } from 'react'
 import style from './index.less'
 import { Drawer } from 'antd'
 import ColorPannel from "./ColorPannel";
-import { RGBA, ToolTypes } from "../../pannel/consts";
+import { PainterTooolProps } from '../../toolbar';
+import { RGBA } from '../../pannel/RGBA';
+import { ToolTypes } from '../../pannel/Painter/interface';
 
 export default ({onSelectTool}: PainterTooolProps)=> {
     const [color, setColor] = useState(new RGBA(0,0,0))

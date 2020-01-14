@@ -1,6 +1,4 @@
-
-import { PainterDrawer } from "../../pannel/interface"
-
+import { PainterDrawer } from "../../pannel/Painter/interface"
 
 const draw:PainterDrawer = ( context ,{x, y}, {lastPoint, lineWidthState} ) => {
   if(lastPoint){

@@ -1,10 +1,10 @@
-import { PainterTooolProps } from "../../pannel/interface";
 import React from 'react'
-import { ToolTypes } from "../../pannel/consts";
-import eraser from './eraser'
 import style from '../index.less'
+import { ToolTypes } from '../../pannel/Painter/interface'
+import { PainterTooolProps } from '../../toolbar'
+import eraser from '../../Pannel/Pens/eraser'
 
-export default ({onSelectTool, onActiveTool, curState}: PainterTooolProps)=> {
+export default ({onSelectTool, onActiveTool, curState}: PainterTooolProps) => {
 
     const handleClick = () => {
         onActiveTool(ToolTypes.ERASER)

@@ -1,10 +1,35 @@
 import style from './index.less'
 import React, { useState } from 'react'
-import { ToolTypes, toolStatesSetting, ToolValues } from '../pannel/consts'
-import { OnSelectTool } from '../pannel/interface'
+import { OnSelectTool, ToolTypes } from '../pannel/Painter/interface'
+import Eraser from '../Tools/Eraser'
+import Pencil from '../Tools/Pencil'
+import SelectColor from '../Tools/SelectColor'
+import Color from '../Tools/Color'
 
 export interface ToolBarProps {
   onSelectTool: OnSelectTool,
+}
+
+export type OnActiveTool = (type: ToolTypes) => void
+
+export type PainterTooolProps = {
+  onSelectTool: OnSelectTool,
+  onActiveTool: OnActiveTool,
+  curState: ToolTypes,
+}
+
+export type PainterToool = React.FC<PainterTooolProps>
+
+export interface ToolStatesSetting {
+  [index: string]: PainterToool
+}
+
+export const toolStatesSetting: ToolStatesSetting = {
+  
+  [ToolTypes.ERASER]: Eraser,
+  [ToolTypes.PENCIL]: Pencil,
+  [ToolTypes.COLOR]: Color,
+  [ToolTypes.SELECTOR]: SelectColor,
 }
 
 export default function ToolBar({ onSelectTool }: ToolBarProps) {

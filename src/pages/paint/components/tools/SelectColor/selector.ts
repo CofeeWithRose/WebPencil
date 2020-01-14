@@ -1,4 +1,4 @@
-import { PainterDrawer } from "../../pannel/interface"
+import { PainterDrawer } from "../../pannel/Painter/interface"
 
 
 const selector: PainterDrawer = ( context ,{x, y} ) => {
@@ -7,7 +7,6 @@ const selector: PainterDrawer = ( context ,{x, y} ) => {
   imageData.data[0]
   // if(lastPoint){
   //   context.strokeStyle = color
-  //   context.beginPath()
   //   context.moveTo(lastPoint.x, lastPoint.y)
   //   context.lineWidth = pressure * lineWidthState
   //   context.lineTo(x, y)

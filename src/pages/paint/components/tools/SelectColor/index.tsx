@@ -1,8 +1,8 @@
-import { PainterTooolProps, OnSelectTool } from "../../pannel/interface";
 import React, { useEffect, useRef, useMemo } from 'react'
 import toolStyle from '../index.less'
-import { ToolTypes } from "../../pannel/consts";
 import { debounce } from 'lodash'
+import { OnSelectTool, ToolTypes } from '../../pannel/Painter/interface'
+import { PainterTooolProps } from '../../toolbar'
 
 export type ColorSelector = { onChange: (  ) => void }
 

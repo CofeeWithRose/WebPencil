@@ -1,7 +1,7 @@
-import { PainterDrawer } from "../../pannel/interface"
+import { PainterDrawer } from "../../pannel/Painter/interface"
 
 
-const draw:PainterDrawer = ( context ,{x, y, pressure}, {lastPoint, lineWidthState, color} ) => {
+const draw:PainterDrawer= ( context ,{x, y, pressure}, {lastPoint, lineWidthState, color} ) => {
   if(lastPoint){
     context.strokeStyle = color
     context.beginPath()
