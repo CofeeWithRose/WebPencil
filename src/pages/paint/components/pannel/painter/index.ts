@@ -1,6 +1,8 @@
-import { painterOptions, Vector2, OnSelectTool, ToolTypes, ToolValues, PaintInfo, PaintContex, PainterDrawer, OffsetPosition } from './interface'
+import { painterOptions, Vector2, OnSelectTool, ToolTypes, ToolValues, PaintInfo, PaintContex, PainterDrawer, OffsetPosition, PainterEventMap } from './interface'
 import styles from './style.less'
 import pencil from '../pens/pen.pencil'
+import CanvasRecoder from '../recorder'
+import { OperateRecord, OPERATE_TYPE } from '../recorder/inerface'
 
 export class Painter {
 
@@ -27,14 +29,17 @@ export class Painter {
 
   protected offsetPosition: OffsetPosition
 
-  protected color: string = '#000000'
+	protected color: string = '#000000'
+	
+	protected recorder: CanvasRecoder
 
 
 
-  protected constructor(
+	protected constructor(
 
     protected canvas: HTMLCanvasElement
-  ) {
+	) {
+		this.recorder = new CanvasRecoder([canvas])
   	const ctx = canvas.getContext('2d')
   	if (ctx) {
   		this.context = ctx
@@ -52,7 +57,7 @@ export class Painter {
   	} else {
   		throw 'failed create canvas'
   	}
-  };
+	};
 
   protected onTouchmove = (e: TouchEvent) => {
   	e.preventDefault()
@@ -67,7 +72,6 @@ export class Painter {
   		return
   	}
   	if (e.getCoalescedEvents) {
-		  console.log(1)
   		const events = e.getCoalescedEvents()
   		events.forEach(e => {
   			this.handlePointMove(e)
@@ -75,9 +79,20 @@ export class Painter {
   	} else {
   		this.handlePointMove(e)
   	}
+  	this.recorder.record([new OperateRecord(OPERATE_TYPE.MODIFY_CANVAS, {layer: 0, canvas: this.canvas})])
   };
 	
-	private handlePointMove = (e: PointerEvent) => {
+  public undo(){
+  	const [c] = this.recorder.undo()
+  	this.context.drawImage(c, 0, 0)
+  }
+
+  public forward(){
+  	const [c] = this.recorder.forwrard()
+  	this.context.drawImage(c, 0, 0)
+  }
+	
+	protected handlePointMove = (e: PointerEvent) => {
 		const { pressure, x: x1, y: y1 } = e
 		const { x, y } = this.getCanvasePosition({ x: x1, y: y1 })
 		const pointInfo: PaintInfo = { x, y, pressure }
@@ -112,13 +127,23 @@ export class Painter {
   	if (type === ToolTypes.COLOR) {
   		this.color = <ToolValues[ToolTypes.COLOR]>value
   		return
-	}
-	if(type === ToolTypes.WIDTH){
-		this.lineWidthState = <ToolValues[ToolTypes.WIDTH]>value
-		return
-	}
+  	}
+  	if(type === ToolTypes.WIDTH){
+  		this.lineWidthState = <ToolValues[ToolTypes.WIDTH]>value
+  		return
+  	}
   	this.onError(`not inmpement ${type}`)
   }
+	
+  addEventListener<T extends keyof PainterEventMap>(type: T, fun: PainterEventMap[T]){
+
+  }
+
+  removeEventListener<T extends keyof PainterEventMap>(type: T, fun: PainterEventMap[T]){
+
+  }
+	
+
 
   onError = (message: string) => {
   	console.error(message)

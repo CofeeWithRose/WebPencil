@@ -17,6 +17,7 @@ export const usePainter = () => {
 		painter.setPaintDrawer(type, value)
 	}
 	return {
+		painter,
 		container,
 		onSelectTool,
 	}

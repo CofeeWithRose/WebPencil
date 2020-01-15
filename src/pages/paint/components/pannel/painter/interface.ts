@@ -1,3 +1,4 @@
+import { RecorderListenerMap } from '../recorder/inerface'
 
 export type painterOptions = {
   width: number;
@@ -57,4 +58,8 @@ export interface  ToolValues {
 }
 
 export type OnSelectTool = <T extends keyof ToolValues>(type: T, value: ToolValues[T]) => void
+
+export interface PainterEventMap extends RecorderListenerMap{
+  
+}
 
