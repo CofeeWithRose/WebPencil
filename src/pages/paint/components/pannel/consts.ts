@@ -1,8 +1,9 @@
-import {ToolStatesSetting, PainterDrawer} from './interface'
 import Eraser from '../tools/eraser'
 import Pencil from '../tools/pencil'
 import Color from '../tools/color'
 import SelectColor from '../tools/select-color'
+import { PainterDrawer } from './painter/interface'
+import { ToolStatesSetting } from '../toolbar'
 export const enum  ToolTypes {
   ERASER= 'eraser',
 

@@ -19,25 +19,40 @@ let show = false
 p.addEventListener('click', ()=> {
     show = !show
     div.style.transform = show? showTransform :''
+    if(show){
+        printLog()
+    }
 })
 document.body.appendChild(div)
 
-const tempLogs: object[][] = []
-const printLog = debounce (()=>{
-    tempLogs.forEach(msgs => {
-        msgs.forEach( o => {
-            const p = document.createElement('pre')
-            if(o instanceof String){
-                p.innerHTML = o as string
-            }
-            if(o instanceof Object){
-                p.innerHTML = JSON.stringify( o as Object )
-            }
-            div.appendChild(p)
-        }) 
-    })
+let tempLogs: object[][] = []
+const printLog = debounce (async ()=>{
+    while(1){
+        const msgs = tempLogs.shift()
+        if(!msgs){
+            return
+        }
+        await new Promise(resolve => {
+            setTimeout(() => {
+                msgs.forEach( o => {
+                    const p = document.createElement('pre')
+                    if(o instanceof String){
+                        p.innerHTML = o as string
+                    }
+                    if(o instanceof Object){
+                        try{
+                            p.innerHTML = JSON.stringify( o as Object )
+                        }catch(e){
+                            console.error(e)
+                        }
+                    }
+                    div.appendChild(p)
+                }) 
+                resolve()
+            },200)
+        })
+    }
 }, 300)
-console.log = (...msgs: object[]) => {
-    // tempLogs.push(msgs)
-    // printLog()
-}
+// console.log = (...msgs: object[]) => {
+//     tempLogs.push(msgs)
+// }

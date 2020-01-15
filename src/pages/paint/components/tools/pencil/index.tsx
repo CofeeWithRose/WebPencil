@@ -1,11 +1,12 @@
-import { PainterTooolProps, OnSelectTool } from "../../pannel/interface";
 import React, { Fragment, useState } from 'react'
-import { ToolTypes } from "../../pannel/consts";
-import pencil from './pencil'
 import localStyle from './index.less'
-import { Drawer, Slider } from "antd";
+import { Slider } from "antd";
 import style from '../index.less'
 import { debounce } from 'lodash'
+import pencilPen from '../../pannel/pens/pen.pencil'
+import { OnSelectTool } from '../../pannel/painter/interface';
+import { ToolTypes } from '../../pannel/painter/interface'
+import { PainterTooolProps } from '../../toolbar';
 
 const handleWidthChange = debounce((val:number, onSelectTool:OnSelectTool) => {
     onSelectTool(ToolTypes.WIDTH, val)
@@ -21,7 +22,7 @@ export default ({ onSelectTool, onActiveTool, curState }: PainterTooolProps) => 
             setIsShowWidth( isShowWidth => !isShowWidth)
         }
         onActiveTool(ToolTypes.PENCIL)
-        onSelectTool(ToolTypes.PENCIL, pencil)
+        onSelectTool(ToolTypes.PENCIL, pencilPen)
         onSelectTool(ToolTypes.WIDTH, lineWidth)
         
     }
