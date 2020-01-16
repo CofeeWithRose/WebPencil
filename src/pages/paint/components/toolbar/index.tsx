@@ -5,6 +5,7 @@ import Pencil from '../tools/pencil'
 import SelectColor from '../tools/select-color'
 import Color from '../tools/color'
 import style from './style.less'
+import Recoder from '../tools/recorder'
 
 
 export interface ToolBarProps {
@@ -31,6 +32,7 @@ export const toolStatesSetting: ToolStatesSetting = {
 	[ToolTypes.PENCIL]: Pencil,
 	[ToolTypes.COLOR]: Color,
 	[ToolTypes.SELECTOR]: SelectColor,
+	[ToolTypes.RECORDER]: Recoder,
 }
 
 export default function ToolBar({ onSelectTool }: ToolBarProps) {

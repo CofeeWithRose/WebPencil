@@ -3,7 +3,7 @@ export const enum RecorderStates {
 
   CAN_UNDO = '1',
 
-  CAN_FORWARD = '2',
+  CAN_REDO = '2',
 
   BOTH = '3',
 
@@ -26,7 +26,7 @@ export interface OperateData {
   [OPERATE_TYPE.ADD_LAYER]:  HTMLCanvasElement
   [OPERATE_TYPE.ROMOVE_LAYER]:{ layer: number,  canvas?: HTMLCanvasElement } 
   [OPERATE_TYPE.MOVE_LAYER]: {from: number, to: number}
-  [OPERATE_TYPE.MODIFY_CANVAS]: { layer: number,  canvas: HTMLCanvasElement } 
+  [OPERATE_TYPE.MODIFY_CANVAS]: { layer: number,  from?: HTMLCanvasElement, to: HTMLCanvasElement } 
 
   
 }

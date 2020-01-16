@@ -42,6 +42,8 @@ export const enum  ToolTypes {
   SELECTOR = 'selector',
 
   WIDTH = 'width',
+
+  RECORDER = 'recorder',
   
 }
 

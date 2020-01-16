@@ -1,58 +1,66 @@
 import { debounce } from 'lodash'
-const div = document.createElement('div')
-const p = document.createElement('p')
-p.innerHTML = 'logger'
-p.style.backgroundColor = '#f0f0f0'
-div.appendChild(p)
-div.style.position = 'fixed'
-div.style.top= `${document.body.clientHeight - 30}px`
-div.style.left = '0'
+const logWrap = document.createElement('div')
+const tittle = document.createElement('p')
+tittle.innerHTML = 'logger'
+tittle.style.backgroundColor = '#f0f0f0'
+logWrap.appendChild(tittle)
+logWrap.style.position = 'fixed'
+logWrap.style.top= `${document.body.clientHeight - 30}px`
+logWrap.style.left = '0'
+logWrap.style.height = '100vh'
+logWrap.style.overflow = 'auto'
+logWrap.style.padding='10px'
 const showTransform =  `translate3d( 0,${30 - document.body.clientHeight}px,0 )`
-// div.style.transform = showTransform
-div.style.background = 'lightgray'
-div.style.transitionProperty = 'transform'
-div.style.transitionDuration = '0.5s'
-div.style.width = '100%'
-div.style.height = '100%'
-div.style.opacity = '0.5'
+logWrap.style.background = 'lightgray'
+logWrap.style.transitionProperty = 'transform'
+logWrap.style.transitionDuration = '0.5s'
+logWrap.style.width = '100%'
+logWrap.style.height = '100%'
+logWrap.style.opacity = '0.5'
 let show = false
-p.addEventListener('click', ()=> {
-    show = !show
-    div.style.transform = show? showTransform :''
-    if(show){
-        printLog()
-    }
+tittle.addEventListener('click', ()=> {
+	show = !show
+	logWrap.style.transform = show? showTransform :''
+	if(show){
+		printLog()
+	}
 })
-document.body.appendChild(div)
+document.body.appendChild(logWrap)
 
 let tempLogs: object[][] = []
 const printLog = debounce (async ()=>{
-    while(1){
-        const msgs = tempLogs.shift()
-        if(!msgs){
-            return
-        }
-        await new Promise(resolve => {
-            setTimeout(() => {
-                msgs.forEach( o => {
-                    const p = document.createElement('pre')
-                    if(o instanceof String){
-                        p.innerHTML = o as string
-                    }
-                    if(o instanceof Object){
-                        try{
-                            p.innerHTML = JSON.stringify( o as Object )
-                        }catch(e){
-                            console.error(e)
-                        }
-                    }
-                    div.appendChild(p)
-                }) 
-                resolve()
-            },200)
-        })
-    }
+	tittle.innerHTML = '....'
+	while(true){
+		const msgs = tempLogs.shift()
+
+		if(!msgs){
+			return
+		}
+		await new Promise(resolve => {
+			setTimeout(() => {
+				msgs.forEach( msg => {
+					const p = document.createElement('pre')
+					p.style.margin = '0'
+					if(typeof msg === 'string'||typeof msg === 'number'){
+						p.innerHTML = msg as string
+					}
+					
+					if(msg instanceof Object){
+						try{
+							p.innerHTML = JSON.stringify( msg as Object)
+						}catch(e){
+							console.error(e)
+						}
+					}
+					logWrap.appendChild(p)
+				}) 
+
+				resolve()
+			},200)
+		})
+		tittle.innerHTML = 'logger'
+	}
 }, 300)
-// console.log = (...msgs: object[]) => {
-//     tempLogs.push(msgs)
-// }
+console.log = (...msgs: object[]) => {
+	tempLogs.push(msgs)
+}
