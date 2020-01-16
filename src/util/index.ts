@@ -56,7 +56,7 @@ const printLog = debounce (async ()=>{
 				}) 
 
 				resolve()
-			},200)
+			},50)
 		})
 		tittle.innerHTML = 'logger'
 	}

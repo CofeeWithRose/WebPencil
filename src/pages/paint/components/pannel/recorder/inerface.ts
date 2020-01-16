@@ -24,16 +24,20 @@ export const enum  OPERATE_TYPE {
 
 export interface OperateData {
   [OPERATE_TYPE.ADD_LAYER]:  HTMLCanvasElement
-  [OPERATE_TYPE.ROMOVE_LAYER]:{ layer: number,  canvas?: HTMLCanvasElement } 
+  [OPERATE_TYPE.ROMOVE_LAYER]: { layer: number,  canvas?: HTMLCanvasElement } 
   [OPERATE_TYPE.MOVE_LAYER]: {from: number, to: number}
-  [OPERATE_TYPE.MODIFY_CANVAS]: { layer: number,  from?: HTMLCanvasElement, to: HTMLCanvasElement } 
+  [OPERATE_TYPE.MODIFY_CANVAS]: ModifyOperateDate
+}
 
-  
+export interface ModifyOperateDate {
+  readonly layer: number
+  readonly from?: HTMLCanvasElement
+  readonly to: HTMLCanvasElement
 }
 
 export class OperateRecord <T extends keyof OperateData>{
 	constructor(
     public readonly type: T,
-    public data: OperateData[T]
+    public readonly data: OperateData[T]
 	){}
 }

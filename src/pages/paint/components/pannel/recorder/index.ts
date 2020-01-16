@@ -63,7 +63,6 @@ export default class CanvasRecoder {
 		}
 		this.updateCurCanvases(operates, true)
 		this.curOperateIndex = this.operateRecord.length - 1
-		console.log('save: ', this.curOperateIndex)
 		this.computState()
 	}
 
@@ -73,13 +72,13 @@ export default class CanvasRecoder {
 			if (operate.type === OPERATE_TYPE.ADD_LAYER) {
 				const c = (operate.data) as OperateData[OPERATE_TYPE.ADD_LAYER]
 				this.curCanvases.push(CanvasRecoder.copyCanvas(c))
-				ops.push(operate)
+				save && ops.push(operate)
 			}
 			if (operate.type === OPERATE_TYPE.MODIFY_CANVAS) {
 				const { layer, to } = operate.data as OperateData[OPERATE_TYPE.MODIFY_CANVAS]
 				const from = this.curCanvases[layer]
 				this.curCanvases[layer] = CanvasRecoder.copyCanvas(to)
-				ops.push(new OperateRecord(OPERATE_TYPE.MODIFY_CANVAS, {layer, from, to}))
+				save && ops.push(new OperateRecord(OPERATE_TYPE.MODIFY_CANVAS, {layer, from, to:this.curCanvases[layer]}))
 			}
 			if (operate.type === OPERATE_TYPE.MOVE_LAYER) {
 				const { from, to } = operate.data as OperateData[OPERATE_TYPE.MOVE_LAYER]
@@ -87,15 +86,17 @@ export default class CanvasRecoder {
 				const arr2 = this.curCanvases.slice(from + 1, to)
 				const arr3 = this.curCanvases.slice(to)
 				this.curCanvases = arr1.concat(arr2.concat(arr3))
-				ops.push(operate)
+				save && ops.push(operate)
 			}
 			if (operate.type === OPERATE_TYPE.ROMOVE_LAYER) {
 				const { layer } = operate.data as OperateData[OPERATE_TYPE.ROMOVE_LAYER]
 				const [delCanvas] = this.curCanvases.splice(layer, 1)
-				ops.push(new OperateRecord(OPERATE_TYPE.ROMOVE_LAYER, { layer, canvas: delCanvas }))
+				save && ops.push(new OperateRecord(OPERATE_TYPE.ROMOVE_LAYER, { layer, canvas: delCanvas }))
 			}
 		})
-		save && this.operateRecord.push(ops)
+		if(save){
+			this.operateRecord.push(ops)
+		}
 	}
 
 	public undo(): HTMLCanvasElement[] {
@@ -128,7 +129,6 @@ export default class CanvasRecoder {
 				}
 			}
 			--this.curOperateIndex
-			console.log('undo: ', this.curOperateIndex)
 			this.computState()
 		}
 		return this.curCanvases
@@ -137,13 +137,22 @@ export default class CanvasRecoder {
 	public redo(): HTMLCanvasElement[] {
 		if (this.recodState === RecorderStates.BOTH || this.recodState === RecorderStates.CAN_REDO) {
 			const ops = this.operateRecord[++this.curOperateIndex]
-			debugger
 			this.updateCurCanvases(ops)
 			this.computState()
 		}
 		return this.curCanvases
 	}
 
+	// protected logCanvas = (st: string, c: HTMLCanvasElement) => {
+	// 	if(!c){
+	// 		return
+	// 	}
+	// 	const ctx = c.getContext('2d')
+	// 	if(ctx){
+	// 		const a = ctx.getImageData(0,0,c.width,c.height).data.filter(v => v)
+	// 		console.log(`${st}, ${this.curOperateIndex}`, a)
+	// 	}
+	// }
 
 
 	public addEventListener<T extends keyof RecorderListenerMap>(type: T, fun: RecorderListenerMap[T]) {
