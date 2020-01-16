@@ -14,6 +14,15 @@ export type PainterDrawer = (
 ) => void
 
 
+export interface PainterPen {
+
+  draw: PainterDrawer
+
+  init: ( ctx: CanvasRenderingContext2D )=> void
+
+}
+
+
 
 export interface PaintInfo {
   x: number, y: number, pressure: number
@@ -49,9 +58,9 @@ export const enum  ToolTypes {
 
 export interface  ToolValues {
 
-  [ToolTypes.ERASER] : PainterDrawer
+  [ToolTypes.ERASER] : PainterPen
 
-  [ToolTypes.PENCIL] : PainterDrawer
+  [ToolTypes.PENCIL] : PainterPen
 
   [ToolTypes.COLOR] : string
 

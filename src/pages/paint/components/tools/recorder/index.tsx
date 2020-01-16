@@ -4,7 +4,7 @@ import { PaintContext } from '../../..'
 import { RecorderStates } from '../../pannel/recorder/inerface'
 import styles from '../index.less'
 
-export default function Recoder({ onSelectTool, onActiveTool, curState }: PainterTooolProps) {
+export default function Recoder() {
 	const { painter } = useContext(PaintContext)
 	const [recorderState, setRecorderState] = useState()
 	useEffect(() => {

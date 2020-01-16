@@ -1,12 +1,13 @@
-import React, { useState, Fragment } from 'react'
+import React, { useState, Fragment, useContext } from 'react'
 import style from './index.less'
 import { Drawer } from 'antd'
 import ColorPannel from './color-pannel'
 import { PainterTooolProps } from '../../toolbar'
 import { RGBA } from '../../pannel/rgba'
 import { ToolTypes } from '../../pannel/painter/interface'
+import { PaintContext } from '../../..'
 
-const Color = ({onSelectTool}: PainterTooolProps) => {
+const Color = () => {
 	const [color, setColor] = useState(new RGBA(0,0,0))
 	const [showColorPanel, setShowColorPannel] = useState(false)
 	const handleShow = () => {
@@ -14,9 +15,12 @@ const Color = ({onSelectTool}: PainterTooolProps) => {
 		setShowColorPannel(true)
 	}
 
+	const { painter} = useContext(PaintContext)
 	const handleClose = () => {
 		setShowColorPannel(false)
-		onSelectTool(ToolTypes.COLOR, color.toColorString())
+		if(painter){
+			painter.setPaintDrawer(ToolTypes.COLOR, color.toColorString())
+		}
 	}
 	// const handleClick = () => {
 	//     onActiveTool(ToolTypes.ERASER)

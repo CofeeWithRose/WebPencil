@@ -1,56 +1,57 @@
-import React, { Fragment, useState } from 'react'
-import localStyle from './index.less'
+import React, { Fragment, useState, useContext, useMemo, useEffect } from 'react'
 import { Slider } from 'antd'
 import style from '../index.less'
 import { debounce } from 'lodash'
-import pencilPen from '../../pannel/pens/pen.pencil'
+import PencilPen from '../../pannel/pens/pen.pencil'
 import { OnSelectTool } from '../../pannel/painter/interface'
 import { ToolTypes } from '../../pannel/painter/interface'
 import { PainterTooolProps } from '../../toolbar'
+import { PaintContext } from '../../..'
+import LineWidth from '../line-width'
 
-const handleWidthChange = debounce((val:number, onSelectTool:OnSelectTool) => {
-	onSelectTool(ToolTypes.WIDTH, val)
-},200)
 
-export default function Pencil({ onSelectTool, onActiveTool, curState }: PainterTooolProps){
+export default function Pencil({ onActiveTool, curState }: PainterTooolProps){
 
+	const {painter} = useContext(PaintContext)
 	const [isShowWidth, setIsShowWidth] = useState(false)
 	const [lineWidth, setLineWidth] = useState(10)
+
+	useEffect(() => {
+		if(curState !== ToolTypes.PENCIL){
+			setIsShowWidth(false)
+		}
+		if( painter && curState === ToolTypes.PENCIL){
+			painter.setPaintDrawer(ToolTypes.WIDTH, lineWidth)
+		}
+	}, [curState])
 
 	const handleClick = () => {
 		if (curState === ToolTypes.PENCIL) {
 			setIsShowWidth( isShowWidth => !isShowWidth)
 		}
 		onActiveTool(ToolTypes.PENCIL)
-		onSelectTool(ToolTypes.PENCIL, pencilPen)
-		onSelectTool(ToolTypes.WIDTH, lineWidth)
-        
+		if(painter){
+			const pencilPen = new PencilPen()
+			pencilPen.init(painter.context)
+			painter.setPaintDrawer(ToolTypes.PENCIL, pencilPen)
+		}
 	}
 
-	const onSliderChange = (val: number) => {
-		setLineWidth(val)
-		handleWidthChange(val, onSelectTool)
-	}
 
 	return <Fragment>
 		<span
-			className={
-				`${localStyle.pencilWrap}
-                ${style.tooBarItem }
-                ${curState === ToolTypes.PENCIL ? style.tooBarActiveItem : ''}`
-			}   
+			className={`
+				${style.tooBarItem }
+				${curState === ToolTypes.PENCIL ? style.tooBarActiveItem : ''}
+			`}   
 			onClick={handleClick}
 		>
             pencil
 		</span>
-		<Slider
+		<LineWidth 
+			visibole={isShowWidth} 
 			value={lineWidth}
-			min={1}
-			max={100}
-			className={`${localStyle.slider} ${
-				isShowWidth &&
-                curState === ToolTypes.PENCIL ? '' : localStyle.hideSlider}`}
-			onChange={onSliderChange }
+			onChange={setLineWidth}
 		/>
 	</Fragment>
 

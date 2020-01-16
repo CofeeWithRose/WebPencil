@@ -10,7 +10,7 @@ const handleSelectColor = (e: PointerEvent, onSelectTool: OnSelectTool) => {
 
 }
 
-const SelectColor = ({ onSelectTool, onActiveTool, curState }: PainterTooolProps) => {
+const SelectColor = ({ onActiveTool, curState }: PainterTooolProps) => {
 
 
 	const handleSelectColor = useRef( debounce((e: PointerEvent) => {

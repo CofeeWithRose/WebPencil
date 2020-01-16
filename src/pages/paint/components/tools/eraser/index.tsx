@@ -1,22 +1,48 @@
-import React from 'react'
+import React, { useContext, Fragment, useState, useEffect } from 'react'
 import style from '../index.less'
 import { ToolTypes } from '../../pannel/painter/interface'
 import { PainterTooolProps } from '../../toolbar'
-import eraser from '../../pannel/pens/pen.eraser'
+import EraserPen from '../../pannel/pens/pen.eraser'
+import { PaintContext } from '../../..'
+import LineWidth from '../line-width'
 
-const Eraser = ({onSelectTool, onActiveTool, curState}: PainterTooolProps) => {
+const Eraser = ({ onActiveTool, curState}: PainterTooolProps) => {
+
+	const { painter } = useContext(PaintContext)
+	const [ widthVisible, setWidthVisilbe]  = useState(false)
+	const [ lineWidth, setLineWidth ] = useState(10)
 
 	const handleClick = () => {
 		onActiveTool(ToolTypes.ERASER)
-		onSelectTool(ToolTypes.ERASER, eraser)
+		if(painter){
+			const eraser = new EraserPen()
+			eraser.init(painter.context)
+			painter.setPaintDrawer(ToolTypes.ERASER, eraser)
+		}
+		if(curState === ToolTypes.ERASER){
+			setWidthVisilbe(widthVisible => !widthVisible)
+		}
 	}
+
+	useEffect(() => {
+		if(curState !== ToolTypes.ERASER){
+			setWidthVisilbe(false)
+		}else{
+			if(painter){
+				painter.setPaintDrawer(ToolTypes.WIDTH, lineWidth)
+			}
+		}
+	}, [curState])
     
-	return <span 
-		className={`${style.tooBarItem} ${ curState===ToolTypes.ERASER? style.tooBarActiveItem : ''}` }
-		onClick={handleClick} 
-	>
+	return <Fragment>
+		<span 
+			className={`${style.tooBarItem} ${ curState===ToolTypes.ERASER? style.tooBarActiveItem : ''}` }
+			onClick={handleClick} 
+		>
         eraser
-	</span>
+		</span>
+		<LineWidth visibole={widthVisible} value={lineWidth} onChange={setLineWidth} />
+	</Fragment>
 }
 
 export default Eraser

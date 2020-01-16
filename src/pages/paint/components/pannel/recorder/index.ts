@@ -1,5 +1,5 @@
-import { EventEmiter } from '../../../../../util/event'
 import { RecorderStates, RecorderListenerMap, OperateRecord, OPERATE_TYPE, OperateData } from './inerface'
+import { EventEmitter } from 'events'
 
 
 
@@ -24,7 +24,7 @@ export default class CanvasRecoder {
 
 	public recodState: RecorderStates = RecorderStates.NONE
 
-	protected eventEmiter = new EventEmiter<RecorderListenerMap>()
+	protected eventEmiter = new EventEmitter()
 
 	protected operateRecord: OperateRecord<OPERATE_TYPE>[][] = []
 
@@ -156,11 +156,11 @@ export default class CanvasRecoder {
 
 
 	public addEventListener<T extends keyof RecorderListenerMap>(type: T, fun: RecorderListenerMap[T]) {
-		this.eventEmiter.addEventLister(type, fun)
+		this.eventEmiter.addListener(type, fun)
 	}
 
 	public removeEventListener<T extends keyof RecorderListenerMap>(type: T, fun: RecorderListenerMap[T]) {
-		this.eventEmiter.removeEventLister(type, fun)
+		this.eventEmiter.removeListener(type, fun)
 	}
 
 }

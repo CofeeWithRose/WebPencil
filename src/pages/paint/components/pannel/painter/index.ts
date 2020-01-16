@@ -1,8 +1,9 @@
-import { painterOptions, Vector2, OnSelectTool, ToolTypes, ToolValues, PaintInfo, PaintContex, PainterDrawer, OffsetPosition, PainterEventMap } from './interface'
+import { painterOptions, Vector2, OnSelectTool, ToolTypes, ToolValues, PaintInfo, PaintContex, PainterDrawer, OffsetPosition, PainterEventMap, PainterPen } from './interface'
 import styles from './style.less'
-import pencil from '../pens/pen.pencil'
+import Pencil from '../pens/pen.pencil'
 import CanvasRecoder from '../recorder'
 import { OperateRecord, OPERATE_TYPE } from '../recorder/inerface'
+import { EventEmitter } from 'events'
 
 export class Painter {
 
@@ -25,7 +26,7 @@ export class Painter {
 
 	protected lastPoint: Vector2 | null = null
 
-	protected painter: PainterDrawer = pencil
+	protected painter: PainterPen = new Pencil()
 
 	protected offsetPosition: OffsetPosition
 
@@ -33,15 +34,18 @@ export class Painter {
 
 	protected recorder: CanvasRecoder
 
+	protected eventEmmiter = new EventEmitter()
+
 
 
 	protected constructor(
-
 		protected canvas: HTMLCanvasElement
 	) {
 		this.recorder = new CanvasRecoder([canvas])
+		this.recorder.addEventListener('stateChange', (...p) => this.eventEmmiter.emit('stateChange', ...p))
 		const ctx = canvas.getContext('2d')
 		if (ctx) {
+			this.painter.init(ctx)
 			this.context = ctx
 			canvas.addEventListener('pointermove', this.onPointermove)
 			canvas.addEventListener('pointerdown', this.onPointerdown)
@@ -100,7 +104,7 @@ export class Painter {
 			lineWidthState: this.lineWidthState,
 			color: this.color
 		}
-		this.painter(this.context, pointInfo, pintContext)
+		this.painter.draw(this.context, pointInfo, pintContext)
 		this.lastPoint = { x, y }
 	}
 
@@ -141,10 +145,12 @@ export class Painter {
 	}
 
 	addEventListener<T extends keyof PainterEventMap>(type: T, fun: PainterEventMap[T]) {
+		this.eventEmmiter.addListener(type,fun)
 		console.log('add e...')
 	}
 
 	removeEventListener<T extends keyof PainterEventMap>(type: T, fun: PainterEventMap[T]) {
+		this.eventEmmiter.removeListener(type,fun)
 		console.log('remove e')
 	}
 

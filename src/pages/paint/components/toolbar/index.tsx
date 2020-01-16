@@ -15,7 +15,6 @@ export interface ToolBarProps {
 export type OnActiveTool = (type: ToolTypes) => void
 
 export type PainterTooolProps = {
-  onSelectTool: OnSelectTool,
   onActiveTool: OnActiveTool,
   curState: ToolTypes,
 }
@@ -48,7 +47,6 @@ export default function ToolBar({ onSelectTool }: ToolBarProps) {
 						key={k}
 						curState={curState}
 						onActiveTool={setCurState}
-						onSelectTool={onSelectTool}
 					/>
 				}
 			)
