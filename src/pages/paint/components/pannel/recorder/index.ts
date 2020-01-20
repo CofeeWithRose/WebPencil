@@ -32,6 +32,8 @@ export default class CanvasRecoder {
 
 	protected curCanvases: HTMLCanvasElement[] = []
 
+	protected maxStep = 500
+
 	protected computState = () => {
 		let changedState: RecorderStates | null = null
 		const maxHisInd = this.operateRecord.length - 1
@@ -62,6 +64,9 @@ export default class CanvasRecoder {
 			this.operateRecord.splice(this.curOperateIndex+1)
 		}
 		this.updateCurCanvases(operates, true)
+		if(this.operateRecord.length> this.maxStep){
+			this.operateRecord.splice(0, this.maxStep - this.operateRecord.length)
+		}
 		this.curOperateIndex = this.operateRecord.length - 1
 		this.computState()
 	}

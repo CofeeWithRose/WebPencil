@@ -1,4 +1,4 @@
-import { painterOptions, Vector2, OnSelectTool, ToolTypes, ToolValues, PaintInfo, PaintContex, PainterDrawer, OffsetPosition, PainterEventMap, PainterPen } from './interface'
+import { painterOptions, Vector2, OnSelectTool, ToolTypes, ToolValues, PaintPointInfo, PaintContex, PainterDrawer, OffsetPosition, PainterEventMap, PainterPen } from './interface'
 import styles from './style.less'
 import Pencil from '../pens/pen.pencil'
 import CanvasRecoder from '../recorder'
@@ -24,7 +24,7 @@ export class Painter {
 
 	protected isPaintting = false
 
-	protected lastPoint: Vector2 | null = null
+	protected lastPoint: PaintPointInfo | null = null
 
 	protected painter: PainterPen = new Pencil()
 
@@ -45,7 +45,7 @@ export class Painter {
 		this.recorder.addEventListener('stateChange', (...p) => this.eventEmmiter.emit('stateChange', ...p))
 		const ctx = canvas.getContext('2d')
 		if (ctx) {
-			this.painter.init(ctx)
+			this.painter.init(ctx, {w: canvas.width, h: canvas.height})
 			this.context = ctx
 			canvas.addEventListener('pointermove', this.onPointermove)
 			canvas.addEventListener('pointerdown', this.onPointerdown)
@@ -98,14 +98,14 @@ export class Painter {
 	protected handlePointMove = (e: PointerEvent) => {
 		const { pressure, x: x1, y: y1 } = e
 		const { x, y } = this.getCanvasePosition({ x: x1, y: y1 })
-		const pointInfo: PaintInfo = { x, y, pressure }
+		const pointInfo: PaintPointInfo = { x, y, pressure }
 		const pintContext: PaintContex = {
 			lastPoint: this.lastPoint,
 			lineWidthState: this.lineWidthState,
 			color: this.color
 		}
 		this.painter.draw(this.context, pointInfo, pintContext)
-		this.lastPoint = { x, y }
+		this.lastPoint = { x, y, pressure }
 	}
 
 	protected onPointerdown = (e: PointerEvent) => {
@@ -113,8 +113,9 @@ export class Painter {
 		if (e.pointerType === 'touch') {
 			return
 		}
-		const { x, y } = e
-		this.lastPoint = this.getCanvasePosition({ x, y })
+		const { x, y, pressure } = e
+		this.lastPoint = {...this.getCanvasePosition({ x, y }), pressure }
+		this.painter.onStart({x,y, pressure})
 		this.isPaintting = true
 	}
 
@@ -125,6 +126,8 @@ export class Painter {
 			this.recorder.record([new OperateRecord(OPERATE_TYPE.MODIFY_CANVAS, { layer: 0, to: this.canvas })])
 		}
 		this.isPaintting = false
+		this.painter.onEnd()
+
 	}
 
 

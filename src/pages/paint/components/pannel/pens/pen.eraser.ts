@@ -1,4 +1,4 @@
-import { PainterDrawer, PainterPen } from '../../pannel/painter/interface'
+import { PainterDrawer, PainterPen, Vector2 } from '../../pannel/painter/interface'
 
 
 
@@ -6,6 +6,14 @@ export  default class Eraser implements PainterPen{
 
 	init(ctx: CanvasRenderingContext2D){
 		ctx.lineCap='round'
+	}
+
+	onStart({x,y,pressure}:{pressure: number}&Vector2){
+
+	}
+
+	onEnd(){
+
 	}
 
  	draw:PainterDrawer = ( context ,{x, y}, {lastPoint, lineWidthState} ) => {
