@@ -1,7 +1,7 @@
 {
     "name": "WebPencil",
     "short_name": "WebPencil",
-    "start_url": "/WebPencil",
+    "start_url": "/WebPencil/",
     "display": "fullscreen",
     "background_color": "#fff",
     "description": "A simply readable Hacker News app.",
