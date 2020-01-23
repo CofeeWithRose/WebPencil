@@ -9,7 +9,7 @@ module.exports = {
   mode: 'development',
   entry: path.resolve(__dirname, '../src/index.tsx'),
   output: {
-    path: path.resolve(__dirname, '../../WebPencil'),
+    path: path.resolve(__dirname, '../../html/WebPencil'),
     chunkFilename: '[id]-[hash].js',
     filename: '[name]-[hash].js',
   },
