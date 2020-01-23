@@ -9,7 +9,8 @@ export const usePainter = () => {
 	const [painter, setPainter] = useState()
 	useEffect(() => {
 		if (container.current) {
-			setPainter(Painter.createPainter(container.current, { width: screen.width, height: screen.height }))
+			const {clientWidth, clientHeight } = container.current
+			setPainter(Painter.createPainter(container.current, { width: clientWidth, height: clientHeight }))
 		}
 	}, [])
 
