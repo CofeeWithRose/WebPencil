@@ -1,4 +1,4 @@
-import { painterOptions, Vector2, OnSelectTool, ToolTypes, ToolValues, PaintPointInfo, PaintContex, PainterDrawer, OffsetPosition, PainterEventMap, PainterPen } from './interface'
+import { painterOptions, Vector2, OnSelectTool, ToolTypes, ToolValues, PaintPointInfo, PaintContex, PainterDrawer, OffsetPosition, PainterEventMap, PainterPen, PannelInfo } from './interface'
 import styles from './style.less'
 import Pencil from '../pens/pen.pencil'
 import CanvasRecoder from '../recorder'
@@ -17,8 +17,9 @@ export class Painter {
 		container.appendChild(canvas)
 		return new Painter(canvas)
 	}
-
 	public context: CanvasRenderingContext2D
+
+	public pannelInfo: PannelInfo
 
 	protected lineWidthState = 5
 
@@ -37,15 +38,15 @@ export class Painter {
 	protected eventEmmiter = new EventEmitter()
 
 
-
 	protected constructor(
-		protected canvas: HTMLCanvasElement
+		public canvas: HTMLCanvasElement
 	) {
 		this.recorder = new CanvasRecoder([canvas])
 		this.recorder.addEventListener('stateChange', (...p) => this.eventEmmiter.emit('stateChange', ...p))
 		const ctx = canvas.getContext('2d')
 		if (ctx) {
-			this.painter.init(ctx, {w: canvas.width, h: canvas.height})
+			this.pannelInfo = new PannelInfo(canvas.width, canvas.height)
+			this.painter.init(ctx, this.pannelInfo)
 			this.context = ctx
 			canvas.addEventListener('pointermove', this.onPointermove)
 			canvas.addEventListener('pointerdown', this.onPointerdown)
@@ -85,13 +86,13 @@ export class Painter {
 
 	public undo = () => {
 		const [c] = this.recorder.undo()
-		this.context.clearRect(0,0, c.width, c.height)
+		this.context.clearRect(0, 0, c.width, c.height)
 		this.context.drawImage(c, 0, 0)
 	}
 
-	public redo = () =>  {
+	public redo = () => {
 		const [c] = this.recorder.redo()
-		this.context.clearRect(0,0, c.width, c.height)
+		this.context.clearRect(0, 0, c.width, c.height)
 		this.context.drawImage(c, 0, 0)
 	}
 
@@ -114,8 +115,8 @@ export class Painter {
 			return
 		}
 		const { x, y, pressure } = e
-		this.lastPoint = {...this.getCanvasePosition({ x, y }), pressure }
-		this.painter.onStart({x,y, pressure})
+		this.lastPoint = { ...this.getCanvasePosition({ x, y }), pressure }
+		this.painter.onStart({ x, y, pressure })
 		this.isPaintting = true
 	}
 
@@ -123,10 +124,11 @@ export class Painter {
 		e.preventDefault()
 		this.lastPoint = null
 		if (this.isPaintting) {
-			this.recorder.record([new OperateRecord(OPERATE_TYPE.MODIFY_CANVAS, { layer: 0, to: this.canvas })])
+			const sholdRecordCanvas = this.painter.onEnd()
+
+			sholdRecordCanvas && this.recorder.record([new OperateRecord(OPERATE_TYPE.MODIFY_CANVAS, { layer: 0, to: this.canvas })])
 		}
 		this.isPaintting = false
-		this.painter.onEnd()
 
 	}
 
@@ -148,12 +150,12 @@ export class Painter {
 	}
 
 	addEventListener<T extends keyof PainterEventMap>(type: T, fun: PainterEventMap[T]) {
-		this.eventEmmiter.addListener(type,fun)
+		this.eventEmmiter.addListener(type, fun)
 		console.log('add e...')
 	}
 
 	removeEventListener<T extends keyof PainterEventMap>(type: T, fun: PainterEventMap[T]) {
-		this.eventEmmiter.removeListener(type,fun)
+		this.eventEmmiter.removeListener(type, fun)
 		console.log('remove e')
 	}
 

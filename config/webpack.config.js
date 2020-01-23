@@ -2,12 +2,16 @@
 const path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const WorkboxPlugin = require('workbox-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
+
 module.exports = {
   mode: 'development',
   entry: path.resolve(__dirname, '../src/index.tsx'),
   output: {
-    path: path.resolve(__dirname, '../dist'),
-    filename: 'main.js',
+    path: path.resolve(__dirname, '../../WebPencil'),
+    chunkFilename: '[id]-[hash].js',
+    filename: '[name]-[hash].js',
   },
   resolve: {
     extensions: [ '.tsx', '.ts', '.js' ],
@@ -62,5 +66,21 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({ template:  path.resolve(__dirname, '../public/index.html')}),
     new webpack.ProgressPlugin(),
+    new CopyPlugin([
+      { from: 'src/assets', to: 'assets' },
+    ]),
+    // new ManifestPlugin(),
+    new WorkboxPlugin.GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true,
+      importWorkboxFrom: 'local',
+    }),
+    // new WorkboxPlugin.InjectManifest({
+    //   // 这些选项帮助快速启用 ServiceWorkers
+    //   // 不允许遗留任何“旧的” ServiceWorkers
+    //   importWorkboxFrom: 'local',
+    //   swSrc:'./src/sw/index.ts',
+    //   swDest: 'web-pencil-ws.js',
+    // }),
   ]
 }

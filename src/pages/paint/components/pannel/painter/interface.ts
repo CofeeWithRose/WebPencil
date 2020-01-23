@@ -1,4 +1,5 @@
 import { RecorderListenerMap } from '../recorder/inerface'
+import { Painter } from '.'
 
 export type painterOptions = {
   width: number;
@@ -45,16 +46,18 @@ export type PainterDrawer = (
   { lastPoint, lineWidthState }: PaintContex
 ) => void
 
-export interface PannelInfo {
-  w: number, h: number
+export class PannelInfo {
+	constructor(public readonly  w: number, public readonly h: number){}
 }
+
+
 export interface PainterPen {
 
   draw: PainterDrawer
 
   onStart( point: {pressure: number}&Vector2): void
 
-  onEnd():void
+  onEnd():boolean
 
   init: ( ctx: CanvasRenderingContext2D, pannelInfo: PannelInfo )=> void
 

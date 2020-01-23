@@ -1,16 +1,11 @@
-import { PainterDrawer, PainterPen, Vector2 } from '../../pannel/painter/interface'
+import { PainterDrawer, Vector2 } from '../../pannel/painter/interface'
+import AbstractPainterPen from './pen.abstract'
 export type End = { point1: Vector2, point2: Vector2 }
-export  default class Pencil implements PainterPen{
+export  default class Pencil extends AbstractPainterPen{
 
-	init(ctx: CanvasRenderingContext2D){
-		// ctx.lineCap='round'
-	}
 
 	onStart({x,y,pressure}:{pressure: number}&Vector2){
 		this.lastEnd = null
-	}
-
-	onEnd(){
 	}
 
 	lastEnd:End | null
