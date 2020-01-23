@@ -4,6 +4,6 @@ module.exports = {
   watchOptions: {
     poll: true
   },
-  writeToDisk: true,
+  // writeToDisk: true,
   // watchContentBase: true
 }
