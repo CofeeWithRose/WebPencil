@@ -74,6 +74,7 @@ module.exports = {
       clientsClaim: true,
       skipWaiting: true,
       importWorkboxFrom: 'local',
+      importsDirectory: 'WebPencil',
     }),
     // new WorkboxPlugin.InjectManifest({
     //   // 这些选项帮助快速启用 ServiceWorkers
