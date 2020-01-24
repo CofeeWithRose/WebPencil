@@ -19,7 +19,7 @@ export default function Recoder() {
 		<span 
 			className={`
 				${styles.tooBarItem} 
-				${ recorderState === RecorderStates.BOTH || RecorderStates.CAN_UNDO === recorderState ? styles.tooBarActiveItem : ''}
+				${ recorderState === RecorderStates.BOTH || RecorderStates.CAN_UNDO === recorderState ? styles.eneableItem : ''}
       		`}
 			onClick={painter&&painter.undo}
 		>
@@ -30,7 +30,7 @@ export default function Recoder() {
 		<span 
 			className={`
 					${styles.tooBarItem} 
-					${recorderState === RecorderStates.BOTH || RecorderStates.CAN_REDO === recorderState ? styles.tooBarActiveItem : ''}
+					${recorderState === RecorderStates.BOTH || RecorderStates.CAN_REDO === recorderState ? styles.eneableItem : ''}
 				`}
 			onClick={painter&&painter.redo}
 		>

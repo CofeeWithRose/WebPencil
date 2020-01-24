@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useMemo, useContext } from 'react'
+import React, { useContext } from 'react'
 import toolStyle from '../index.less'
-import { debounce } from 'lodash'
-import { OnSelectTool, ToolTypes } from '../../pannel/painter/interface'
+import { ToolTypes } from '../../pannel/painter/interface'
 import { PainterTooolProps } from '../../toolbar'
 import { PaintContext } from '../../..'
 import SelectRGB from '../../pannel/pens/pen.selectRGB'
@@ -31,7 +30,7 @@ const SelectColor = ({ onActiveTool, curState }: PainterTooolProps) => {
 		className = {`${toolStyle.tooBarItem} ${ curState === ToolTypes.SELECTOR ? toolStyle.tooBarActiveItem : ''}` }
 		onClick={handleClick}> 
 		<Tooltip title="pick" placement="bottom" >
-			<Icon type="exclamation" className={ curState === ToolTypes.ERASER? toolStyle.activeToolIcon : ''} />
+			<Icon type="exclamation" />
 		</Tooltip>
 	</div>
 }

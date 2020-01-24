@@ -47,7 +47,7 @@ export default function Pencil({ onActiveTool, curState }: PainterTooolProps){
 			onClick={handleClick}
 		>
 			<Tooltip title="pencil" placement="bottom" >
-				<Icon type="edit" className={ curState === ToolTypes.PENCIL? style.activeToolIcon : ''} />
+				<Icon type="edit" />
 			</Tooltip>
 		</span>
 		<LineWidth 

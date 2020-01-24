@@ -41,7 +41,7 @@ const Eraser = ({ onActiveTool, curState}: PainterTooolProps) => {
 			onClick={handleClick} 
 		>
 			<Tooltip title="eraser" placement="bottom" >
-				<Icon type="tag" className={ curState === ToolTypes.ERASER? style.activeToolIcon : ''} />
+				<Icon type="tag"/>
 			</Tooltip>
 		</span>
 		<LineWidth visibole={widthVisible} value={lineWidth} onChange={setLineWidth} />
