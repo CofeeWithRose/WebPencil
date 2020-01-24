@@ -1,15 +1,18 @@
 import Pencil from './pen.pencil'
 import { PainterPen, PainterDrawer, PaintPointInfo } from '../painter/interface'
 import {PannelInfo} from  '../painter/interface'
+import { Painter } from '../painter'
 
 export default abstract class AbstractPainterPen implements PainterPen {
-	init(ctx: CanvasRenderingContext2D, pannelInfo: PannelInfo){
+    protected painter: Painter
 
-	}
+    init(painter:Painter){
+    	this.painter = painter
+    }
 
-	onStart({x,y,pressure}:PaintPointInfo){}
+    onStart({x,y,pressure}:PaintPointInfo){}
 
-    onEnd = ()=> true
+    onEnd = (p: PaintPointInfo)=> true
 
     draw: PainterDrawer = () =>  {}
 } 

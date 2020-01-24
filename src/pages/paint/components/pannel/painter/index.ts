@@ -4,6 +4,8 @@ import Pencil from '../pens/pen.pencil'
 import CanvasRecoder from '../recorder'
 import { OperateRecord, OPERATE_TYPE } from '../recorder/inerface'
 import { EventEmitter } from 'events'
+import { RGBA } from '../rgba'
+import PEventEmiter from '../../../../../util/event'
 
 export class Painter {
 
@@ -35,7 +37,7 @@ export class Painter {
 
 	protected recorder: CanvasRecoder
 
-	protected eventEmmiter = new EventEmitter()
+	protected eventEmmiter = new PEventEmiter<PainterEventMap>()
 
 
 	protected constructor(
@@ -46,8 +48,10 @@ export class Painter {
 		const ctx = canvas.getContext('2d')
 		if (ctx) {
 			this.pannelInfo = new PannelInfo(canvas.width, canvas.height)
-			this.painter.init(ctx, this.pannelInfo)
+			this.painter.init(this)
 			this.context = ctx
+			ctx.fillStyle= 'white'
+			ctx.fillRect(0,0, canvas.width, canvas.height)
 			canvas.addEventListener('pointermove', this.onPointermove)
 			canvas.addEventListener('pointerdown', this.onPointerdown)
 			canvas.addEventListener('pointerup', this.onPointerup)
@@ -124,7 +128,8 @@ export class Painter {
 		e.preventDefault()
 		this.lastPoint = null
 		if (this.isPaintting) {
-			const sholdRecordCanvas = this.painter.onEnd()
+			const {x, y} = this.getCanvasePosition(e)
+			const sholdRecordCanvas = this.painter.onEnd({x,y, pressure: e.pressure})
 
 			sholdRecordCanvas && this.recorder.record([new OperateRecord(OPERATE_TYPE.MODIFY_CANVAS, { layer: 0, to: this.canvas })])
 		}
@@ -134,12 +139,15 @@ export class Painter {
 
 
 	setPaintDrawer: OnSelectTool = async (type, value) => {
-		if (type === ToolTypes.ERASER || type === ToolTypes.PENCIL) {
+		if (type === ToolTypes.ERASER || type === ToolTypes.PENCIL|| type === ToolTypes.SELECTOR) {
 			this.painter = <ToolValues[ToolTypes.ERASER | ToolTypes.PENCIL]>value
 			return
 		}
 		if (type === ToolTypes.COLOR) {
-			this.color = <ToolValues[ToolTypes.COLOR]>value
+			const val = <ToolValues[ToolTypes.COLOR]>value
+			this.eventEmmiter.emit('colorchange',val, this.color)
+			console.log('ccc: ', val)
+			this.color = val.toColorString()
 			return
 		}
 		if (type === ToolTypes.WIDTH) {
@@ -151,14 +159,16 @@ export class Painter {
 
 	addEventListener<T extends keyof PainterEventMap>(type: T, fun: PainterEventMap[T]) {
 		this.eventEmmiter.addListener(type, fun)
-		console.log('add e...')
 	}
 
 	removeEventListener<T extends keyof PainterEventMap>(type: T, fun: PainterEventMap[T]) {
 		this.eventEmmiter.removeListener(type, fun)
-		console.log('remove e')
 	}
 
+	getPointColor = ({x,y}: Vector2) => {
+		const {data} = this.context.getImageData(x,y,1,1)
+		return new RGBA(data[0], data[1], data[2], data[3])
+	}
 
 
 	onError = (message: string) => {

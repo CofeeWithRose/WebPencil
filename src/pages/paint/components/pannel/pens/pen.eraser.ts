@@ -1,11 +1,12 @@
 import { PainterDrawer, PainterPen, Vector2, PaintPointInfo } from '../../pannel/painter/interface'
 
 import AbstractPainterPen from './pen.abstract'
+import { Painter } from '../painter'
 
 export default class Eraser extends AbstractPainterPen {
 
-	init(ctx: CanvasRenderingContext2D) {
-		ctx.lineCap = 'round'
+	init(painter: Painter) {
+		painter.context.lineCap = 'round'
 	}
 
 	onStart({x,y,pressure}:PaintPointInfo){

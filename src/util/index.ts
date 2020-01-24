@@ -61,6 +61,8 @@ const printLog = debounce (async ()=>{
 		tittle.innerHTML = 'logger'
 	}
 }, 300)
+const log = console.log
 console.log = (...msgs: object[]) => {
 	tempLogs.push(msgs)
+	log(msgs)
 }

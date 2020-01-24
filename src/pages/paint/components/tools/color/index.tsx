@@ -1,4 +1,4 @@
-import React, { useState, Fragment, useContext } from 'react'
+import React, { useState, Fragment, useContext, useEffect } from 'react'
 import style from './index.less'
 import { Drawer } from 'antd'
 import ColorPannel from './color-pannel'
@@ -19,9 +19,10 @@ const Color = () => {
 	const handleClose = () => {
 		setShowColorPannel(false)
 		if(painter){
-			painter.setPaintDrawer(ToolTypes.COLOR, color.toColorString())
+			painter.setPaintDrawer(ToolTypes.COLOR, color)
 		}
 	}
+	
 	// const handleClick = () => {
 	//     onActiveTool(ToolTypes.ERASER)
 	//     onSelectTool(ToolTypes.ERASER, eraser)
@@ -29,6 +30,15 @@ const Color = () => {
 	const handleColorChange = (value: RGBA) => {
 		setColor(value)
 	}
+
+	useEffect(() => {
+		if(painter){
+			painter.addEventListener('colorchange', handleColorChange)
+			return () => {
+				painter.removeEventListener('colorchange',handleColorChange)
+			}
+		}
+	}, [painter])
     
 	return <Fragment>
 		<div 

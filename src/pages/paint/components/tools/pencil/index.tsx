@@ -32,7 +32,7 @@ export default function Pencil({ onActiveTool, curState }: PainterTooolProps){
 		onActiveTool(ToolTypes.PENCIL)
 		if(painter){
 			const pencilPen = new PencilPen()
-			pencilPen.init(painter.context, painter.pannelInfo)
+			pencilPen.init(painter)
 			painter.setPaintDrawer(ToolTypes.PENCIL, pencilPen)
 		}
 	}

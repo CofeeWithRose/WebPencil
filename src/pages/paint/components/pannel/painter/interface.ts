@@ -1,5 +1,6 @@
 import { RecorderListenerMap } from '../recorder/inerface'
 import { Painter } from '.'
+import { RGBA } from '../rgba'
 
 export type painterOptions = {
   width: number;
@@ -55,11 +56,11 @@ export interface PainterPen {
 
   draw: PainterDrawer
 
-  onStart( point: {pressure: number}&Vector2): void
+  onStart( point: PaintPointInfo): void
 
-  onEnd():boolean
+  onEnd(p : PaintPointInfo):boolean
 
-  init: ( ctx: CanvasRenderingContext2D, pannelInfo: PannelInfo )=> void
+  init: ( painter:Painter )=> void
 
 }
 
@@ -102,15 +103,17 @@ export interface  ToolValues {
 
   [ToolTypes.PENCIL] : PainterPen
 
-  [ToolTypes.COLOR] : string
+  [ToolTypes.COLOR] : RGBA
 
   [ToolTypes.WIDTH] : number
+
+  [ToolTypes.SELECTOR]: PainterPen
 
 }
 
 export type OnSelectTool = <T extends keyof ToolValues>(type: T, value: ToolValues[T]) => void
 
 export interface PainterEventMap extends RecorderListenerMap{
-  
+  'colorchange': ( color: RGBA, preColor: RGBA ) => void
 }
 

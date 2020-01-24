@@ -16,7 +16,7 @@ const Eraser = ({ onActiveTool, curState}: PainterTooolProps) => {
 		onActiveTool(ToolTypes.ERASER)
 		if(painter){
 			const eraser = new EraserPen()
-			eraser.init(painter.context)
+			eraser.init(painter)
 			painter.setPaintDrawer(ToolTypes.ERASER, eraser)
 		}
 		if(curState === ToolTypes.ERASER){
