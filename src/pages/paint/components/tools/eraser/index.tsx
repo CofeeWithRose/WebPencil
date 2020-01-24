@@ -5,6 +5,7 @@ import { PainterTooolProps } from '../../toolbar'
 import EraserPen from '../../pannel/pens/pen.eraser'
 import { PaintContext } from '../../..'
 import LineWidth from '../line-width'
+import { Icon, Tooltip } from 'antd'
 
 const Eraser = ({ onActiveTool, curState}: PainterTooolProps) => {
 
@@ -39,7 +40,9 @@ const Eraser = ({ onActiveTool, curState}: PainterTooolProps) => {
 			className={`${style.tooBarItem} ${ curState===ToolTypes.ERASER? style.tooBarActiveItem : ''}` }
 			onClick={handleClick} 
 		>
-        eraser
+			<Tooltip title="eraser" placement="bottom" >
+				<Icon type="tag" className={ curState === ToolTypes.ERASER? style.activeToolIcon : ''} />
+			</Tooltip>
 		</span>
 		<LineWidth visibole={widthVisible} value={lineWidth} onChange={setLineWidth} />
 	</Fragment>

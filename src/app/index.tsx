@@ -4,6 +4,7 @@ import { createHashHistory } from 'history'
 import {routeConfig, RouteConfig} from '../config/route.config'
 import './index.less'
 import 'antd/dist/antd.css'
+import { Spin } from 'antd'
 
 export const history = createHashHistory()
 
@@ -22,7 +23,7 @@ const getRoute = ( config: RouteConfig[], parentPath: string, res: ReactElement<
 }
 
 export const App: React.FC = ({ }) => {
-	return <Suspense fallback={'...'} >
+	return <Suspense fallback={<Spin style={{ top:'50%', left:'50%', position: 'absolute', transform: 'translate3d(-50%, -50%, 0)' }}/>} >
 		<Router history={history}>
 			<Switch>
 				{getRoute(routeConfig, '', []) }

@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useContext, useMemo, useEffect } from 'react'
-import { Slider } from 'antd'
+import { Slider, Tooltip, Icon } from 'antd'
 import style from '../index.less'
 import { debounce } from 'lodash'
 import PencilPen from '../../pannel/pens/pen.pencil'
@@ -46,7 +46,9 @@ export default function Pencil({ onActiveTool, curState }: PainterTooolProps){
 			`}   
 			onClick={handleClick}
 		>
-            pencil
+			<Tooltip title="pencil" placement="bottom" >
+				<Icon type="edit" className={ curState === ToolTypes.PENCIL? style.activeToolIcon : ''} />
+			</Tooltip>
 		</span>
 		<LineWidth 
 			visibole={isShowWidth} 

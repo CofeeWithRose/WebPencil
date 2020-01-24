@@ -5,6 +5,7 @@ import { OnSelectTool, ToolTypes } from '../../pannel/painter/interface'
 import { PainterTooolProps } from '../../toolbar'
 import { PaintContext } from '../../..'
 import SelectRGB from '../../pannel/pens/pen.selectRGB'
+import { Tooltip, Icon } from 'antd'
 export type ColorSelector = { onChange: (  ) => void }
 
 
@@ -29,7 +30,9 @@ const SelectColor = ({ onActiveTool, curState }: PainterTooolProps) => {
 	return <div 
 		className = {`${toolStyle.tooBarItem} ${ curState === ToolTypes.SELECTOR ? toolStyle.tooBarActiveItem : ''}` }
 		onClick={handleClick}> 
-     选择颜色器 
+		<Tooltip title="pick" placement="bottom" >
+			<Icon type="exclamation" className={ curState === ToolTypes.ERASER? toolStyle.activeToolIcon : ''} />
+		</Tooltip>
 	</div>
 }
 export default SelectColor

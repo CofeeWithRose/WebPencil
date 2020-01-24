@@ -183,7 +183,6 @@ export interface ColorPannelProps {
 }
 
 const handleChange = debounce((onChange: ((color: RGBA) => void) | undefined , circlePoint:Vector2, selectPoint: Vector2, cirleInfo:CircleInfo) => {
-	console.log('chang...')
 	const standColor = getStandardColor(circlePoint,{x:cirleInfo.x, y: cirleInfo.y})
 	const r = Math.cos(Math.PI *0.25) * cirleInfo.r - cirleInfo.width
 	onChange && onChange( getSelectColor(selectPoint, standColor, cirleInfo.x, cirleInfo.y, r))

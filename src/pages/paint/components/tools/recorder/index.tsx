@@ -3,6 +3,7 @@ import React, { Fragment, useContext, useEffect, useState, useRef } from 'react'
 import { PaintContext } from '../../..'
 import { RecorderStates } from '../../pannel/recorder/inerface'
 import styles from '../index.less'
+import { Tooltip, Icon } from 'antd'
 
 export default function Recoder() {
 	const { painter } = useContext(PaintContext)
@@ -22,7 +23,9 @@ export default function Recoder() {
       		`}
 			onClick={painter&&painter.undo}
 		>
-			undo
+			<Tooltip title="undo" placement="bottom" >
+				<Icon type="undo" />
+			</Tooltip>
 		</span>
 		<span 
 			className={`
@@ -31,7 +34,9 @@ export default function Recoder() {
 				`}
 			onClick={painter&&painter.redo}
 		>
-			redo
+			<Tooltip title="redo" placement="bottom" >
+				<Icon type="redo" />
+			</Tooltip>
 		</span>
 	</Fragment>
 }

@@ -146,7 +146,6 @@ export class Painter {
 		if (type === ToolTypes.COLOR) {
 			const val = <ToolValues[ToolTypes.COLOR]>value
 			this.eventEmmiter.emit('colorchange',val, this.color)
-			console.log('ccc: ', val)
 			this.color = val.toColorString()
 			return
 		}
