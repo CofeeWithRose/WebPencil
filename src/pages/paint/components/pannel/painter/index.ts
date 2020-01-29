@@ -14,7 +14,7 @@ export class Painter {
 		const canvas = document.createElement('canvas')
 		const { width, height } = option
 		canvas.width = width * devicePixelRatio
-		canvas.height = height * devicePixelRatio
+		canvas.height = height * devicePixelRatio	
 		canvas.classList.add(styles.paintCanvas)
 		container.appendChild(canvas)
 		return new Painter(canvas)

@@ -17,6 +17,7 @@ export  default class Pencil extends AbstractPainterPen{
 			// console.log('pressure: ', pressure, `${x}, ${y}`)
 			// const nextHalfWidth =  lineWidthState *  0.5
 			context.fillStyle = color
+			context.strokeStyle = color
 			const nextHalfWidth =  lineWidthState * pressure * 0.5
 			const toPoint = new Vector2(x,y)
 			const toPointVec: Vector2 = Vector2.reduce(toPoint, prePoint ) 
