@@ -198,6 +198,10 @@ export default ({ value, onChange }: ColorPannelProps) => {
 	const canvas = useRef<HTMLCanvasElement>(null)
 
 	useEffect(() => {
+		console.log(value)
+	}, [value])
+
+	useEffect(() => {
 		if(canvas.current){
 			const ctx = canvas.current.getContext('2d')
 			canvas.current.width = canvas.current.clientWidth

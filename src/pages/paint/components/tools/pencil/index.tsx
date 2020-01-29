@@ -14,7 +14,7 @@ export default function Pencil({ onActiveTool, curState }: PainterTooolProps){
 
 	const {painter} = useContext(PaintContext)
 	const [isShowWidth, setIsShowWidth] = useState(false)
-	const [lineWidth, setLineWidth] = useState(10)
+	const [lineWidth, setLineWidth] = useState(1)
 
 	useEffect(() => {
 		if(curState !== ToolTypes.PENCIL){
@@ -23,7 +23,7 @@ export default function Pencil({ onActiveTool, curState }: PainterTooolProps){
 		if( painter && curState === ToolTypes.PENCIL){
 			painter.setPaintDrawer(ToolTypes.WIDTH, lineWidth)
 		}
-	}, [curState])
+	}, [curState, painter	])
 
 	const handleClick = () => {
 		if (curState === ToolTypes.PENCIL) {

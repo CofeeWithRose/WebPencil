@@ -13,8 +13,8 @@ export class Painter {
 	static createPainter(container: HTMLElement, option: painterOptions) {
 		const canvas = document.createElement('canvas')
 		const { width, height } = option
-		canvas.width = width
-		canvas.height = height
+		canvas.width = width * devicePixelRatio
+		canvas.height = height * devicePixelRatio
 		canvas.classList.add(styles.paintCanvas)
 		container.appendChild(canvas)
 		return new Painter(canvas)
@@ -60,8 +60,8 @@ export class Painter {
 			this.offsetPosition = {
 				x: this.canvas.width / canvas.clientWidth,
 				y: this.canvas.height / canvas.clientHeight,
-				offsetX: canvas.offsetLeft,
-				offsetY: canvas.offsetTop
+				offsetX: canvas.offsetLeft * devicePixelRatio,
+				offsetY: canvas.offsetTop * devicePixelRatio,
 			}
 		} else {
 			throw 'failed create canvas'

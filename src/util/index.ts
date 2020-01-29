@@ -32,9 +32,8 @@ const printLog = debounce (async ()=>{
 	tittle.innerHTML = '....'
 	while(true){
 		const msgs = tempLogs.shift()
-
 		if(!msgs){
-			return
+			break
 		}
 		await new Promise(resolve => {
 			setTimeout(() => {
@@ -58,8 +57,8 @@ const printLog = debounce (async ()=>{
 				resolve()
 			},50)
 		})
-		tittle.innerHTML = 'logger'
 	}
+	tittle.innerHTML = 'logger'
 }, 300)
 const log = console.log
 console.log = (...msgs: object[]) => {
