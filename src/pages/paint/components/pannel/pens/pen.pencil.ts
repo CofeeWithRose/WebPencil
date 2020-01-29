@@ -10,15 +10,13 @@ export  default class Pencil extends AbstractPainterPen{
 
 	lastEnd:End | null
 
-	draw:PainterDrawer= ( context ,{x, y, pressure}, {lastPoint, lineWidthState, color} ) => {
+	draw:PainterDrawer= ( context ,{x, y, pressure}, {lastPoint, minWidth, maxWidth, color} ) => {
 
 		if(lastPoint){
 			const prePoint = new Vector2(lastPoint.x, lastPoint.y)
-			// console.log('pressure: ', pressure, `${x}, ${y}`)
-			// const nextHalfWidth =  lineWidthState *  0.5
 			context.fillStyle = color
 			context.strokeStyle = color
-			const nextHalfWidth =  lineWidthState * pressure * 0.5
+			const nextHalfWidth =  (minWidth +  (maxWidth - minWidth) * pressure) * 0.5
 			const toPoint = new Vector2(x,y)
 			const toPointVec: Vector2 = Vector2.reduce(toPoint, prePoint ) 
 			if(Vector2.equal(toPoint, prePoint)){

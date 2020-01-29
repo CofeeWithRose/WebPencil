@@ -10,12 +10,6 @@ function start(){
   server.listen(5000, () => {
     console.log('dev server listening on port 5000');
   });
-  setInterval(() => {
-    const childProcess = require('child_process')
-    
-    childProcess.exec('git pull', (_, log) => {
-      console.log(`git pull : ${process.env.PWD}.\n`, log)
-    })
-  },3600 * 24)
+  
 }
 start()

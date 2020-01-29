@@ -106,7 +106,9 @@ export class Painter {
 		const pointInfo: PaintPointInfo = { x, y, pressure }
 		const pintContext: PaintContex = {
 			lastPoint: this.lastPoint,
-			lineWidthState: this.lineWidthState,
+			// lineWidthState: this.lineWidthState,
+			minWidth: 1,
+			maxWidth: this.lineWidthState,
 			color: this.color
 		}
 		this.painter.draw(this.context, pointInfo, pintContext)
