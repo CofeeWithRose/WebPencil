@@ -2,15 +2,8 @@ import React from 'react'
 import ReactDom from 'react-dom'
 import {App} from './app/index'
 import './util'
-import zhCN from 'antd/es/locale/zh_CN'
-import { ConfigProvider } from 'antd'
-import './style.less'
 
-ReactDom.render(
-	<ConfigProvider locale={zhCN}>
-		<App/>
-	</ConfigProvider>, 
-	document.querySelector('#root') )
+ReactDom.render( <App/>, document.querySelector('#root') )
 
 if ('serviceWorker' in navigator) {
 	window.addEventListener('load', () => {

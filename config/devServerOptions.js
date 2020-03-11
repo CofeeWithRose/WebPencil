@@ -4,7 +4,7 @@ module.exports = {
   watchOptions: {
     poll: true
   },
-  publicPath: '/webpencil/'
+  // publicPath: '/webpencil/'
   // writeToDisk: true,
   // watchContentBase: true
 }

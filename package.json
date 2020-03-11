@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/CofeeWithRose/WebPencil#readme",
   "dependencies": {
-    "antd": "^3.26.6",
+    "antd": "^4.0.2",
     "lodash": "^4.17.15",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
