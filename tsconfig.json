@@ -12,7 +12,7 @@
     "allowJs": true,
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true,
-    "moduleResolution": "Node"
+    "moduleResolution": "Node",
   },
   "exclude": ["bak"]
 }

@@ -18,13 +18,38 @@ module.exports = {
   },
   module: {
     rules: [
+      // {
+      //   test: /\.tsx?$/,
+      //   use: 'ts-loader',
+      //   exclude: /node_modules/,
+      // },
       {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
+        test: /\.(j|t)sx?$/,
         exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            cacheDirectory: true,
+            babelrc: false,
+            presets: [
+              [
+                "@babel/preset-env",
+                { targets: { browsers: "last 2 versions" } }
+              ],
+              "@babel/preset-typescript",
+              "@babel/preset-react"
+            ],
+            plugins: [
+              ["@babel/plugin-proposal-decorators", { legacy: true }],
+              ["@babel/plugin-proposal-class-properties", { loose: true }],
+              "react-hot-loader/babel"
+            ]
+          }
+        }
       },
       {
         test: /\.less$/,
+        // exclude: [ path.resolve(__dirname, '../node_modules') ],
         use: [
           {
             loader: 'style-loader', // creates style nodes from JS strings
@@ -39,12 +64,18 @@ module.exports = {
                 hashPrefix: 'web-pencil',
               },
             }
-           
           },
           {
             loader: 'less-loader', // compiles Less to CSS
             options:{
-              javascriptEnabled: true
+              javascriptEnabled: true,
+              modifyVars: {
+                'primary-color': '#ff0000',
+                'link-color': '#1DA57A',
+                'border-radius-base': '2px',
+                // or
+                // 'hack': `true; @import "your-less-file-path.less";`, // Override with less file
+              },
             }
           },
         ],
@@ -64,6 +95,7 @@ module.exports = {
     ],
   },
   plugins: [
+   
     new HtmlWebpackPlugin({ template:  path.resolve(__dirname, '../public/index.html')}),
     new webpack.ProgressPlugin(),
     new CopyPlugin([

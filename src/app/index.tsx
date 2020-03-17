@@ -1,3 +1,4 @@
+import { hot } from 'react-hot-loader/root'
 import React, { lazy, Suspense, ReactElement } from 'react'
 import { Switch, Route, Router, Redirect } from 'react-router-dom'
 import { createHashHistory } from 'history'
@@ -22,7 +23,7 @@ const getRoute = ( config: RouteConfig[], parentPath: string, res: ReactElement<
 	return res
 }
 
-export const App: React.FC = ({ }) => {
+export const App: React.FC = hot(({ }) => {
 	return <Suspense fallback={<Spin style={{ top:'50%', left:'50%', position: 'absolute', transform: 'translate3d(-50%, -50%, 0)' }}/>} >
 		<Router history={history}>
 			<Switch>
@@ -31,4 +32,4 @@ export const App: React.FC = ({ }) => {
 			</Switch>
 		</Router>
 	</Suspense>
-}
+})

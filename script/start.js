@@ -1,8 +1,13 @@
 const webpack = require('webpack')
 const webpackDevServer = require('webpack-dev-server');
 
+const devPlugins = [
+  new webpack.HotModuleReplacementPlugin()
+]
+
 function start(){
   const webpackConfig = require('../config/webpack.config')
+  webpackConfig.plugins = [...webpackConfig.plugins, ...devPlugins]
   const devServerOptions = require('../config/devServerOptions')
   const compiler =  webpack(webpackConfig)
   webpackDevServer.addDevServerEntrypoints(webpackConfig, devServerOptions);
