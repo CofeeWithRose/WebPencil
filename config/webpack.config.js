@@ -65,9 +65,6 @@ module.exports = {
           {
             test: /.*antd.*\.less$/,
             use: [
-              // {
-              //   loader: 'style-loader', // creates style nodes from JS strings
-              // },
               {loader: MiniCssExtractPlugin.loader},
               {
                 loader: 'css-loader', // translates CSS into CommonJS
@@ -85,9 +82,6 @@ module.exports = {
             test: /\.less$/,
             exclude: [ require.resolve('antd') ],
             use: [
-              // {
-              //   loader: 'style-loader', // creates style nodes from JS strings
-              // },
               {loader: MiniCssExtractPlugin.loader},
               {
                 loader: 'css-loader', // translates CSS into CommonJS
@@ -110,19 +104,7 @@ module.exports = {
             ],
           },
         ]
-      },
-      {
-        test: /\.css$/,
-        exclude: [ path.resolve('../src') ],
-        use: [
-          {
-            loader: 'style-loader', // creates style nodes from JS strings
-          },
-          {
-            loader: 'css-loader', // translates CSS into CommonJS
-          }
-        ],
-      },
+      }
     ],
   },
   plugins: [

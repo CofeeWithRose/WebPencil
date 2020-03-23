@@ -11,7 +11,7 @@ function start(){
   const devServerOptions = require('../config/devServerOptions')
   const compiler =  webpack({
     ...webpackConfig, 
-    // mode: 'development'
+    mode: 'development'
   })
   webpackDevServer.addDevServerEntrypoints(webpackConfig, devServerOptions);
   const server = new webpackDevServer(compiler, devServerOptions);
