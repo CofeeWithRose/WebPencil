@@ -5,19 +5,18 @@ import './util'
 import zhCN from 'antd/es/locale/zh_CN'
 import { ConfigProvider } from 'antd'
 import './style.less'
-
 ReactDom.render(
 	<ConfigProvider locale={zhCN}>
 		<App/>
 	</ConfigProvider>, 
 	document.querySelector('#root') )
 
-if ('serviceWorker' in navigator) {
-	window.addEventListener('load', () => {
-		navigator.serviceWorker.register('./service-worker.js').then(registration => {
-			console.log('SW registered: ', registration)
-		}).catch((registrationError:Error) => {
-			console.log('SW registration failed: ', registrationError.message, registrationError.stack)
-		})
-	})
-}
+// if ('serviceWorker' in navigator) {
+// 	window.addEventListener('load', () => {
+// 		navigator.serviceWorker.register('./service-worker.js').then(registration => {
+// 			console.log('SW registered: ', registration)
+// 		}).catch((registrationError:Error) => {
+// 			console.log('SW registration failed: ', registrationError.message, registrationError.stack)
+// 		})
+// 	})
+// }

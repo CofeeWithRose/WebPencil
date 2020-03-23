@@ -9,7 +9,10 @@ function start(){
   const webpackConfig = require('../config/webpack.config')
   webpackConfig.plugins = [...webpackConfig.plugins, ...devPlugins]
   const devServerOptions = require('../config/devServerOptions')
-  const compiler =  webpack(webpackConfig)
+  const compiler =  webpack({
+    ...webpackConfig, 
+    // mode: 'development'
+  })
   webpackDevServer.addDevServerEntrypoints(webpackConfig, devServerOptions);
   const server = new webpackDevServer(compiler, devServerOptions);
   server.listen(5000, () => {

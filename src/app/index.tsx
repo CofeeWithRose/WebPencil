@@ -4,7 +4,6 @@ import { Switch, Route, Router, Redirect } from 'react-router-dom'
 import { createHashHistory } from 'history'
 import {routeConfig, RouteConfig} from '../config/route.config'
 import './index.less'
-import 'antd/dist/antd.css'
 import { Spin } from 'antd'
 
 export const history = createHashHistory()
