@@ -1,7 +1,7 @@
 
 import React, { Fragment } from 'react'
-import { FileMenu } from './FileMenu'
 import style from './style.less'
+import PCanvas from './PCanvas'
 
 
 
@@ -11,14 +11,12 @@ export default function Paint(){
 
 	return <section className={style.container}>
 		<header>
-			<FileMenu
-				className={style.FileMenu}
-			/>
+		
 		</header>
 		<div>
 			<aside></aside>
 			<main>
-				<canvas></canvas>
+				<PCanvas/>
 			</main>
 		</div>
 	</section>
