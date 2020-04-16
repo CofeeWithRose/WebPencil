@@ -3,13 +3,15 @@ const path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-// const WorkboxPlugin = require('workbox-webpack-plugin');
+const WorkboxPlugin = require('workbox-webpack-plugin');
 // const CopyPlugin = require('copy-webpack-plugin');
 const antdThemeVars = require('./theme')
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserJSPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const WebpackPwaManifest = require('webpack-pwa-manifest')
+const mainifestConfig = require('./mainifest')
 
 module.exports = {
   mode: 'production',
@@ -116,19 +118,18 @@ module.exports = {
       'collections': true,
       'paths': true
     }),
+    
     new HtmlWebpackPlugin({ template:  path.resolve(__dirname, '../public/index.html')}),
+    new WebpackPwaManifest(mainifestConfig),
     new webpack.ProgressPlugin(),
     new CleanWebpackPlugin(),
-    // new CopyPlugin([
-    //   { from: 'src/assets', to: 'assets' },
-    // ]),
-    // new ManifestPlugin(),
-    // new WorkboxPlugin.GenerateSW({
-    //   clientsClaim: true,
-    //   skipWaiting: true,
-    //   importWorkboxFrom: 'local',
-    //   // importsDirectory: 'WebPencil',
-    // }),
+
+    new WorkboxPlugin.GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true,
+      // importWorkboxFrom: 'local',
+      // importsDirectory: 'WebPencil',
+    }),
 
 
     // new WorkboxPlugin.InjectManifest({

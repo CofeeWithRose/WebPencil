@@ -9,7 +9,16 @@ ReactDom.render(
 	<ConfigProvider locale={zhCN}>
 		<App/>
 	</ConfigProvider>, 
-	document.querySelector('#root') )
+	document.querySelector('#root') 
+)
+
+if ('serviceWorker' in navigator) {
+	// Use the window load event to keep the page load performant
+	window.addEventListener('load', () => {
+	  navigator.serviceWorker.register('/service-worker.js');
+	});
+  }
+
 
 // if ('serviceWorker' in navigator) {
 // 	window.addEventListener('load', () => {
