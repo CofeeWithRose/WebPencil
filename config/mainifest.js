@@ -1,12 +1,13 @@
 const path = require('path')
 module.exports = {
-    start_url: '/',
+    start_url: './',
     name: 'My Progressive Web App',
     short_name: 'MyPWA',
     description: 'My awesome Progressive Web App!',
     background_color: '#ffffff',
     crossorigin: 'use-credentials', //can be null, use-credentials or anonymous
     display:'fullscreen',
+    orientation: 'landscape-primary',
     icons: [
       {
         src: path.resolve('src/assets/icon.png'),

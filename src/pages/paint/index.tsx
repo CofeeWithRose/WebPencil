@@ -8,10 +8,10 @@ import PCanvas from './PCanvas'
 export default function Paint(){
 	const ele = useRef<HTMLElement>(null)
 	const onClick = () => {
-		console.log('click')
-		if(ele.current){
-			ele.current.requestFullscreen()
-		}
+		// console.log('click')
+		// if(ele.current){
+		// 	ele.current.requestFullscreen()
+		// }
 	}
 
 	return <section 

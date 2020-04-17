@@ -110,6 +110,7 @@ module.exports = {
     ],
   },
   plugins: [
+    new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
       filename: '[name]-[contenthash].css',
       chunkFilename: '[id]-[contenthash].css',
@@ -122,12 +123,10 @@ module.exports = {
     new HtmlWebpackPlugin({ template:  path.resolve(__dirname, '../public/index.html')}),
     new WebpackPwaManifest(mainifestConfig),
     new webpack.ProgressPlugin(),
-    new CleanWebpackPlugin(),
-
     new WorkboxPlugin.GenerateSW({
       clientsClaim: true,
       skipWaiting: true,
-      // importWorkboxFrom: 'local',
+      importWorkboxFrom: 'local',
       // importsDirectory: 'WebPencil',
     }),
 
