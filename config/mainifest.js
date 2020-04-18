@@ -11,17 +11,8 @@ module.exports = {
     orientation: 'landscape-primary',
     icons: [
       {
-        src: path.resolve('src/assets/icon.png'),
+        src: path.resolve('src/assets/favicon.ico'),
         sizes: [96, 128, 192, 256, 384, 512] // multiple sizes
       },
-      // {
-      //   src: path.resolve('src/assets/large-icon.png'),
-      //   size: '1024x1024' // you can also use the specifications pattern
-      // },
-      // {
-      //   src: path.resolve('src/assets/maskable-icon.png'),
-      //   size: '1024x1024',
-      //   purpose: 'maskable'
-      // }
     ]
 }

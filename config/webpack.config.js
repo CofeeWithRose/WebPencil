@@ -20,8 +20,8 @@ module.exports = {
   entry: path.resolve(__dirname, '../src/index.tsx'),
   output: {
     path: path.resolve(__dirname, '../docs'),
-    chunkFilename: '[id]-[hash].js',
-    filename: '[name]-[hash].js',
+    chunkFilename: '[id]-[contenthash].js',
+    filename: '[name]-[contenthash].js',
   },
   optimization: {
     minimizer: [
@@ -112,8 +112,9 @@ module.exports = {
     ],
   },
   plugins: [
-    new webpack.DefinePlugin(defineds),
     new CleanWebpackPlugin(),
+    new webpack.DefinePlugin(defineds),
+    new webpack.ProgressPlugin(),
     new MiniCssExtractPlugin({
       filename: '[name]-[contenthash].css',
       chunkFilename: '[id]-[contenthash].css',
@@ -123,23 +124,16 @@ module.exports = {
       'paths': true
     }),
     
-    new HtmlWebpackPlugin({ template:  path.resolve(__dirname, '../public/index.html')}),
+    new HtmlWebpackPlugin({ 
+      template:  path.resolve(__dirname, '../public/index.html'),
+      favicon: path.resolve(__dirname, '../src/assets/favicon.ico'),
+    }),
     new WebpackPwaManifest(mainifestConfig),
-    new webpack.ProgressPlugin(),
     new WorkboxPlugin.GenerateSW({
       clientsClaim: true,
       skipWaiting: true,
       importWorkboxFrom: 'local',
-      // importsDirectory: 'WebPencil',
     }),
 
-
-    // new WorkboxPlugin.InjectManifest({
-    //   // 这些选项帮助快速启用 ServiceWorkers
-    //   // 不允许遗留任何“旧的” ServiceWorkers
-    //   importWorkboxFrom: 'local',
-    //   swSrc:'./src/sw/index.ts',
-    //   swDest: 'web-pencil-ws.js',
-    // }),
   ]
 }

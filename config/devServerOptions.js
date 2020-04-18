@@ -9,10 +9,4 @@ module.exports = {
   hot: true,
   writeToDisk: true,
   proxy,
-  
-  // https: {
-  //   key: fs.readFileSync(path.resolve(__dirname, './cer/server_no_passwd.key')),
-  //   cert: fs.readFileSync(path.resolve(__dirname, './cer/server.crt')),
-  //   ca: fs.readFileSync(path.resolve(__dirname, './cer/server.csr')),
-  // }
 }
