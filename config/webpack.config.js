@@ -12,6 +12,8 @@ const TerserJSPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest')
 const mainifestConfig = require('./mainifest')
+const defineds = require('./defines')
+
 
 module.exports = {
   mode: 'production',
@@ -110,6 +112,7 @@ module.exports = {
     ],
   },
   plugins: [
+    new webpack.DefinePlugin(defineds),
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
       filename: '[name]-[contenthash].css',
