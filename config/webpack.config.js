@@ -19,7 +19,7 @@ module.exports = {
   mode: 'production',
   entry: path.resolve(__dirname, '../src/index.tsx'),
   output: {
-    path: path.resolve(__dirname, '../dist'),
+    path: path.resolve(__dirname, '../docs'),
     chunkFilename: '[id]-[hash].js',
     filename: '[name]-[hash].js',
   },
