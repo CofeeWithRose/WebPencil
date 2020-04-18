@@ -1,0 +1,41 @@
+{
+  "icons": [
+    {
+      "src": "icon_512x512.6c253ab9fac1f15cca917777f1ecd40b.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icon_384x384.c3404327aae7b20a74faeb71adc41093.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "icon_256x256.0057e76ff3b47d1c7ced16047708bd39.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "icon_192x192.721315b4a19ab1ccb44dfb7848d34c9f.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon_128x128.bc641aaaa00fb4b987903bd3ea9ac9b0.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "icon_96x96.b83ce5086ee7c1ed5f4db3978305a0cc.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    }
+  ],
+  "name": "draw in everywhere",
+  "short_name": "HappyDrawer",
+  "orientation": "landscape-primary",
+  "display": "fullscreen",
+  "start_url": "./",
+  "description": "Pick up your pencil anywhere at any time to be a happy drawer!",
+  "background_color": "#800000"
+}

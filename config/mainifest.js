@@ -1,11 +1,12 @@
 const path = require('path')
+const theme = require('./theme')
 module.exports = {
     start_url: './',
-    name: 'My Progressive Web App',
-    short_name: 'MyPWA',
-    description: 'My awesome Progressive Web App!',
-    background_color: '#ffffff',
-    crossorigin: 'use-credentials', //can be null, use-credentials or anonymous
+    name: 'draw in everywhere',
+    short_name: 'HappyDrawer',
+    description: 'Pick up your pencil anywhere at any time to be a happy drawer!',
+    background_color:theme['primary-color'],
+    crossorigin: 'use-credentials', 
     display:'fullscreen',
     orientation: 'landscape-primary',
     icons: [
