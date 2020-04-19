@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDom from 'react-dom'
 import {App} from './app/index'
-import './util'
 import zhCN from 'antd/es/locale/zh_CN'
 import { ConfigProvider } from 'antd'
 import './style.less'

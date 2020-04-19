@@ -1,10 +1,7 @@
-// const paths = require('./paths')
 const path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const WorkboxPlugin = require('workbox-webpack-plugin');
-// const CopyPlugin = require('copy-webpack-plugin');
 const antdThemeVars = require('./theme')
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -13,6 +10,7 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest')
 const mainifestConfig = require('./mainifest')
 const defineds = require('./defines')
+const { BUILD_ENV } = require('../script/const')
 
 
 module.exports = {
@@ -20,8 +18,8 @@ module.exports = {
   entry: path.resolve(__dirname, '../src/index.tsx'),
   output: {
     path: path.resolve(__dirname, '../docs'),
-    chunkFilename: '[id]-[contenthash].js',
-    filename: '[name]-[contenthash].js',
+    chunkFilename: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'[id]-[hash].js': '[id]-[contenthash].js',
+    filename: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'[name]-[hash].js': '[name]-[contenthash].js',
   },
   optimization: {
     minimizer: [
@@ -36,7 +34,7 @@ module.exports = {
     rules: [
       {
         test: /\.(j|t)sx?$/,
-        // exclude: /node_modules/,
+        exclude: /node_modules/,
         use: {
           loader: "babel-loader",
           options: {
@@ -112,12 +110,12 @@ module.exports = {
     ],
   },
   plugins: [
-    new CleanWebpackPlugin(),
+    
     new webpack.DefinePlugin(defineds),
     new webpack.ProgressPlugin(),
     new MiniCssExtractPlugin({
-      filename: '[name]-[contenthash].css',
-      chunkFilename: '[id]-[contenthash].css',
+      filename: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'[name]-[hash].css': '[name]-[contenthash].css',
+      chunkFilename:  process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'[id]-[hash].css': '[id]-[contenthash].css',
     }),
     new LodashModuleReplacementPlugin({
       'collections': true,

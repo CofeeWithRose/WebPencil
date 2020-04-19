@@ -1,3 +1,5 @@
+const { BUILD_ENV } = require('./const')
+process.env.BUILD_ENV = process.env.BUILD_ENV || BUILD_ENV.DEVELOPMENT
 const webpack = require('webpack')
 const webpackDevServer = require('webpack-dev-server');
 
