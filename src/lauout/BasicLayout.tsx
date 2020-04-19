@@ -10,16 +10,22 @@ export interface BasicLayoutProps {
     asideClass?:string,
     asideNode?:ReactNode, 
     children?:ReactNode,
+    beforeBack?: () => boolean
 }
 
-export default function Home ({className='', headNode=null, asideClass='', asideNode=null, children=null}: BasicLayoutProps){
+export default function Home ({className='', headNode=null, asideClass='', asideNode=null, children=null, beforeBack}: BasicLayoutProps){
+    const onGoBack = async () => {
+        if((beforeBack && await beforeBack())|| !beforeBack){
+            history.goBack()
+        }
+    }
     return <section 
         className={`${style.section} ${className}`}
     >
     <header>
         <Button 
             ghost={true}
-            onClick={() => history.goBack()}
+            onClick={onGoBack}
             shape="circle"
             size="small"
             icon={<LeftOutlined />}

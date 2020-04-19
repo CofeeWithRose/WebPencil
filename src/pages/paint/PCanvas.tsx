@@ -4,7 +4,7 @@ import styles from './style.less'
 
 export interface PCanvasProps {
     type: 'new'| 'store',
-        
+
 }
 
 export default () =>{
@@ -36,6 +36,7 @@ export default () =>{
       <div
         ref={containerRef}
       >
+          canvas
       </div>
     </main>
 }
