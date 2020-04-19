@@ -1,6 +1,9 @@
 import React, { useState, FC } from 'react'
 import { Modal, InputNumber, Form, Button } from 'antd'
 
+export interface SizeInfo {
+	width: number, height: number
+}
 
 export interface FileMenuProps {
 
@@ -9,62 +12,61 @@ export interface FileMenuProps {
 	 */
 	className?: string
 
+	isVisibale: boolean
+
+	onComplete?: ( size: SizeInfo ) => void
+
 }
 
-export const FileMenu: FC<FileMenuProps> = ( {className=''}: FileMenuProps) => {
+export const FileMenu: FC<FileMenuProps> = ( {className='', isVisibale, onComplete}: FileMenuProps) => {
 
-	const [isFileSizeVisibale, setIsFileSizeVisibale] = useState(false)
-	const [ hasCreated, setHasCreated ] = useState(false)
-	
+	const [form] = Form.useForm();
 
-	const onCreate = () => {
-		setIsFileSizeVisibale(true)
+	const onSubmit = async () =>{
+		const values = await form.validateFields()
+		onComplete && onComplete(values as SizeInfo)
 	}
 
-	const onFinish = (values: object) =>{
-		console.log(values)
-	}
-
+	const formater = (value: number ) => `${value||0}px`
+	const parser = (displayVal: string) => (displayVal||'').replace('px', '')
 	
 	return <div>
-		 {
-			!hasCreated && 
-			<span onClick={onCreate} >新建</span>
-		 }
-		  <Form 
-			 	onFinish={onFinish}
-			 >
+		 <Form form={form}>
 			<Modal
-				visible={isFileSizeVisibale}
+				visible={isVisibale}
 				title={'创建'}
 				className={className}
-			>
+				okButtonProps={{onClick:onSubmit}}
+			> 
+			
 				
 				<Form.Item 
 					name="width" 
-					label="宽度"
-						
+					label="宽度" 
+					rules={[
+						{
+						  required: true,
+						  message: '请填写画布宽度',
+						},
+					]}
 				>
-					<InputNumber min={1} max={10} precision={0} />
-					<span className="ant-form-text"> px</span>
+					<InputNumber min={1} max={10800} precision={0} formatter={formater} parser={parser} />
 				</Form.Item>
-					
-				{/* <ul>
-					<li>
-						<span>宽度：</span>
-						<FormItem>
-							<InputNumber precision={0} />
-						</FormItem>
-						<span>px</span>
-					</li>
-
-					<li>
-						<span>高度：</span>
-						<InputNumber precision={0} />
-						<span>px</span>
-					</li>
-				</ul> */}
+				<Form.Item 
+					name="height" 
+					label="高度" 
+					rules={[
+						{
+						  required: true,
+						  message: '请填写画布高度',
+						},
+					]}
+				>
+					<InputNumber min={1} max={10800} precision={0} formatter={formater} parser={parser}/>
+				</Form.Item>
 			</Modal>
-		 </Form>
+			</Form>
+
+
 	</div>
 }

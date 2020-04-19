@@ -27,7 +27,7 @@ export const App: React.FC = hot(({ }) => {
 		<Router history={history}>
 			<Switch>
 				{getRoute(routeConfig, '', []) }
-				<Redirect to="/paint"></Redirect>
+				<Redirect to="/home"></Redirect>
 			</Switch>
 		</Router>
 	</Suspense>

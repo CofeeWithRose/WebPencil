@@ -2,6 +2,10 @@ import React, { useRef, useEffect } from 'react'
 import Hammer from 'hammerjs'
 import styles from './style.less'
 
+export interface PCanvasProps {
+    type: 'new'| 'store',
+    
+}
 
 export default () =>{
 

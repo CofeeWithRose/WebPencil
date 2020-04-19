@@ -1,0 +1,29 @@
+
+.section{
+    overflow: hidden;
+    // background-color: @primary-color;
+    height:100%;
+    display: flex;
+    flex-direction: column;
+    &>header {
+      background-color: @primary-color;
+      height: 20px;
+    }
+    &>.wrapper{
+      flex: 1;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      &>aside{
+        width: 20px;
+        height: 100%;
+        margin-right: 10px;
+        background: @dropdown-menu-bg;
+      }
+      &>main{
+        flex:1;
+        color: @primary-color;
+      }
+    }
+  }
+  
