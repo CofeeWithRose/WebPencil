@@ -1,5 +1,6 @@
 import React, { ReactElement, ReactNode } from 'react'
 import style from './style.less'
+import { history } from '../app'
 
 export interface BasicLayoutProps {
     className?: string
@@ -14,6 +15,7 @@ export default function Home ({className='', headNode=null, asideClass='', aside
         className={`${style.section} ${className}`}
     >
     <header>
+        <span onClick={() => history.goBack()}>back</span>      
         {headNode}
     </header>
     <div className={style.wrapper}>
