@@ -1,6 +1,8 @@
 import React, { ReactElement, ReactNode } from 'react'
 import style from './style.less'
 import { history } from '../app'
+import { Button } from 'antd'
+import { LeftOutlined } from '@ant-design/icons'
 
 export interface BasicLayoutProps {
     className?: string
@@ -15,7 +17,13 @@ export default function Home ({className='', headNode=null, asideClass='', aside
         className={`${style.section} ${className}`}
     >
     <header>
-        <span onClick={() => history.goBack()}>back</span>      
+        <Button 
+            ghost={true}
+            onClick={() => history.goBack()}
+            shape="circle"
+            size="small"
+            icon={<LeftOutlined />}
+        ></Button>
         {headNode}
     </header>
     <div className={style.wrapper}>

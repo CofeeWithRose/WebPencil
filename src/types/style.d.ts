@@ -6,4 +6,5 @@ declare module '*.less' {
 }
 declare module '@ant-design/icons'{
   export const PlusOutlined: any
+  export const LeftOutlined: any
 }
