@@ -23,6 +23,7 @@ if ( 'serviceWorker' in navigator) {
 	});
 	navigator.serviceWorker.addEventListener('controllerchange', () => {
 		window.location.reload()
+		console.log('service worker change..')
 	})
 }
 console.log((window as any).webkitRequestFileSystem)
