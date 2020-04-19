@@ -113,6 +113,11 @@ module.exports = {
     
     new webpack.DefinePlugin(defineds),
     new webpack.ProgressPlugin(),
+    new WorkboxPlugin.GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true,
+      importWorkboxFrom: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'cdn': 'local',
+    }),
     new MiniCssExtractPlugin({
       filename: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'[name]-[hash].css': '[name]-[contenthash].css',
       chunkFilename:  process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'[id]-[hash].css': '[id]-[contenthash].css',
@@ -127,11 +132,7 @@ module.exports = {
       favicon: path.resolve(__dirname, '../src/assets/favicon.ico'),
     }),
     new WebpackPwaManifest(mainifestConfig),
-    new WorkboxPlugin.GenerateSW({
-      clientsClaim: true,
-      skipWaiting: true,
-      importWorkboxFrom: 'local',
-    }),
+
 
   ]
 }

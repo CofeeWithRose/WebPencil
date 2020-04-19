@@ -88,44 +88,15 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "8-1e0b7af2fa8d61ac5e7b.js"
   },
   {
-    "revision": "c5bef8e83342a07a4b3bae9df2a54dc4",
-    "url": "favicon.ico"
-  },
-  {
-    "url": "icon_128x128.c5bef8e83342a07a4b3bae9df2a54dc4.ico"
-  },
-  {
-    "url": "icon_192x192.c5bef8e83342a07a4b3bae9df2a54dc4.ico"
-  },
-  {
-    "url": "icon_256x256.c5bef8e83342a07a4b3bae9df2a54dc4.ico"
-  },
-  {
-    "url": "icon_384x384.c5bef8e83342a07a4b3bae9df2a54dc4.ico"
-  },
-  {
-    "url": "icon_512x512.c5bef8e83342a07a4b3bae9df2a54dc4.ico"
-  },
-  {
-    "url": "icon_96x96.c5bef8e83342a07a4b3bae9df2a54dc4.ico"
-  },
-  {
-    "revision": "2264adaf83e6346cafa6c323c364c2ce",
-    "url": "index.html"
-  },
-  {
-    "revision": "aeb6657f45d93fdb308d",
+    "revision": "727626ead115a57b77eb",
     "url": "main-8d67d05b99f2c9e056a4.css"
   },
   {
-    "revision": "aeb6657f45d93fdb308d",
-    "url": "main-e230694d3de1391c6316.js"
+    "revision": "727626ead115a57b77eb",
+    "url": "main-c112bc9785ef2dcfab60.js"
   },
   {
     "revision": "eff3b4d7e4bb0087ce53139cd90bc880",
-    "url": "main-e230694d3de1391c6316.js.LICENSE.txt"
-  },
-  {
-    "url": "manifest.aa84c54633c3788b2449e9d5ecccd3ea.json"
+    "url": "main-c112bc9785ef2dcfab60.js.LICENSE.txt"
   }
 ]);

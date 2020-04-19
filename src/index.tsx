@@ -17,14 +17,17 @@ ReactDom.render(
 )
 
 if ( 'serviceWorker' in navigator) {
+	navigator.serviceWorker.addEventListener('controllerchange', async () => {
+		message.info(<span onClick={() => window.location.reload()}>点击更新应用</span>,0)
+
+	})
 	// Use the window load event to keep the page load performant
 	window.addEventListener('load', async () => {
 		
 	  const reg= await navigator.serviceWorker.register('./service-worker.js')
 	  reg.update()
 	});
-	navigator.serviceWorker.addEventListener('controllerchange', async () => {
-		message.info(<span onClick={() => window.location.reload()}>点击更新应用</span>)
-	})
+
+	
 }
 console.log((window as any).webkitRequestFileSystem)

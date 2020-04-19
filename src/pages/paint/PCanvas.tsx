@@ -36,7 +36,6 @@ export default () =>{
       <div
         ref={containerRef}
       >
-          canvas
       </div>
     </main>
 }
