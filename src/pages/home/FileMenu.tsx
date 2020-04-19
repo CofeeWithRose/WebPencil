@@ -31,7 +31,10 @@ export const FileMenu: FC<FileMenuProps> = ( {className='', isVisibale, onComple
 	const parser = (displayVal: string) => (displayVal||'').replace('px', '')
 	
 	return <div>
-		 <Form form={form}>
+		 <Form form={form} initialValues={{
+				width: 2048,
+				height: 2048,
+		 }}>
 			<Modal
 				visible={isVisibale}
 				title={'创建'}
@@ -51,7 +54,6 @@ export const FileMenu: FC<FileMenuProps> = ( {className='', isVisibale, onComple
 					]}
 				>
 					<InputNumber 
-						defaultValue={2048} 
 						min={1} 
 						max={4096} 
 						precision={0} 
@@ -70,7 +72,6 @@ export const FileMenu: FC<FileMenuProps> = ( {className='', isVisibale, onComple
 					]}
 				>
 					<InputNumber 
-						defaultValue={2048} 
 						min={1} 
 						max={4096} 
 						precision={0} 
