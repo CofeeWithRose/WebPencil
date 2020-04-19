@@ -10,7 +10,7 @@ export interface BasicLayoutProps {
     asideClass?:string,
     asideNode?:ReactNode, 
     children?:ReactNode,
-    beforeBack?: () => boolean
+    beforeBack?: () => Promise<boolean> | boolean
 }
 
 export default function Home ({className='', headNode=null, asideClass='', asideNode=null, children=null, beforeBack}: BasicLayoutProps){
