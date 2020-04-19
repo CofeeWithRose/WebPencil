@@ -50,7 +50,14 @@ export const FileMenu: FC<FileMenuProps> = ( {className='', isVisibale, onComple
 						},
 					]}
 				>
-					<InputNumber min={1} max={10800} precision={0} formatter={formater} parser={parser} />
+					<InputNumber 
+						defaultValue={2048} 
+						min={1} 
+						max={4096} 
+						precision={0} 
+						formatter={formater} 
+						parser={parser} 
+					/>
 				</Form.Item>
 				<Form.Item 
 					name="height" 
@@ -62,7 +69,14 @@ export const FileMenu: FC<FileMenuProps> = ( {className='', isVisibale, onComple
 						},
 					]}
 				>
-					<InputNumber min={1} max={10800} precision={0} formatter={formater} parser={parser}/>
+					<InputNumber 
+						defaultValue={2048} 
+						min={1} 
+						max={4096} 
+						precision={0} 
+						formatter={formater} 
+						parser={parser}
+					/>
 				</Form.Item>
 			</Modal>
 			</Form>

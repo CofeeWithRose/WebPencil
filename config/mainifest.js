@@ -1,7 +1,7 @@
 const path = require('path')
 const theme = require('./theme')
 module.exports = {
-    start_url: './',
+    start_url: './#/home',
     name: 'draw in everywhere',
     short_name: 'HappyDrawer',
     description: 'Pick up your pencil anywhere at any time to be a happy drawer!',

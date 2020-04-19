@@ -4,7 +4,7 @@ import styles from './style.less'
 
 export interface PCanvasProps {
     type: 'new'| 'store',
-    
+        
 }
 
 export default () =>{

@@ -35,7 +35,7 @@
   "short_name": "HappyDrawer",
   "orientation": "landscape-primary",
   "display": "fullscreen",
-  "start_url": "./",
+  "start_url": "./#/home",
   "description": "Pick up your pencil anywhere at any time to be a happy drawer!",
   "background_color": "#800000"
 }
