@@ -36,6 +36,7 @@ export default () =>{
       <div
         ref={containerRef}
       >
+          cabvas
       </div>
     </main>
 }
