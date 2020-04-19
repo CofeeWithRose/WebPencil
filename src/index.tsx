@@ -17,8 +17,12 @@ ReactDom.render(
 
 if ( 'serviceWorker' in navigator) {
 	// Use the window load event to keep the page load performant
-	window.addEventListener('load', () => {
-	  navigator.serviceWorker.register('./service-worker.js');
+	window.addEventListener('load', async () => {
+	  const reg= await navigator.serviceWorker.register('./service-worker.js')
+	  reg.update()
 	});
+	navigator.serviceWorker.addEventListener('controllerchange', () => {
+		window.location.reload()
+	})
 }
 console.log((window as any).webkitRequestFileSystem)
