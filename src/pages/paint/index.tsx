@@ -7,6 +7,8 @@ import PCanvas from './PCanvas'
 
 
 export default function Paint(){
+
+
 	// const ele = useRef<HTMLElement>(null)
 	// const onClick = () => {
 	// 	// console.log('click')
@@ -29,7 +31,7 @@ export default function Paint(){
 	// 	</div>
 	// </section>
 	return <BasicLayout >
-		<PCanvas/>
+		<PCanvas />
 	</BasicLayout>
   
 }

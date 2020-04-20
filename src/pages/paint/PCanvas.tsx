@@ -1,13 +1,17 @@
 import React, { useRef, useEffect } from 'react'
 import Hammer from 'hammerjs'
 import styles from './style.less'
+import { WorkDetail } from '../../workStorage'
 
 export interface PCanvasProps {
-    type: 'new'| 'store',
 
+    workDetail?: WorkDetail
 }
 
-export default () =>{
+/**
+ * 手绘编辑器的画板.
+ */
+export default ({ workDetail }: PCanvasProps) =>{
 
     const mainRef = useRef<HTMLElement>(null)
 
