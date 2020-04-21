@@ -30,6 +30,16 @@ export default function Home ({className='', headNode=null, asideClass='', aside
             size="small"
             icon={<LeftOutlined />}
         ></Button>
+        {
+            process.env.BUILD_ENV === 'development'&&
+            <Button 
+            ghost={true}
+            onClick={() => location.reload()}
+            shape="circle"
+            size="small"
+            >reload</Button>
+        }
+        
         {headNode}
     </header>
     <div className={style.wrapper}>

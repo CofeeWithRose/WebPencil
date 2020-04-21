@@ -17,6 +17,7 @@ module.exports = {
   mode: 'production',
   entry: path.resolve(__dirname, '../src/index.tsx'),
   output: {
+    publicPath: process.env.PUBLIC_PATH,
     path: path.resolve(__dirname, '../docs'),
     chunkFilename: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'[id]-[hash].js': '[id]-[contenthash].js',
     filename: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'[name]-[hash].js': '[name]-[contenthash].js',
@@ -130,9 +131,8 @@ module.exports = {
     new HtmlWebpackPlugin({ 
       template:  path.resolve(__dirname, '../public/index.html'),
       favicon: path.resolve(__dirname, '../src/assets/favicon.ico'),
+      scripts: ['../cordova.js']
     }),
     new WebpackPwaManifest(mainifestConfig),
-
-
   ]
 }

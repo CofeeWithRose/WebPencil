@@ -1,5 +1,10 @@
 import { uniqueId } from 'lodash'
 
+// document.addEventListener("deviceready", onDeviceReady, false);
+// function onDeviceReady() {
+    
+// }
+// console.log('requestFileSystem: ', (window as any).requestFileSystem);
 /**
  * 作品的描述信息.
  */

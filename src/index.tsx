@@ -23,10 +23,13 @@ if ( 'serviceWorker' in navigator) {
 	})
 	// Use the window load event to keep the page load performant
 	window.addEventListener('load', async () => {
-	  const reg= await navigator.serviceWorker.register('./service-worker.js')
-	  reg.update()
+		console.log('try to regist service worker')
+		const reg= await navigator.serviceWorker.register(`${process.env.PUBLIC_PATH||'./'}service-worker.js`)
+		console.log(' registed service worker')
+		reg.update()
 	});
 
 	
 }
-console.log((window as any).webkitRequestFileSystem)
+document.addEventListener('deviceready', () => console.log('rrrr..'))
+console.log((window as any).cordova)

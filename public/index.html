@@ -3,10 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, maximum-scale=1.0">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
+  <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>WebPencil</title>
 </head>
 <body>
   <div id="root"></div>
+  <%= (htmlWebpackPlugin.options.scripts||[]).map( src => `<script type="text/javascript" src="${src}"></script>` ) %>
 </body>
 </html>
