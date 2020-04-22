@@ -17,7 +17,7 @@ module.exports = {
   mode: 'production',
   entry: path.resolve(__dirname, '../src/index.tsx'),
   externals:{
-    ...(cdnConfigs.reduce( (externals ,{libraryName, root}) => ({...externals, [libraryName]: root}), {} ))
+    ...(cdnConfigs.reduce( (externals ,{libName, root}) => ({...externals, [libName]: root}), {} ))
   },
   output: {
     publicPath: process.env.PUBLIC_PATH,
