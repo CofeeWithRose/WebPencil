@@ -28,7 +28,7 @@ module.exports = {
   optimization: {
     minimizer: [
       new TerserJSPlugin({}), 
-      new OptimizeCSSAssetsPlugin({})
+      new OptimizeCSSAssetsPlugin({}),
     ],
   },
   resolve: {
@@ -121,6 +121,10 @@ module.exports = {
       clientsClaim: true,
       skipWaiting: true,
       importWorkboxFrom: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'cdn': 'local',
+      additionalManifestEntries: cdnConfigs.map((productionCDNPath,devCDNPath)=>( {
+        "revision": null,
+        "url": process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT? devCDNPath: productionCDNPath,
+      }))
     }),
     new MiniCssExtractPlugin({
       filename: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'[name]-[hash].css': '[name]-[contenthash].css',
