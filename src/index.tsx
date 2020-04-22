@@ -31,5 +31,4 @@ if ( 'serviceWorker' in navigator) {
 
 	
 }
-document.addEventListener('deviceready', () => console.log('rrrr..'))
-console.log((window as any).cordova)
+document.body.removeChild(document.querySelector('#loading'))
