@@ -11,6 +11,6 @@
 </head>
 <body>
   <div id="root"></div>
-  <%= (htmlWebpackPlugin.options.scripts||[]).map( src => `<script type="text/javascript" src="${src}"></script>` ) %>
+  <%= (htmlWebpackPlugin.options.scripts||[]).map( src => `<script type="text/javascript" src="${src}"></script>` ).join('|').replace(/\|/g,'') %>
 </body>
 </html>

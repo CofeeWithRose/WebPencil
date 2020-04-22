@@ -8,14 +8,12 @@ cfg.plugins = [ ...cfg.plugins, new BundleAnalyzerPlugin({
     analyzerPort: 5001
 }) ]
 function build(){
-    try{
-        childProcess.execSync(`rm -rf ${config.output.path}`)
-    }catch(e){
-        console.warn('fail remve dist dir.')
-    }
     const compiler = webpack(cfg)
     compiler.run((err, stat) => {
         console.log(err)
     })
 }
 build()
+
+// https://cdn.bootcss.com/react-dom/16.13.1/cjs/react-dom-server.browser.production.min.js
+{/* <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script> */}
