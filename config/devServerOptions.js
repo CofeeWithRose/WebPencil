@@ -1,5 +1,4 @@
 const proxy = require('./devProxy')
-const {output} = require('./webpack.config')
 
 module.exports = {
   compress: true,
@@ -7,5 +6,5 @@ module.exports = {
   hot: true,
   proxy,
   publicPath:'/WebPencil',
-  writeToDisk: true,
+  // writeToDisk: true,
 }

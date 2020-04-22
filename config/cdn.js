@@ -15,7 +15,7 @@ module.exports = [
         libName: 'react',
         devCDNPath: 'https://cdn.bootcss.com/react/16.13.1/umd/react.development.js',
         productionCDNPath:'https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js',
-        root: 'react',
+        root: 'React',
     },
     {
         libName: 'react-dom',
