@@ -1,6 +1,6 @@
 const { BUILD_ENV } = require('./const')
 process.env.BUILD_ENV = process.env.BUILD_ENV || BUILD_ENV.PRODUCTION
-// process.env.PUBLIC_PATH = process.env.PUBLIC_PATH || './'
+process.env.PUBLIC_PATH = process.env.PUBLIC_PATH || './'
 
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
