@@ -31,4 +31,3 @@ if ( 'serviceWorker' in navigator) {
 
 	
 }
-document.body.removeChild(document.querySelector('#loading'))

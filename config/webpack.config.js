@@ -26,7 +26,11 @@ module.exports = {
     filename: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'[name]-[hash].js': '[name]-[contenthash].js',
   },
   optimization: {
+    splitChunks: {
+      chunks: 'all'
+    },
     minimizer: [
+
       new TerserJSPlugin({}), 
       new OptimizeCSSAssetsPlugin({}),
     ],
