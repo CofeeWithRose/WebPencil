@@ -117,15 +117,7 @@ module.exports = {
     
     new webpack.DefinePlugin(defineds),
     new webpack.ProgressPlugin(),
-    new WorkboxPlugin.GenerateSW({
-      clientsClaim: true,
-      skipWaiting: true,
-      importWorkboxFrom: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'cdn': 'local',
-      additionalManifestEntries: cdnConfigs.map((productionCDNPath,devCDNPath)=>( {
-        "revision": null,
-        "url": process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT? devCDNPath: productionCDNPath,
-      }))
-    }),
+
     new MiniCssExtractPlugin({
       filename: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'[name]-[hash].css': '[name]-[contenthash].css',
       chunkFilename:  process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'[id]-[hash].css': '[id]-[contenthash].css',
@@ -143,5 +135,10 @@ module.exports = {
       ],
     }),
     new WebpackPwaManifest(mainifestConfig),
+    new WorkboxPlugin.GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true,
+      additionalManifestEntries: cdnConfigs.map(({productionCDNPath,devCDNPath})=> process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT? devCDNPath: productionCDNPath)
+    }),
   ]
 }
