@@ -6,6 +6,7 @@ import ReactDom from 'react-dom'
 import {App} from './app/index'
 import zhCN from 'antd/es/locale/zh_CN'
 import { ConfigProvider, Modal, message } from 'antd'
+import 'antd/dist/antd.dark.less';
 
 import './style.less'
 

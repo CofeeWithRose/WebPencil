@@ -28,7 +28,7 @@ module.exports = [
         libName: 'antd',
         devCDNPath: 'https://cdn.bootcss.com/antd/4.1.3/antd-with-locales.min.js',
         productionCDNPath:'https://cdn.bootcss.com/antd/4.1.3/antd-with-locales.min.js',
-        css:  'https://cdn.bootcss.com/antd/4.1.3/antd.dark.css',
+        // css:  'https://cdn.bootcss.com/antd/4.1.3/antd.dark.css',
         root: 'antd',
     },
     
