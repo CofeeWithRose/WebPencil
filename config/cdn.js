@@ -19,16 +19,27 @@ module.exports = [
         root: 'React',
     },
     {
+        libName: 'react-router',
+        devCDNPath: 'https://cdn.bootcss.com/react-router/5.1.2/react-router.js',
+        productionCDNPath:'https://cdn.bootcss.com/react-router/5.1.2/react-router.min.js',
+        root: 'ReactRouter',
+    },
+    {
         libName: 'react-dom',
         devCDNPath: 'https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.development.min.js',
         productionCDNPath:'https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js',
         root: 'ReactDOM',
     },
     {
+        libName: 'react-router-dom',
+        devCDNPath: 'https://cdn.bootcss.com/react-router-dom/5.1.2/react-router-dom.min.js',
+        productionCDNPath:'https://cdn.bootcss.com/react-router-dom/5.1.2/react-router-dom.min.js',
+        root: 'ReactRouterDOM',
+    },
+    {
         libName: 'antd',
         devCDNPath: 'https://cdn.bootcss.com/antd/4.1.3/antd-with-locales.min.js',
         productionCDNPath:'https://cdn.bootcss.com/antd/4.1.3/antd-with-locales.min.js',
-        // css:  'https://cdn.bootcss.com/antd/4.1.3/antd.dark.css',
         root: 'antd',
     },
     
