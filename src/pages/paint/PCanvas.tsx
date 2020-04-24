@@ -2,6 +2,8 @@ import React, { useRef, useEffect } from 'react'
 import Hammer from 'hammerjs'
 import styles from './style.less'
 import { WorkDetail } from '../../workStorage'
+import useTransform from '../../hooks/useTransform'
+import { List } from 'antd'
 
 export interface PCanvasProps {
 
@@ -13,33 +15,19 @@ export interface PCanvasProps {
  */
 export default ({ workDetail }: PCanvasProps) =>{
 
-    const mainRef = useRef<HTMLElement>(null)
+  const { wrapRef, contentRef } = useTransform<HTMLElement, HTMLDivElement>()
 
-    const containerRef = useRef<HTMLDivElement>(null)
 
-    useEffect(() => {
-        if(mainRef.current){
-            const mainManager = new Hammer.Manager(mainRef.current)
-            mainManager.add(new Hammer.Rotate())
-            mainManager.add(new Hammer.Pinch())
-            const onRotate = ({rotation}: HammerInput) => { console.log(rotation)}
-            const onPinch = ({ }: HammerInput) => { console.log('pinch') }
-            mainManager.on('rotate', onRotate)
-            mainManager.on('pinch', onPinch)
-            return () => {
-                mainManager.off('rotate', onRotate)
-                mainManager.off('pinch', onPinch)
-            }
-        }
-    }, [mainRef.current])
 
     return <main 
-        ref={mainRef}
+        ref={wrapRef}
         className={styles.PCanvas}
     >
       <div
-        ref={containerRef}
+        ref={contentRef}
+        className={styles.cotent}
       >
+          sss
       </div>
     </main>
 }
