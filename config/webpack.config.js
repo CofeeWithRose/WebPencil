@@ -141,7 +141,13 @@ module.exports = {
     new WorkboxPlugin.GenerateSW({
       clientsClaim: true,
       skipWaiting: true,
-      additionalManifestEntries: cdnConfigs.map(({productionCDNPath,devCDNPath})=> process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT? devCDNPath: productionCDNPath)
+      maximumFileSizeToCacheInBytes: 1000*1000*4,
+      additionalManifestEntries: cdnConfigs.map(({productionCDNPath,devCDNPath})=> (
+        {
+          url: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT? devCDNPath: productionCDNPath,
+          revision: null,
+        })
+      ),
     }),
   ]
 }

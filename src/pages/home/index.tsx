@@ -44,6 +44,7 @@ export default () => {
     }
 
     return <BasicLayout
+        showBackButton={false}
         asideClass={style.asideClass}
     >
         <main className={style.listWrap}>

@@ -30,6 +30,10 @@ export class WorkDetail {
         public workInfo: WorkInfo,
         public contens: LayerDetail[], 
     ){}
+
+    // static createEmptyWorkDetail({ name='', width, height, widthWhiteLayer=true}: ){
+    //     // return new WorkDetail(new WorkInfo())
+    // }
 }
 
 /**
