@@ -15,19 +15,12 @@ export interface PCanvasProps {
  */
 export default ({ workDetail }: PCanvasProps) =>{
 
-  const { wrapRef, contentRef } = useTransform<HTMLElement, HTMLDivElement>()
-
-
-
+  const { wrapRef } = useTransform<HTMLElement>()
+  
     return <main 
         ref={wrapRef}
         className={styles.PCanvas}
     >
-      <div
-        ref={contentRef}
-        className={styles.cotent}
-      >
-          sss
-      </div>
+      ss
     </main>
 }

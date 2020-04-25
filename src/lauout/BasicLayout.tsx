@@ -5,6 +5,7 @@ import { Button } from 'antd'
 import { LeftOutlined } from '@ant-design/icons'
 
 export interface BasicLayoutProps {
+    contentClassName?: string,
     className?: string
     headNode?: ReactNode,
     asideClass?:string,
@@ -22,6 +23,7 @@ export default function Home ({
     children=null, 
     beforeBack, 
     showBackButton =true,
+    contentClassName='',
 }: BasicLayoutProps){
     const onGoBack = async () => {
         if((beforeBack && await beforeBack())|| !beforeBack){
@@ -58,7 +60,7 @@ export default function Home ({
         <aside className={asideClass} >
             {asideNode}
         </aside>
-        <main>
+        <main className={contentClassName}>
             {children}
         </main>
     </div>
