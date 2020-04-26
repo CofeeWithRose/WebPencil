@@ -19,6 +19,30 @@ const getValueFromRange = (val: number, min: number, max: number) => Math.min( M
 
 const getTargetValue = ( val: number, targetVal: number, dt: number ) => Math.abs(val - targetVal) < dt? targetVal:val
 
+const scaleFun = (val: Vector2, center: Vector2,  scale: number) => {
+    const valVec = Vector2.subtract(val, center)
+    return Vector2.add(Vector2.multipy(valVec, scale), center)
+}
+
+const rotateFun = (val: Vector2, center: Vector2,  rotate: number) => {
+    const valVec = Vector2.subtract(val, center)
+    return Vector2.add(Vector2.rotate(valVec, rotate), center)
+}
+
+const translateFun = (val: Vector2, center: Vector2, translate: Vector2, scale: number, rotate: number ): Vector2 => {
+    return  Vector2.add(rotateFun(scaleFun(val,center, scale), center,rotate), translate)
+}
+
+
+const getNewTranslate = (preCenter: Vector2, newCenter: Vector2, translate: Vector2, scale: number, rotate: number) => {
+    const preTransVal = translateFun(new Vector2(), preCenter, translate, scale, rotate)
+    const newTransVal = translateFun(new Vector2(), newCenter, translate, scale, rotate)
+    // ToFixed.
+    return Vector2.add(Vector2.subtract(newTransVal, preTransVal), translate)
+}
+
+
+
 export default function useTransform<WrapElement extends HTMLElement>(userTransformProps?: UseTransformProps){
     const {
         
@@ -97,7 +121,7 @@ export default function useTransform<WrapElement extends HTMLElement>(userTransf
             const mainManager = new Hammer.Manager(wrapRef.current)
             mainManager.add(new Hammer.Pan( { threshold: 0, pointers: 2}))
             rotateEnable && mainManager.add(new Hammer.Rotate()).recognizeWith(mainManager.get('pan'))
-            scaleEnable && mainManager.add(new Hammer.Pinch({threshold: 0.1})).recognizeWith([mainManager.get('pan'), mainManager.get('rotate')])
+            scaleEnable && mainManager.add(new Hammer.Pinch()).recognizeWith([mainManager.get('pan'), mainManager.get('rotate') ])
 
 
             const requestUpdate =  throttle(() => {
@@ -129,41 +153,40 @@ export default function useTransform<WrapElement extends HTMLElement>(userTransf
             }
           
             const onRotateStart = ({rotation, center}: HammerInput) => {
-                const { rotate, translate } = transformInfoRef.current
+                const { rotate, translate, center: preCenter, scale } = transformInfoRef.current
                 transformInfoRef.current.eleStartRotate = rotate
                 transformInfoRef.current.gestrueStartRotate = rotation
+                const newCenter = Vector2.subtract(center, translate)
+                transformInfoRef.current.translate = getNewTranslate(preCenter, newCenter, translate, scale, rotate)
+                transformInfoRef.current.center = newCenter
+
                 
             }
-            const onRotate = ({rotation, center}: HammerInput) => { 
+            const onRotate = ({rotation}: HammerInput) => { 
                 const { gestrueStartRotate, eleStartRotate, translate } =  transformInfoRef.current
                 const deltaRotateion = rotation - gestrueStartRotate
-                if( Math.abs(deltaRotateion) > 5){
-                    console.log('rotating')
-                    const rotateVal = eleStartRotate +  deltaRotateion
-                    transformInfoRef.current.rotate = getTargetValue(rotateVal, 0, 10 )
-                    transformInfoRef.current.center = Vector2.subtract(center, translate)
-                    requestUpdate()
-                }
+                const rotateVal = eleStartRotate +  deltaRotateion
+                transformInfoRef.current.rotate = getTargetValue(rotateVal, 0, 10 )
+                requestUpdate()
               
             }
 
             const onPinchStart = ({ scale, center }: HammerInput) =>{
-                const { translate, scale: slScale } = transformInfoRef.current
+                const { translate, scale: slScale, center:preCenter, rotate } = transformInfoRef.current
                 transformInfoRef.current.gestrueStartscale = scale
                 transformInfoRef.current.eleStartScale = slScale
+                const newCenter = Vector2.subtract(center, translate)
+                transformInfoRef.current.translate = getNewTranslate(preCenter, newCenter, translate, scale, rotate)
+                transformInfoRef.current.center = newCenter
+
             }
 
             const onPinchinMove = ({ scale, center }: HammerInput) => { 
                 const { eleStartScale, gestrueStartscale, translate } = transformInfoRef.current
                 const deltaScale = scale - gestrueStartscale
-                if(Math.abs(deltaScale) > 0.1 ){
-                    console.log('scaling...')
-                    const scaleVal = getValueFromRange(eleStartScale + deltaScale, minScale, maxScale)
-                    transformInfoRef.current.scale = getTargetValue(scaleVal, 1, 0.2)
-                    transformInfoRef.current.center = Vector2.subtract(center, translate)
-    
-                    requestUpdate()
-                }
+                const scaleVal = getValueFromRange(eleStartScale + deltaScale, minScale, maxScale)
+                transformInfoRef.current.scale = getTargetValue(scaleVal, 1, 0.2)
+                requestUpdate()
                
             }
 

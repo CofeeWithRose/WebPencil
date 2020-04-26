@@ -21,6 +21,10 @@ export class Vector2 {
         return Math.sqrt((v1.x - v2.x)**2 + (v1.y - v2.y)**2 )
     }
 
+    static magnitude(v: Vector2){
+        return Math.sqrt(v.x**2 + v.y**2 )
+    }
+
     static degree(center: Vector2, v1:Vector2, v2: Vector2){
         const deg1 = normalizeAtant2(Math.atan2(v1.y-center.y, v1.x - center.x))
         const deg2 = normalizeAtant2(Math.atan2(v2.y - center.y, v2.x - center.x))
@@ -29,6 +33,21 @@ export class Vector2 {
 
     static add(v1: Vector2, v2: Vector2){
         return new Vector2(v1.x + v2.x, v1.y + v2.y)
+    }
+
+    /**
+     * rotate as clockwise.
+     * @param v 
+     * @param degree 
+     */
+    static rotate(v:Vector2, degree: number){
+        const magnitude = Vector2.magnitude(v)
+        const deg = ((degree%360)/180)*Math.PI
+        return new Vector2(Math.cos(deg) * magnitude, Math.sin(deg) * magnitude)
+    }
+
+    static multipy({x, y}: Vector2, scale: number){
+        return new Vector2(x*scale, y*scale)
     }
 
     static subtract(v1: Vector2, v2: Vector2){
