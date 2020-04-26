@@ -7,7 +7,8 @@ import { List } from 'antd'
 
 export interface PCanvasProps {
 
-    workDetail?: WorkDetail
+    workDetail?: WorkDetail,
+
 }
 
 /**
@@ -15,7 +16,7 @@ export interface PCanvasProps {
  */
 export default ({ workDetail }: PCanvasProps) =>{
 
-  const { wrapRef } = useTransform<HTMLElement>()
+  const { wrapRef } = useTransform<HTMLElement>({ maxScale: devicePixelRatio * 2 })
   
     return <main 
         ref={wrapRef}

@@ -27,6 +27,13 @@ export class Vector2 {
         return Math.abs(deg2 - deg1)
     }
 
+    static add(v1: Vector2, v2: Vector2){
+        return new Vector2(v1.x + v2.x, v1.y + v2.y)
+    }
+
+    static subtract(v1: Vector2, v2: Vector2){
+        return new Vector2(v1.x - v2.x, v1.y - v2.y)
+    }
     static move(v: Vector2, from: Vector2, to: Vector2){
         const dx = to.x - from.x
         const dy = to.y - from.y

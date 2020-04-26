@@ -40,7 +40,7 @@ export default function Paint(){
 	// 		</main>
 	// 	</div>
 	// </section>
-	return <BasicLayout contentClassName={style.layout}>
+	return <BasicLayout contentClassName={style.layout} >
 		<PCanvas workDetail={workDetail}/>
 	</BasicLayout>
   

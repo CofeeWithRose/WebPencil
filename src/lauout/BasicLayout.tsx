@@ -25,11 +25,13 @@ export default function Home ({
     showBackButton =true,
     contentClassName='',
 }: BasicLayoutProps){
+    
     const onGoBack = async () => {
         if((beforeBack && await beforeBack())|| !beforeBack){
             history.goBack()
         }
     }
+
     return <section 
         className={`${style.section} ${className}`}
     >

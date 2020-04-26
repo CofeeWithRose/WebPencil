@@ -9,6 +9,10 @@ export interface UseTransformProps {
 
     minScale? :number,
 
+    scaleEnable?: boolean
+
+    rotateEnable?: boolean
+
 }
 
 const getValueFromRange = (val: number, min: number, max: number) => Math.min( Math.max(min, val), max )
@@ -21,6 +25,10 @@ export default function useTransform<WrapElement extends HTMLElement>(userTransf
         maxScale = 2,
 
         minScale = 0.5,
+
+        scaleEnable = true,
+
+        rotateEnable = true,
 
     } = userTransformProps||{}
 
@@ -63,6 +71,9 @@ export default function useTransform<WrapElement extends HTMLElement>(userTransf
 
         translate: new Vector2(),
 
+        /**
+         * 旋转中心点.
+         */
         center: new Vector2(),
     })
 
@@ -78,85 +89,102 @@ export default function useTransform<WrapElement extends HTMLElement>(userTransf
              */
             transformInfoRef.current.center = new Vector2(parseFloat(computedStyle.width) * 0.5, parseFloat(computedStyle.height) * 0.5)
 
+            /**
+             * 添加操作时的动画，增强体验流畅度.
+             */
+            wrapRef.current.style.transition = 'transform 0.15s'
+
             const mainManager = new Hammer.Manager(wrapRef.current)
             mainManager.add(new Hammer.Pan( { threshold: 0, pointers: 2}))
-            mainManager.add(new Hammer.Swipe()).recognizeWith(mainManager.get('pan'))
-            mainManager.add(new Hammer.Rotate()).recognizeWith(mainManager.get('pan'))
-            mainManager.add(new Hammer.Pinch()).recognizeWith([mainManager.get('pan'), mainManager.get('rotate')])
+            rotateEnable && mainManager.add(new Hammer.Rotate()).recognizeWith(mainManager.get('pan'))
+            scaleEnable && mainManager.add(new Hammer.Pinch({threshold: 0.1})).recognizeWith([mainManager.get('pan'), mainManager.get('rotate')])
 
 
-            const updateTransform =  throttle(() => {
-                const { rotate, scale, translate:{ x:transformX, y: transformY}, center } = transformInfoRef.current;
-                (<WrapElement>wrapRef.current).style.transform = `translate3d( ${transformX}px, ${transformY}px, 0) translate3d( ${transformX}px, ${transformY}px, 0) scale3d(${scale}, ${scale},1) rotate(${rotate}deg)`;
-                (<WrapElement>wrapRef.current).style.transformOrigin = `${center.x}px ${center.y}px`
-                console.log('center: ', center)
+            const requestUpdate =  throttle(() => {
+                requestAnimationFrame(()=> {
+                    const { rotate, scale, translate:{ x:transformX, y: transformY}, center } = transformInfoRef.current;
+                    (<WrapElement>wrapRef.current).style.transform = `translate3d( ${transformX}px, ${transformY}px, 0)  scale(${scale}) rotate(${rotate}deg)`;
+                    (<WrapElement>wrapRef.current).style.transformOrigin = `${center.x}px ${center.y}px`
+                    // console.log('translate: ', transformInfoRef.current.translate)
+                    // console.log('center: ', transformInfoRef.current.center)
+                })
             }, 10)
 
-            const onPanStart = ({deltaX, deltaY, center }: HammerInput) => {
+            const onPanStart = ({deltaX, deltaY }: HammerInput) => {
                 const { translate } = transformInfoRef.current
                 transformInfoRef.current.gestrueStartTranslate = new Vector2(deltaX, deltaY)
                 transformInfoRef.current.eleStartTanslate = translate
-                transformInfoRef.current.center = center
             }
 
-            const onPan = ({deltaX, deltaY }: HammerInput) =>{
+            const onPan = ({deltaX, deltaY, center }: HammerInput) =>{
                 const { scale, gestrueStartTranslate, eleStartTanslate } = transformInfoRef.current
-                const valX = eleStartTanslate.x + (deltaX - gestrueStartTranslate.x) * scale
-                const valY = eleStartTanslate.y + (deltaY - gestrueStartTranslate.y) * scale
-                transformInfoRef.current.translate = new Vector2( getTargetValue(valX, 0, 20 *scale),  getTargetValue(valY, 0, 20 *scale))
-                updateTransform()
+                const valX = eleStartTanslate.x + (deltaX - gestrueStartTranslate.x)
+                const valY = eleStartTanslate.y + (deltaY - gestrueStartTranslate.y)
+                const translate = scale ==1? 
+                new Vector2( getTargetValue(valX, 0, 10 ),  getTargetValue(valY, 0, 10)):
+                new Vector2(valX, valY)
+                transformInfoRef.current.translate = translate
+                
+                requestUpdate()
             }
           
             const onRotateStart = ({rotation, center}: HammerInput) => {
-                const { rotate } = transformInfoRef.current
+                const { rotate, translate } = transformInfoRef.current
                 transformInfoRef.current.eleStartRotate = rotate
                 transformInfoRef.current.gestrueStartRotate = rotation
-                transformInfoRef.current.center = center
+                
             }
             const onRotate = ({rotation, center}: HammerInput) => { 
-                const { gestrueStartRotate, eleStartRotate } =  transformInfoRef.current
-                const rotateVal = eleStartRotate +  (rotation - gestrueStartRotate)
-                transformInfoRef.current.rotate = getTargetValue(rotateVal, 0, 10 )
-                transformInfoRef.current.center = center
-                updateTransform()
+                const { gestrueStartRotate, eleStartRotate, translate } =  transformInfoRef.current
+                const deltaRotateion = rotation - gestrueStartRotate
+                if( Math.abs(deltaRotateion) > 5){
+                    console.log('rotating')
+                    const rotateVal = eleStartRotate +  deltaRotateion
+                    transformInfoRef.current.rotate = getTargetValue(rotateVal, 0, 10 )
+                    transformInfoRef.current.center = Vector2.subtract(center, translate)
+                    requestUpdate()
+                }
+              
             }
-            const onRotateEnd = ({rotation}: HammerInput) => { console.log('onRotateEnd:', rotation) }
 
             const onPinchStart = ({ scale, center }: HammerInput) =>{
+                const { translate, scale: slScale } = transformInfoRef.current
                 transformInfoRef.current.gestrueStartscale = scale
-                transformInfoRef.current.eleStartScale = transformInfoRef.current.scale
-                transformInfoRef.current.center = center
+                transformInfoRef.current.eleStartScale = slScale
             }
 
             const onPinchinMove = ({ scale, center }: HammerInput) => { 
-                const { eleStartScale, gestrueStartscale } = transformInfoRef.current
-                const scaleVal = getValueFromRange(eleStartScale + (scale - gestrueStartscale), minScale, maxScale)
-                transformInfoRef.current.scale = getTargetValue(scaleVal, 1, 0.2)
-                transformInfoRef.current.center = center
-
-                updateTransform()
+                const { eleStartScale, gestrueStartscale, translate } = transformInfoRef.current
+                const deltaScale = scale - gestrueStartscale
+                if(Math.abs(deltaScale) > 0.1 ){
+                    console.log('scaling...')
+                    const scaleVal = getValueFromRange(eleStartScale + deltaScale, minScale, maxScale)
+                    transformInfoRef.current.scale = getTargetValue(scaleVal, 1, 0.2)
+                    transformInfoRef.current.center = Vector2.subtract(center, translate)
+    
+                    requestUpdate()
+                }
+               
             }
 
             mainManager.on('panstart', onPanStart)
-            mainManager.on('pan', onPan)
+            mainManager.on('panmove', onPan)
 
 
             mainManager.on('rotatestart', onRotateStart)
             mainManager.on('rotate', onRotate)
-            mainManager.on('rotateend', onRotateEnd)
 
             mainManager.on('pinchstart', onPinchStart)
             mainManager.on('pinchmove', onPinchinMove)
             
-            updateTransform()
+            requestUpdate()
             return () => {
                 mainManager.off('panstart', onPanStart)
-                mainManager.off('pan', onPan)
+                mainManager.off('panmove', onPan)
     
     
                 mainManager.off('rotatestart', onRotateStart)
                 mainManager.off('rotate', onRotate)
-                mainManager.off('rotateend', onRotateEnd)
     
                 mainManager.off('pinchstart', onPinchStart)
                 mainManager.off('pinchmove', onPinchinMove)
