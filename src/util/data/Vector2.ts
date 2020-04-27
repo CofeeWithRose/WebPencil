@@ -42,7 +42,7 @@ export class Vector2 {
      */
     static rotate(v:Vector2, degree: number){
         const magnitude = Vector2.magnitude(v)
-        const deg = ((degree%360)/180)*Math.PI
+        const deg  = normalizeAtant2(Math.atan2(v.y, v.x)) - ((degree%360)/180 *Math.PI)
         return new Vector2(Math.cos(deg) * magnitude, Math.sin(deg) * magnitude)
     }
 

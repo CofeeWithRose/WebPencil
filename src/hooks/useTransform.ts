@@ -30,18 +30,22 @@ const rotateFun = (val: Vector2, center: Vector2,  rotate: number) => {
 }
 
 const translateFun = (val: Vector2, center: Vector2, translate: Vector2, scale: number, rotate: number ): Vector2 => {
-    return  Vector2.add(rotateFun(scaleFun(val,center, scale), center,rotate), translate)
+    return Vector2.add(rotateFun(scaleFun(val,center, scale), center,rotate), translate)
 }
 
+const zero = new Vector2()
+console.log('translateFun: ', translateFun(new Vector2(0,1), zero, zero, 2, 90))
 
-const getNewTranslate = (preCenter: Vector2, newCenter: Vector2, translate: Vector2, scale: number, rotate: number) => {
-    const preTransVal = translateFun(new Vector2(), preCenter, translate, scale, rotate)
-    const newTransVal = translateFun(new Vector2(), newCenter, translate, scale, rotate)
-    // ToFixed.
-    return Vector2.add(Vector2.subtract(newTransVal, preTransVal), translate)
+/**
+ * 当transform-origin的改变（用户旋转操作时会发生）,此时scale或rotate有值会导致图像抖动，该方法可以获取修正后的transform。
+ */
+const getNewTranslate = (preCenter: Vector2, newCenter: Vector2, translate: Vector2, scale: number, rotate: number): Vector2 => {
+    const preVec = translateFun(new Vector2, preCenter, translate, scale, rotate)
+    const newVec = translateFun(new Vector2, newCenter, translate, scale, rotate)
+    return Vector2.add(Vector2.subtract(newVec, preVec), translate)
 }
 
-
+const TRANSACTION = 'transform 0.1s'
 
 export default function useTransform<WrapElement extends HTMLElement>(userTransformProps?: UseTransformProps){
     const {
@@ -116,7 +120,7 @@ export default function useTransform<WrapElement extends HTMLElement>(userTransf
             /**
              * 添加操作时的动画，增强体验流畅度.
              */
-            wrapRef.current.style.transition = 'transform 0.15s'
+            wrapRef.current.style.transition = TRANSACTION
 
             const mainManager = new Hammer.Manager(wrapRef.current)
             mainManager.add(new Hammer.Pan( { threshold: 0, pointers: 2}))
@@ -124,20 +128,30 @@ export default function useTransform<WrapElement extends HTMLElement>(userTransf
             scaleEnable && mainManager.add(new Hammer.Pinch()).recognizeWith([mainManager.get('pan'), mainManager.get('rotate') ])
 
 
-            const requestUpdate =  throttle(() => {
-                requestAnimationFrame(()=> {
-                    const { rotate, scale, translate:{ x:transformX, y: transformY}, center } = transformInfoRef.current;
-                    (<WrapElement>wrapRef.current).style.transform = `translate3d( ${transformX}px, ${transformY}px, 0)  scale(${scale}) rotate(${rotate}deg)`;
-                    (<WrapElement>wrapRef.current).style.transformOrigin = `${center.x}px ${center.y}px`
-                    // console.log('translate: ', transformInfoRef.current.translate)
-                    // console.log('center: ', transformInfoRef.current.center)
-                })
-            }, 10)
+            const requestUpdate =  throttle(() => 
+                 new Promise(resolve => {
+                    requestAnimationFrame(()=> {
+                        const { rotate, scale, translate:{ x:transformX, y: transformY}, center } = transformInfoRef.current;
+                        (<WrapElement>wrapRef.current).style.transform = `translate3d( ${transformX}px, ${transformY}px, 0)  scale(${scale}) rotate(${rotate}deg)`;
+                        (<WrapElement>wrapRef.current).style.transformOrigin = `${center.x}px ${center.y}px`
+                        resolve()
+                        // console.log('translate: ', transformInfoRef.current.translate)
+                        // console.log('center: ', transformInfoRef.current.center)
+                    })
+                }), 10)
 
             const onPanStart = ({deltaX, deltaY }: HammerInput) => {
                 const { translate } = transformInfoRef.current
                 transformInfoRef.current.gestrueStartTranslate = new Vector2(deltaX, deltaY)
-                transformInfoRef.current.eleStartTanslate = translate
+                transformInfoRef.current.eleStartTanslate = translate;
+                if(wrapRef.current){
+                    wrapRef.current.style.transition = ''
+                    requestAnimationFrame(() => {
+                        if(wrapRef.current){
+                            wrapRef.current.style.transition = TRANSACTION
+                        }
+                    } )
+                }
             }
 
             const onPan = ({deltaX, deltaY, center }: HammerInput) =>{
@@ -152,14 +166,22 @@ export default function useTransform<WrapElement extends HTMLElement>(userTransf
                 requestUpdate()
             }
           
-            const onRotateStart = ({rotation, center}: HammerInput) => {
+            const onRotateStart = async ({rotation, center}: HammerInput) => {
                 const { rotate, translate, center: preCenter, scale } = transformInfoRef.current
                 transformInfoRef.current.eleStartRotate = rotate
                 transformInfoRef.current.gestrueStartRotate = rotation
                 const newCenter = Vector2.subtract(center, translate)
                 transformInfoRef.current.translate = getNewTranslate(preCenter, newCenter, translate, scale, rotate)
                 transformInfoRef.current.center = newCenter
-
+                await requestUpdate()
+                if(wrapRef.current){
+                    wrapRef.current.style.transition = ''
+                    requestAnimationFrame(() => {
+                        if(wrapRef.current){
+                            wrapRef.current.style.transition = TRANSACTION
+                        }
+                    } )
+                }
                 
             }
             const onRotate = ({rotation}: HammerInput) => { 
@@ -171,14 +193,22 @@ export default function useTransform<WrapElement extends HTMLElement>(userTransf
               
             }
 
-            const onPinchStart = ({ scale, center }: HammerInput) =>{
+            const onPinchStart = async ({ scale, center }: HammerInput) =>{
                 const { translate, scale: slScale, center:preCenter, rotate } = transformInfoRef.current
                 transformInfoRef.current.gestrueStartscale = scale
                 transformInfoRef.current.eleStartScale = slScale
                 const newCenter = Vector2.subtract(center, translate)
                 transformInfoRef.current.translate = getNewTranslate(preCenter, newCenter, translate, scale, rotate)
                 transformInfoRef.current.center = newCenter
-
+                await requestUpdate()
+                if(wrapRef.current){
+                    wrapRef.current.style.transition = ''
+                    requestAnimationFrame(() => {
+                        if(wrapRef.current){
+                            wrapRef.current.style.transition = TRANSACTION
+                        }
+                    } )
+                }
             }
 
             const onPinchinMove = ({ scale, center }: HammerInput) => { 
