@@ -18,7 +18,7 @@ ReactDom.render(
 	document.querySelector('#root') 
 );
 
-if('serviceWorker' in navigator){
+if('serviceWorker' in navigator && process.env.BUILD_ENV !== 'development'){
 	const workBox = new Workbox(`${process.env.PUBLIC_PATH||'./'}service-worker.js`);
 	workBox.addEventListener('activated', ({isUpdate}) => {
 		isUpdate && message.info(<span onClick={() => window.location.reload()}>应用已更新，点击加载.</span>, 0)

@@ -9,7 +9,7 @@ export interface TopToolBarProps{
 export default ({  }:TopToolBarProps) => {
 
     const onColorChange = (val:RGBA) => {
-        console.log('rgba: ', val)
+        // console.log('rgba: ', val)
     }
 
     return <Fragment>

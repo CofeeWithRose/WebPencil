@@ -4,11 +4,12 @@ import { debounce} from 'lodash'
 import { RGBA } from './rgba'
 import { Vector2 } from '../../../../util/data/Vector2'
 
-type CircleInfo = Vector2 & { r: number, width: number }
+type CircleInfo = Vector2 & { r: number, width: number, pixX: number, pixY: number, pixR: number, pixWidth: number }
 
 type CircleFragmentInfo = { start: number, end: number } & CircleInfo
 
-const drawCircleFragment = (ctx: CanvasRenderingContext2D, { x, y, r, width, start, end }: CircleFragmentInfo, color: RGBA) => {
+const drawCircleFragment = (ctx: CanvasRenderingContext2D, { pixX: x,pixY: y, pixR: r, pixWidth: width, start, end }: CircleFragmentInfo, color: RGBA) => {
+	
 	const lR = r - width
 
 	const point1 = {
@@ -59,7 +60,7 @@ const drawCircle = (ctx: CanvasRenderingContext2D, circleInfo: CircleInfo) => {
 	}
 }
 
-const drawSelectArea = (ctx: CanvasRenderingContext2D, {x, y, r, width}: CircleInfo, standardColor: string) => {
+const drawSelectArea = (ctx: CanvasRenderingContext2D, {pixX: x,pixY: y, pixR: r, pixWidth: width}: CircleInfo, standardColor: string) => {
 	const curR =  Math.sin(Math.PI * 0.25) * (r - width)
 	const w = curR * 2
 	ctx.clearRect(x-curR, y-curR , w, w)
@@ -210,8 +211,13 @@ export default ({ value, onChange }: ColorPannelProps) => {
 			canvas.current.height = size
 			if (ctx) {
 				setCtx(ctx)
-				const halfWidth = canvas.current.width * 0.5
-				const cirleInfo= { x: halfWidth, y: halfWidth, r: halfWidth-10, width: 30 }
+				const halfWidth = canvas.current.clientWidth * 0.5
+				const pixHalfWidth = canvas.current.width * 0.5
+				const cirleInfo= { 
+					x: halfWidth, y: halfWidth, r: halfWidth-10, width: 30, 
+					pixX: pixHalfWidth, pixY: pixHalfWidth, pixR: pixHalfWidth - 10 * devicePixelRatio,
+					pixWidth: 30 * devicePixelRatio  
+				}
 				drawCircle(ctx, cirleInfo)
 				drawSelectArea(ctx, cirleInfo, 'rgb(255,0,0)')
 				setCircleInfo(cirleInfo)
