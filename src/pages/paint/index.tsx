@@ -1,11 +1,12 @@
 
-import React, { Fragment, useLayoutEffect, useRef, useEffect, useState } from 'react'
+import React, {  useEffect, useState } from 'react'
 import BasicLayout from '../../lauout/BasicLayout'
 import style from './style.less'
-import PCanvas from './PCanvas'
+import PCanvas, { usePCanvas } from './PCanvas'
 import {history} from '../../app'
 import  qs from 'qs'
 import { WorkInfo, WorkDetail } from '../../workStorage'
+import TopToolBar from './TopToolBar'
 
 
 export default function Paint(){
@@ -19,29 +20,16 @@ export default function Paint(){
 		}
 	},[])
 
-	// const ele = useRef<HTMLElement>(null)
-	// const onClick = () => {
-	// 	// console.log('click')
-	// 	// if(ele.current){
-	// 	// 	ele.current.requestFullscreen()
-	// 	// }
-	// }
-	// return <section 
-	// 	ref={ele}
-	//     onClick={onClick}
-	// 	className={style.section}
-	// >
-	// 	<header>
-	// 	</header>
-	// 	<div className={style.wrapper}>
-	// 		<aside></aside>
-	// 		<main>
-	// 			<PCanvas/>
-	// 		</main>
-	// 	</div>
-	// </section>
-	return <BasicLayout contentClassName={style.layout} >
-		<PCanvas workDetail={workDetail}/>
+	const { pCanvasRef } = usePCanvas()
+
+	return <BasicLayout 
+			contentClassName={style.layout} 
+			asideNode={<TopToolBar/>}
+			 
+		>
+			<PCanvas 
+				pCanvasRef={pCanvasRef}   
+				workDetail={workDetail}
+			/>
 	</BasicLayout>
-  
 }
