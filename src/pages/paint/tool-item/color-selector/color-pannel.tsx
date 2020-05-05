@@ -155,7 +155,7 @@ const getStandardColor = (point: Vector2, {x,y}: Vector2) => {
 			return colors[i+1]
 		}
 	}
-	return RGBA.black
+	return RGBA.BLACK
 
 } 
 /**
@@ -169,9 +169,11 @@ const getSelectColor = (point: Vector2, color: RGBA, x: number, y:number, r:numb
 	const startX = x - r
 	const startY = y - r
 	const width = r *2
-	const s = (point.y -startY)/width
-	const l = (point.x - startX)/width
-	return  RGBA.mutipy(RGBA.add( RGBA.mutipy(color, s), RGBA.mutipy(RGBA.black, 1-s)), l) 
+	const s = Math.max(Math.min((point.y -startY)/width, 1), 0)
+	const l = Math.max(Math.min((point.x - startX)/width,1), 0)
+	console.log('stander: ', color, s, l)
+
+	return  RGBA.mutipy(RGBA.add( RGBA.mutipy(color, s), RGBA.mutipy(RGBA.BLACK, 1-s)), l) 
 
 }
 
@@ -218,8 +220,8 @@ export default ({ value, onChange }: ColorPannelProps) => {
 					pixX: pixHalfWidth, pixY: pixHalfWidth, pixR: pixHalfWidth - 10 * devicePixelRatio,
 					pixWidth: 30 * devicePixelRatio  
 				}
-				drawCircle(ctx, cirleInfo)
 				drawSelectArea(ctx, cirleInfo, 'rgb(255,0,0)')
+				drawCircle(ctx, cirleInfo)
 				setCircleInfo(cirleInfo)
 				setCirclePoint({x: halfWidth + cirleInfo.r, y: halfWidth})
 				setSelectPoint({x: halfWidth, y: halfWidth})
@@ -292,6 +294,7 @@ export default ({ value, onChange }: ColorPannelProps) => {
 		</div>
 		<div 
 			className={style.canvasCover}
+			style={{height: `${ cirleInfo &&cirleInfo.x * 2}px`}}
 			onPointerDown={onPointDown}
 			onPointerUp={onPointOut}
 			onPointerMove={onPointMove}

@@ -36,9 +36,9 @@ export class RGBA {
 		)
 	}
 
-  static readonly black = new RGBA(255,255,255)
+  static readonly BLACK = new RGBA(0,0,0)
   
-  static readonly white = new RGBA(0,0,0)
+  static readonly WHITE = new RGBA(255,255,255)
   constructor(
     public readonly r: number,
     public readonly g: number,

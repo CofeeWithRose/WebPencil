@@ -9,20 +9,36 @@ import { RGBA } from './rgba'
 
 export interface ColorSelectorProps {
     onChange?: (value: RGBA) => void
-    value?: RGBA
+	value?: RGBA,
+	defaultValue?: RGBA,
 }
 
-export default  ({value, onChange}: ColorSelectorProps) => {
-    const [showColorPanel, setShowColorPannel] = useState(false)
+export default  ({value, onChange, defaultValue}: ColorSelectorProps) => {
+	const [showColorPanel, setShowColorPannel] = useState(false)
+	const [rgba, setRGBA] = useState(defaultValue|| RGBA.BLACK)
+
+	useEffect(() => {
+		if(value){
+			setRGBA(value)
+			return
+		}
+	}, [ value ])
+
+
+
     
 	const modaleChange = () => {
 		setShowColorPannel(val => !val)
 	}
 
+	const onColorChange = (val:RGBA) => {
+		setRGBA(val)
+		onChange && onChange(val)
+	}
 
 	return <Fragment>
 		<div 
-			style={{backgroundColor: value && value.toColorString()}}
+			style={{backgroundColor: rgba.toColorString()}}
 			className={style.colorBar}
 			onClick={modaleChange} 
 		>
@@ -34,8 +50,8 @@ export default  ({value, onChange}: ColorSelectorProps) => {
 			onClose={modaleChange}
 		>
 			<ColorPannel 
-				value={value} 
-				onChange={onChange}
+				value={rgba} 
+				onChange={onColorChange}
 			/>
 		</Drawer>
 	</Fragment>
