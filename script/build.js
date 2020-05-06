@@ -8,7 +8,7 @@ const cdnConfigs = require('../config/cdn')
 
 
 const webpack = require('webpack')
-const {plugings, ...config} = require('../config/webpack.config')
+const {plugins, ...config} = require('../config/webpack.config')
 const cfg = { 
     ...config,
     mode: 'production',
