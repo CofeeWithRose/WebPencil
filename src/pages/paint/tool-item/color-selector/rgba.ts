@@ -46,7 +46,7 @@ export class RGBA {
     public readonly a: number = 1,
   ){}
 
-  toColorString(){
+  toRGBAString(){
   	return `rgba(${this.r},${this.g},${this.b},${this.a})`
   }
 

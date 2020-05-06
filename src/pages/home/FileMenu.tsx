@@ -1,7 +1,8 @@
 import React, { useState, FC } from 'react'
 import { Modal, InputNumber, Form, Button } from 'antd'
+import { WorkInfo } from '../../workStorage';
 
-export interface SizeInfo {
+export interface WorkForm {
 	width: number, height: number
 }
 
@@ -14,7 +15,7 @@ export interface FileMenuProps {
 
 	isVisibale: boolean
 
-	onComplete?: ( size: SizeInfo ) => void
+	onComplete?: ( size: WorkForm ) => void
 
 }
 
@@ -24,7 +25,7 @@ export const FileMenu: FC<FileMenuProps> = ( {className='', isVisibale, onComple
 
 	const onSubmit = async () =>{
 		const values = await form.validateFields()
-		onComplete && onComplete(values as SizeInfo)
+		onComplete && onComplete(values as  WorkForm)
 	}
 
 	const formater = (value: number ) => `${value||0}px`

@@ -38,7 +38,7 @@ export default  ({value, onChange, defaultValue}: ColorSelectorProps) => {
 
 	return <Fragment>
 		<div 
-			style={{backgroundColor: rgba.toColorString()}}
+			style={{backgroundColor: rgba.toRGBAString()}}
 			className={style.colorBar}
 			onClick={modaleChange} 
 		>

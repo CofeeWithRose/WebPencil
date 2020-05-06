@@ -2,18 +2,18 @@ import React, { Fragment, ReactNode, ReactNodeArray, Component } from 'react'
 import ColorSelector from '../tool-item/color-selector'
 import { RGBA } from '../tool-item/color-selector/rgba'
 import style from './index.less'
-import { PCanvasInstance } from '../p-canvas'
+import { PCanvasController } from '../p-canvas'
 
 export interface TopToolBarProps{
-    pCanvasInstance?: PCanvasInstance
+    pCanvasController?: PCanvasController
     // onChange?: ()
 }
 
-export default ({ pCanvasInstance }:TopToolBarProps) => {
+export default ({ pCanvasController }:TopToolBarProps) => {
 
     const onColorChange = (val:RGBA) => {
-        if(pCanvasInstance){
-            pCanvasInstance.setColor(val)
+        if(pCanvasController){
+            pCanvasController.setColor(val)
         }
     }
 

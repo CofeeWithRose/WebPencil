@@ -24,7 +24,7 @@ const drawCircleFragment = (ctx: CanvasRenderingContext2D, { pixX: x,pixY: y, pi
 		x: x + Math.cos(end) * lR,
 		y: y + Math.sin(end) * lR,
 	}
-	const colorStr = color.toColorString()
+	const colorStr = color.toRGBAString()
 	ctx.beginPath()
 	ctx.fillStyle = colorStr
 	ctx.strokeStyle = colorStr
@@ -237,7 +237,7 @@ export default ({ value, onChange }: ColorPannelProps) => {
 			if(pointType === 'circle'&&ctx){
 				setCirclePoint(getCirclePosition({x,y}, cirleInfo))
 				const sC = getStandardColor({x,y}, {x:cirleInfo.x, y:cirleInfo.y})
-				drawSelectArea(ctx, cirleInfo,sC.toColorString())
+				drawSelectArea(ctx, cirleInfo,sC.toRGBAString())
 			}
 			if(pointType === 'round'){
 				const p = getSelectPoint({x,y}, cirleInfo)

@@ -4,9 +4,9 @@ import style from './style.less'
 import WorkItem from './component/WorkItem'
 import { PlusOutlined } from '@ant-design/icons';
 import { history } from '../../app'
-import { FileMenu, SizeInfo } from './FileMenu';
+import { FileMenu, WorkForm } from './FileMenu';
 import qs from 'qs'
-import WorkStorage, { WorkInfo } from '../../workStorage';
+import WorkStorage, { WorkInfo, WorkDetail } from '../../workStorage';
 
 export default () => {
     
@@ -26,8 +26,10 @@ export default () => {
      * 跳转至编辑页面.
      * @param sizeInfo 画布大小.
      */
-    const newWork = (sizeInfo: SizeInfo) => {
-        history.push({pathname: '/paint', search:qs.stringify({...sizeInfo, type: 'new'}) })
+    const newWork = async ({width, height}: WorkForm) => {
+        const workInfo = new WorkInfo(width, height)
+        await  WorkStorage.addWork(new WorkDetail(workInfo,[]))
+        editWork(workInfo.workId)
     }
 
     /**
@@ -40,7 +42,7 @@ export default () => {
      * @param workId 到编辑页面.
      */
     const editWork = (workId: string) => {
-        history.push({pathname: '/paint', search:qs.stringify({workId, type: 'edit'}) })
+        history.push({pathname: '/paint', search:qs.stringify({workId}) })
     }
 
     return <BasicLayout

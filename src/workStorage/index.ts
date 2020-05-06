@@ -1,4 +1,7 @@
 import { uniqueId } from 'lodash'
+import { RGBA } from '../pages/paint/tool-item/color-selector/rgba';
+import { Link } from '../util/link';
+import { createCanvas } from './canvas.util';
 
 // document.addEventListener("deviceready", onDeviceReady, false);
 // function onDeviceReady() {
@@ -11,13 +14,13 @@ import { uniqueId } from 'lodash'
 export class WorkInfo {
 
     constructor(
-        public name: string, 
         public width: number,
         public height: number,
-        public createTime: number,
-        public updateTime: number,
-        public thumbnail: HTMLCanvasElement,
-        public readonly workId = uniqueId(`${Date.now()}_`),
+        public name: string = '', 
+        public thumbnail: HTMLCanvasElement|null= null,
+        public createTime: number = Date.now(),
+        public updateTime: number = Date.now(),
+        public readonly workId = uniqueId(`work_${Date.now()}_`),
     ){}
 }
 
@@ -28,12 +31,29 @@ export class WorkDetail {
 
     constructor(
         public workInfo: WorkInfo,
-        public contens: LayerDetail[], 
+        public contens: WorkLayers, 
     ){}
 
-    // static createEmptyWorkDetail({ name='', width, height, widthWhiteLayer=true}: ){
-    //     // return new WorkDetail(new WorkInfo())
-    // }
+      /**
+     * 
+     * @param width 
+     * @param height 
+     * @param background 
+     */
+    static createEmpty(width: number, height: number, background: RGBA){
+        const workInfo = new WorkInfo(width,height,'new work', createCanvas(width,height, background))
+        const layer = new  WorkLayers();
+        WorkLayers.addLayer(layer, workInfo, LayerDetail.create(workInfo, RGBA.WHITE))
+        WorkLayers.addLayer(layer, workInfo, LayerDetail.create(workInfo, undefined, LayerDetailType.TEMP_COVER ))
+        return new WorkDetail(workInfo,layer)
+    }
+}
+
+export enum  LayerDetailType{
+
+    TEMP_COVER= 1,
+    
+    NORMAL = 2,
 }
 
 /**
@@ -42,14 +62,40 @@ export class WorkDetail {
 export class LayerDetail {
     
     constructor(
+        public canvas: HTMLCanvasElement,
 
-        public index: number,
+        public type: LayerDetailType = LayerDetailType.NORMAL,
 
-        public visible: boolean,
-    
-        public canvas: HTMLCanvasElement
+        public visible: boolean = true,
+
+        public readonly layerId = uniqueId(`layer-${Date.now()}-`)
 
     ){}
+
+    static create({width, height}: WorkInfo, color?: RGBA, type?: LayerDetailType){
+        return new LayerDetail(createCanvas(width, height, color), type)
+    }
+
+}
+
+/**
+ * 图层信息.
+ */
+export class WorkLayers {
+    
+    constructor(
+        public readonly workLayersId = uniqueId(`worklayer-${Date.now()}-`),
+    ){}
+
+    public layers: LayerDetail[] =[]
+
+    
+    static addLayer(workLayers: WorkLayers, {width, height}: WorkInfo, layerDetail?: LayerDetail, ){
+        if(!layerDetail){
+            layerDetail = new LayerDetail(createCanvas(width, height))
+        }
+        workLayers.layers.unshift(layerDetail)
+    }
 
 }
 
@@ -68,7 +114,7 @@ export default class WorkStorage {
      * @param workedetail 
      */
     static async addWork(workedetail: WorkDetail): Promise<void>{
-        //TODO  Implement
+        //TODO  Implement.
     }
 
     /**
@@ -76,7 +122,7 @@ export default class WorkStorage {
      * @param workId 
      */
     static async removeWork(workId: string): Promise<void> {
-        //TODO  Implement
+        //TODO  Implement.
     }
 
     /**
@@ -84,14 +130,14 @@ export default class WorkStorage {
      * @param workInfo 
      */
     static async updateWorkInfo(workInfo: WorkInfo): Promise<void>{
-         //TODO  Implement
+         //TODO  Implement.
     }
 
     /**
      * 更新作品的内容, 此时会自动更新 WorkInfo 的 updateTime.
      */
     static async batchUpdateLayerDetail(workId: string, layerdetails:LayerDetail[]): Promise<void> {
-         //TODO  Implement
+         //TODO  Implement.
     }
 
     /**
@@ -101,15 +147,15 @@ export default class WorkStorage {
      */
     static async getWorkDetail(workId: string): Promise<WorkDetail>{
         //TODO  Implement.
-        const workInfo = new WorkInfo('x1', 2048, 2048, Date.now(), Date.now(), document.createElement('canvas'));
-        return new WorkDetail(workInfo, [])
+        // const workInfo = new WorkInfo(2048, 2048);
+        return WorkDetail.createEmpty(2048, 2048, RGBA.WHITE)
     }
 
     /**
      * 获取作品描述信息列表.
      */
     static async getWorkList(): Promise<WorkInfo[]>{
-        //TODO  Implement
+        //TODO  Implement.
         return []
      }
 }
