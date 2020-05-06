@@ -40,20 +40,23 @@ export class Brush {
         this. lastPoint = status
         this.isPainting = true
         ctx.strokeStyle = color
-        ctx.beginPath()
-        ctx.moveTo(this.lastPoint.x, this.lastPoint.y)
+       
     }
 
     onDraw(brushStatus: BrushStatus[], contx: PCanvasContext) {
         if(this.isPainting){
             const  { curCanvasContext2D: ctx, brushWidth } = contx
-            brushStatus.forEach( ({x,y, pressure}) => {
+            brushStatus.forEach( p => {
+                const {x,y, pressure} = p
+                ctx.beginPath()
+                ctx.moveTo(this.lastPoint.x, this.lastPoint.y)
                 ctx.lineTo(x,y)
                 ctx.lineWidth = brushWidth * pressure
                 // console.log('pressure', pressure, 'lineWidth ',ctx.lineWidth )
                 ctx.stroke()
+                this.lastPoint = p
             })
-            this.lastPoint = brushStatus.pop() as BrushStatus
+            
         }
     }
 
