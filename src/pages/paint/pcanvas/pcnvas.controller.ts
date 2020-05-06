@@ -11,9 +11,9 @@ interface Listeners{
 
 } 
 
-const pointEvent2BrunshStatus = ({x,y,tiltX,tiltY,pressure}: PointerEvent, ) => {
-    console.log('event2BrunshStatus:', x,y,tiltX,tiltY,pressure)
-    return new BrushStatus(x,y,tiltX, tiltY, pressure)
+const pointEvent2BrunshStatus = ({offsetX: x, offsetY: y,tiltX,tiltY, pressure}: PointerEvent) => {
+    pressure = pressure>1? pressure * 0.01 : pressure;
+    return new BrushStatus(x,y, pressure, tiltX, tiltY)
 }
 
 /**
@@ -25,13 +25,18 @@ class PCanvasControllerOrg {
 
     protected layerManager:PcanvasLayers;
 
-    @emitAfter<Listeners>('colorchange')
-    setColor(color: RGBA) {
-        // this.context.color = color
-    }
 
     init(wrap: HTMLElement, workDetail: WorkDetail ){
         this.layerManager = new PcanvasLayers(wrap, workDetail.contens.layers)
+        this.context = new PCanvasContext(
+            this.layerManager.getCanvas(),
+            this.layerManager.getContext(),
+        )
+    }
+
+    @emitAfter<Listeners>('colorchange')
+    setColor(color: RGBA) {
+        this.context.color = color.toRGBAString()
     }
 
     setBrush(brush: Brush){
@@ -44,8 +49,7 @@ class PCanvasControllerOrg {
 
     onPointerMove(pointerEvent: PointerEvent){
         let ponterEvents: PointerEvent[];
-
-        if('getCoalescedEvents' in pointerEvent){
+        if((pointerEvent as any).getCoalescedEvents){
             ponterEvents = (pointerEvent as any ).getCoalescedEvents()
         }else{
             ponterEvents =  [pointerEvent]

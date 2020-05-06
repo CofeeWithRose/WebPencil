@@ -148,7 +148,7 @@ export default class WorkStorage {
     static async getWorkDetail(workId: string): Promise<WorkDetail>{
         //TODO  Implement.
         // const workInfo = new WorkInfo(2048, 2048);
-        return WorkDetail.createEmpty(2048, 2048, RGBA.WHITE)
+        return WorkDetail.createEmpty(823, 627, RGBA.WHITE)
     }
 
     /**

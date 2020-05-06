@@ -7,6 +7,7 @@ import { history } from '../../app'
 import { FileMenu, WorkForm } from './FileMenu';
 import qs from 'qs'
 import WorkStorage, { WorkInfo, WorkDetail } from '../../workStorage';
+import { RGBA } from '../paint/tool-item/color-selector/rgba';
 
 export default () => {
     
@@ -27,9 +28,9 @@ export default () => {
      * @param sizeInfo 画布大小.
      */
     const newWork = async ({width, height}: WorkForm) => {
-        const workInfo = new WorkInfo(width, height)
-        await  WorkStorage.addWork(new WorkDetail(workInfo,[]))
-        editWork(workInfo.workId)
+        const work = WorkDetail.createEmpty(width, height, RGBA.WHITE)
+        await  WorkStorage.addWork(work)
+        editWork(work.workInfo.workId)
     }
 
     /**

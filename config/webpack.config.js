@@ -1,7 +1,6 @@
 const path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const WorkboxPlugin = require('workbox-webpack-plugin');
 const antdThemeVars = require('./theme')
 const LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -138,16 +137,6 @@ module.exports = {
       ]
     }),
     new WebpackPwaManifest(mainifestConfig),
-    new WorkboxPlugin.GenerateSW({
-      clientsClaim: true,
-      skipWaiting: true,
-      maximumFileSizeToCacheInBytes: 1000*1000*4,
-      additionalManifestEntries: cdnConfigs.map(({productionCDNPath,devCDNPath})=> (
-        {
-          url: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT? devCDNPath: productionCDNPath,
-          revision: null,
-        })
-      ),
-    }),
+
   ]
 }

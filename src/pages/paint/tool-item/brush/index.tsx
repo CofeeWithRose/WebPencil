@@ -1,4 +1,4 @@
-import { PCanvasContext } from "../../p-canvas/pcanvas.context";
+import { PCanvasContext } from "../../pcanvas/pcanvas.context";
 
 export class BrushStatus {
     constructor(
@@ -7,7 +7,7 @@ export class BrushStatus {
 
         public readonly y: number,
 
-        public readonly pressuer: number,
+        public readonly pressure: number,
 
         public readonly tiltX: number,
 
@@ -32,16 +32,34 @@ export class Brush {
 
     name = 'default'
 
-    onStart(brushStatus: BrushStatus, contx: PCanvasContext) {
+    isPainting = false
 
+    lastPoint: BrushStatus
+
+    onStart(status: BrushStatus, {curCanvasContext2D: ctx, color, brushWidth}: PCanvasContext) {
+        this. lastPoint = status
+        this.isPainting = true
+        ctx.strokeStyle = color
+        ctx.beginPath()
+        ctx.moveTo(this.lastPoint.x, this.lastPoint.y)
     }
 
     onDraw(brushStatus: BrushStatus[], contx: PCanvasContext) {
-
+        if(this.isPainting){
+            const  { curCanvasContext2D: ctx, brushWidth } = contx
+            brushStatus.forEach( ({x,y, pressure}) => {
+                ctx.lineTo(x,y)
+                ctx.lineWidth = brushWidth * pressure
+                // console.log('pressure', pressure, 'lineWidth ',ctx.lineWidth )
+                ctx.stroke()
+            })
+            this.lastPoint = brushStatus.pop() as BrushStatus
+        }
     }
 
     onEnd(brushStatus: BrushStatus, contx: PCanvasContext) {
-
+        this.isPainting = false
+        // TODO 将内转到目标图层上.
     }
 
 }

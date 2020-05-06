@@ -2,7 +2,7 @@
 import React, {  useEffect, useState } from 'react'
 import BasicLayout from '../../lauout/BasicLayout'
 import style from './style.less'
-import { usePCanvas, PCanvas } from './p-canvas'
+import { usePCanvas, PCanvas } from './pcanvas'
 import {history} from '../../app'
 import  qs from 'qs'
 import WorkStorage, { WorkInfo, WorkDetail } from '../../workStorage'

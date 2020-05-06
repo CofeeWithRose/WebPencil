@@ -2,7 +2,7 @@ import React, { Fragment, ReactNode, ReactNodeArray, Component } from 'react'
 import ColorSelector from '../tool-item/color-selector'
 import { RGBA } from '../tool-item/color-selector/rgba'
 import style from './index.less'
-import { PCanvasController } from '../p-canvas'
+import { PCanvasController } from '../pcanvas'
 
 export interface TopToolBarProps{
     pCanvasController?: PCanvasController

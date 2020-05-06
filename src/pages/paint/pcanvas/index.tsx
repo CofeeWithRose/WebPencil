@@ -17,10 +17,6 @@ import { PCanvasContext } from './pcanvas.context'
 
  const usePCanvas = () => {
   const {current: pCanvas} = useRef(new PCanvasController())
-  pCanvas.addListener('colorchange', (color:RGBA) => {
-    console.log('listener', color.toRGBAString())
-  })
-  pCanvas.setColor(RGBA.BLACK)
   return {
     pCanvas
   }
