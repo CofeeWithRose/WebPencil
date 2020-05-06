@@ -171,7 +171,6 @@ const getSelectColor = (point: Vector2, color: RGBA, x: number, y:number, r:numb
 	const width = r *2
 	const s = Math.max(Math.min((point.y -startY)/width, 1), 0)
 	const l = Math.max(Math.min((point.x - startX)/width,1), 0)
-	console.log('stander: ', color, s, l)
 
 	return  RGBA.mutipy(RGBA.add( RGBA.mutipy(color, s), RGBA.mutipy(RGBA.BLACK, 1-s)), l) 
 
@@ -250,7 +249,6 @@ export default ({ value, onChange }: ColorPannelProps) => {
 	}
 
 	const onPointDown = ( { nativeEvent: {offsetX: x, offsetY: y}}: React.PointerEvent) => {
-		console.log('down...')
 		if(cirleInfo ){
 			operateInfo.current.isSelecting = true;
 			setPointType(getPointType({x,y}, cirleInfo))
@@ -265,7 +263,6 @@ export default ({ value, onChange }: ColorPannelProps) => {
 	}
 
 	const onPointOut = () => {
-		console.log('out...')
 		operateInfo.current.isSelecting = false;
 		setPointType(null)
 	}
