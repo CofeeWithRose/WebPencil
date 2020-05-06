@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[15],{27:function(a,n,o){a.exports={PCanvas:"PCanvas_bc01f",layout:"layout_72e38"}}}]);
