@@ -13,7 +13,7 @@ const cfg = {
     ...config,
     mode: 'production',
     plugins: [
-        ...plugings,
+        ...plugins,
         new WorkboxPlugin.GenerateSW({
             clientsClaim: true,
             skipWaiting: true,
