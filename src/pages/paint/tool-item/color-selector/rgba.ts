@@ -26,6 +26,20 @@ export class RGBA {
 		return new RGBA(r+B.r, g+B.g, b+B.b )
 	}
 
+	/**
+	 * 将a倾向b颜色，percent表示程度，当为1时，则为颜色.
+	 * @param a 
+	 * @param b 
+	 * @param percent 
+	 */
+	static mix(a:RGBA,b:RGBA, percent: number){
+		return new RGBA(
+			a.r + (b.r-a.r) * percent,
+			a.g + (b.g-a.g) * percent,
+			a.b + (b.b-a.b) * percent
+		)
+	}
+
 	static getLerpColor(from: RGBA, to:RGBA, percent: number){
 		const {r,g,b,a} = from
 		return new RGBA(

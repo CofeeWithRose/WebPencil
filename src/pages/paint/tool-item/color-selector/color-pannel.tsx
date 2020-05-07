@@ -169,11 +169,9 @@ const getSelectColor = (point: Vector2, color: RGBA, x: number, y:number, r:numb
 	const startX = x - r
 	const startY = y - r
 	const width = r *2
-	const s = Math.max(Math.min((point.y -startY)/width, 1), 0)
-	const l = Math.max(Math.min((point.x - startX)/width,1), 0)
-
-	return  RGBA.mutipy(RGBA.add( RGBA.mutipy(color, s), RGBA.mutipy(RGBA.BLACK, 1-s)), l) 
-
+	const l = 1- Math.max(Math.min((point.y -startY)/width, 1), 0)
+	const s = Math.max(Math.min((point.x - startX)/width,1), 0)
+	return RGBA.mix(RGBA.mix(color, RGBA.WHITE, l), RGBA.BLACK, 1-s )
 }
 
 export interface ColorPannelProps {
@@ -254,7 +252,7 @@ export default ({ value, onChange }: ColorPannelProps) => {
 			setPointType(getPointType({x,y}, cirleInfo))
 			const positionType = getPointType({x,y}, cirleInfo)
 			if(positionType === 'circle'){
-				setCirclePoint({x,y})
+				setCirclePoint(getCirclePosition({x,y}, cirleInfo))
 			}
 			if(positionType === 'round'){
 				setSelectPoint({x,y})
