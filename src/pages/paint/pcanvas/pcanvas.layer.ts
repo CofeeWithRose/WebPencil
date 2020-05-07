@@ -3,6 +3,7 @@ import { LayerDetail, LayerDetailType } from "../../../workStorage";
 export class PcanvasLayers{
 
     protected tempcover:HTMLCanvasElement;
+
     
 
     constructor(public wrap: HTMLElement, public layers: LayerDetail[]){

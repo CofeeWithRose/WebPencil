@@ -3,7 +3,7 @@ import styles from './style.less'
 import { WorkDetail, LayerDetail } from '../../../workStorage'
 import useTransform from '../../../hooks/useTransform'
 import { RGBA } from '../tool-item/color-selector/rgba'
-import { PCanvasController } from './pcnvas.controller'
+import { PCanvasController, WrapInfo } from './pcnvas.controller'
 import { PCanvasContext } from './pcanvas.context'
  
 
@@ -32,18 +32,19 @@ import { PCanvasContext } from './pcanvas.context'
 
   const coverRef = useRef<HTMLDivElement>(null)
 
-  const paintContextRef = useRef<PCanvasContext>()
+  const wrapRef = useRef<HTMLDivElement>(null)
 
-  const wrapRef = useRef<HTMLElement>(null)
-
-  // const { layers } = useWork(defaulyValue)
-
+  const [{width, height}, setSize] = useState({width: 0, height: 0})
 
   
   useEffect(() => {
-    if(pCanvasController&& wrapRef.current){
-      
-       pCanvasController.init(wrapRef.current, initValue)
+    if(pCanvasController&& wrapRef.current&&coverRef.current){
+        const wrapInfo: WrapInfo = {
+          wrap: wrapRef.current,
+          cover: coverRef.current,
+          setSize
+        }
+       pCanvasController.init(wrapInfo, initValue)
     }
   }, [])
 
@@ -78,11 +79,15 @@ import { PCanvasContext } from './pcanvas.context'
 
   
     return <main 
-        ref={wrapRef}
         className={styles.pCanvas}
     >
-     
-      <div ref={coverRef} className={styles.cover}></div>
+      <section
+        ref={wrapRef}
+        className={styles.canvasWrap}
+        style={{ width: `${width}px`, height: `${height}px` }}
+      >
+        <div ref={coverRef} className={styles.cover}></div>
+      </section>
     </main>
 }
 
