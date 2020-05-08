@@ -17,6 +17,20 @@ export class Vector2 {
         public readonly y = 0,
     ){}
 
+    static normalize(v:Vector2){
+        const scale = 1 / Vector2.magnitude(v)
+        return new Vector2(v.x * scale, v.y * scale)
+    }
+
+    /**
+     * get normalized vertical vector2.
+     * @param v 
+     */
+    static vertical(v:Vector2){
+        const {x,y} = Vector2.normalize(v)
+        return new Vector2(y, -x)
+    }
+
     static dist(v1: Vector2, v2: Vector2){
         return Math.sqrt((v1.x - v2.x)**2 + (v1.y - v2.y)**2 )
     }
@@ -58,4 +72,9 @@ export class Vector2 {
         const dy = to.y - from.y
         return new Vector2( v.x + dx, v.y + dy)
     }
+
+    static floor({x, y}: Vector2){
+        return new Vector2(Math.floor(x), Math.floor(y))
+    }
+
 }
