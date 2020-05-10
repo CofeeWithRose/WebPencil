@@ -26,8 +26,7 @@ export class Vector2 {
      * get normalized vertical vector2.
      * @param v 
      */
-    static vertical(v:Vector2){
-        const {x,y} = Vector2.normalize(v)
+    static vertical({ x, y}:Vector2){
         return new Vector2(y, -x)
     }
 

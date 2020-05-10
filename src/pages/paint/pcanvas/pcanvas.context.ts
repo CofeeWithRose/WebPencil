@@ -15,7 +15,7 @@ export class PCanvasContext {
 
         public color: string = RGBA.BLACK.toRGBAString(),
 
-        public brushWidth: number = 10,
+        public brushWidth: number = 100,
 
     ){}
 }

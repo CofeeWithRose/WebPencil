@@ -39,7 +39,8 @@ export class Brush {
 
     lastVerPath: [ Vector2, Vector2]|null;
 
-    onStart(status: BrushStatus, {curCanvasContext2D: ctx, color, brushWidth}: PCanvasContext) {
+    onStart(status: BrushStatus, context: PCanvasContext) {
+        const {curCanvasContext2D: ctx, color, brushWidth} = context
         this. lastBrush = status
         this.isPainting = true
         ctx.fillStyle = color
@@ -56,7 +57,6 @@ export class Brush {
         return [p1,p2] 
     }
 
-
     onDraw(brushStatus: BrushStatus[], contx: PCanvasContext): void {
         if(this.isPainting){
             const  { curCanvasContext2D: ctx, brushWidth } = contx
@@ -64,8 +64,9 @@ export class Brush {
             brushStatus.forEach( p => {
                 const {x,y, pressure} = p
                 let halfWidth: number;
-                const drection =  new Vector2( x- this.lastBrush.x, y - this.lastBrush.y )
-                const verticalDirection = Vector2.vertical(drection)
+                const direction =  new Vector2( x- this.lastBrush.x, y - this.lastBrush.y )
+                const norDirection = Vector2.normalize(direction)
+                const verticalDirection = Vector2.vertical(norDirection)
                 let p1:Vector2;
                 let p2: Vector2;
                 if(!this.lastVerPath){
@@ -85,8 +86,12 @@ export class Brush {
                 ctx.lineTo(p2.x, p2.y)
                 ctx.lineTo(p3.x, p3.y)
                 ctx.lineTo(p4.x, p4.y)
+                ctx.lineTo(p1.x, p1.y)
                 this.lastBrush = p
-                this.lastVerPath = [p4,p3]
+                this.lastVerPath = [ 
+                    Vector2.subtract(p4, Vector2.multipy(norDirection, 0.5)), 
+                    Vector2.subtract(p3, Vector2.multipy(norDirection, 0.5)),  
+                ]
             })
             ctx.closePath()
             ctx.fill()

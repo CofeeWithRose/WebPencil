@@ -34,15 +34,12 @@ import { PCanvasContext } from './pcanvas.context'
 
   const wrapRef = useRef<HTMLDivElement>(null)
 
-  const [{width, height}, setSize] = useState({width: 0, height: 0})
-
   
   useEffect(() => {
     if(pCanvasController&& wrapRef.current&&coverRef.current){
         const wrapInfo: WrapInfo = {
           wrap: wrapRef.current,
           cover: coverRef.current,
-          setSize
         }
        pCanvasController.init(wrapInfo, initValue)
     }
@@ -84,7 +81,6 @@ import { PCanvasContext } from './pcanvas.context'
       <section
         ref={wrapRef}
         className={styles.canvasWrap}
-        style={{ width: `${width}px`, height: `${height}px` }}
       >
         <div ref={coverRef} className={styles.cover}></div>
       </section>

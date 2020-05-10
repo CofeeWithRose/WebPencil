@@ -15,7 +15,7 @@ const pointEvent2BrunshStatus = ({offsetX: x, offsetY: y,tiltX,tiltY, pressure}:
     pressure = pressure>1? pressure * 0.01 : pressure;
     return new BrushStatus(x,y, pressure, tiltX, tiltY)
 }
-export type WrapInfo = { wrap: HTMLElement, cover: HTMLElement, setSize:  (size: {width: number, height:number}) => void }
+export type WrapInfo = { wrap: HTMLElement, cover: HTMLElement }
 /**
  * 用于控制PCanvascontroller component 的对象.
  */
@@ -26,9 +26,10 @@ class PCanvasControllerOrg {
     protected layerManager:PcanvasLayers;
 
 
-    init( {wrap, setSize}:  WrapInfo, workDetail: WorkDetail ){
+    init( {wrap}:  WrapInfo, workDetail: WorkDetail ){
         const { width, height } = workDetail.workInfo
-        setSize({width, height})
+        wrap.style.width = `${width}px`
+        wrap.style.height = `${height}px`
         this.layerManager = new PcanvasLayers(wrap, workDetail.contens.layers)
         this.context = new PCanvasContext(
             this.layerManager.getCanvas(),
@@ -46,6 +47,7 @@ class PCanvasControllerOrg {
     }
 
     onPointerDown(p: PointerEvent){
+        
         this.context.brush.onStart(pointEvent2BrunshStatus(p),this.context)
     }
 
