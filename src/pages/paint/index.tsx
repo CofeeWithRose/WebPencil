@@ -7,6 +7,7 @@ import {history} from '../../app'
 import  qs from 'qs'
 import WorkStorage, { WorkInfo, WorkDetail } from '../../workStorage'
 import TopToolBar from './top-tool-bar'
+import AsideToolBar from './aside-tool-bar'
 
 
 export default function Paint(){
@@ -25,7 +26,8 @@ export default function Paint(){
 
 	return <BasicLayout 
 				contentClassName={style.layout} 
-				headNode={<TopToolBar 
+				headNode={<TopToolBar pCanvasController={pCanvas}/>}
+				asideNode={<AsideToolBar 
 					pCanvasController={pCanvas}
 				/>}
 			>

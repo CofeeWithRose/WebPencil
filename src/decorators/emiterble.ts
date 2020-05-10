@@ -10,21 +10,29 @@ export const emitterble = <C>() =>
     return class Emitterble extends constructor {
         protected eventEmitterDec = new EventEmitter()
 
-        public addListener<K extends keyof C>(eventName: K, listener: C[K]){
-            return this.eventEmitterDec.addListener(eventName as string, listener as any)
+        public addListener<K extends keyof C>(eventName: K, listener: C[K]): void{
+            this.eventEmitterDec.addListener(eventName as string, listener as any)
         }
         
-        public removeListener<K extends keyof C>(eventName: K, listener: C[K]){
-            return this.eventEmitterDec.removeListener(eventName as string, listener as any)
+        public removeListener<K extends keyof C>(eventName: K, listener: C[K]): void {
+            this.eventEmitterDec.removeListener(eventName as string, listener as any)
         }
         
     }
 }
 
+export type EmitAfterOptions = {
+    shouldEmitParams: boolean
+}
+
+const defaultOptions:EmitAfterOptions = {
+    shouldEmitParams: true,
+}
 /**
  * 函数后
  */
-export const emitAfter = <T>(eventName: keyof T) => {
+export const emitAfter = <T>(eventName: keyof T, options=defaultOptions) => {
+    const {shouldEmitParams} = options
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
         const fun = target[propertyKey] 
 
@@ -39,7 +47,8 @@ export const emitAfter = <T>(eventName: keyof T) => {
             }
             const res = (fun as Function).call(this, ...params)
             try{
-                eventEmitter.emit(eventName as string, ...params)
+                const p = shouldEmitParams? params : []
+                eventEmitter.emit(eventName as string, ...p)
             }catch(error){
                 console.error(error)
             }

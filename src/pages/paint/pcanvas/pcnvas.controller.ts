@@ -9,6 +9,8 @@ interface Listeners{
 
     colorchange: (color:RGBA) => void
 
+    init: () => void
+
 } 
 
 const pointEvent2BrunshStatus = ({offsetX: x, offsetY: y,tiltX,tiltY, pressure}: PointerEvent) => {
@@ -25,7 +27,10 @@ class PCanvasControllerOrg {
 
     protected layerManager:PcanvasLayers;
 
+    protected color = RGBA.BLACK;
 
+
+    @emitAfter<Listeners>('init', { shouldEmitParams: false })
     init( {wrap}:  WrapInfo, workDetail: WorkDetail ){
         const { width, height } = workDetail.workInfo
         wrap.style.width = `${width}px`
@@ -40,6 +45,17 @@ class PCanvasControllerOrg {
     @emitAfter<Listeners>('colorchange')
     setColor(color: RGBA) {
         this.context.color = color.toRGBAString()
+        this.color = color
+    }
+
+    setBrushWidth(width: number){
+        this.context.brushWidth = width
+    }
+
+    setOpacity(opacity: number){
+        const {r,g,b} = this.color
+        const color = new RGBA(r, g, b, opacity)
+        this.setColor(color)
     }
 
     setBrush(brush: Brush){
