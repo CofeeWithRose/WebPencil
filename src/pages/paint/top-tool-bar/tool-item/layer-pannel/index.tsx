@@ -15,6 +15,7 @@ export default ({ pCanvasController }: LayerProps) => {
     useEffect(() => {
         const init = () => {
             setLayers(pCanvasController.getLayers().filter( ({type}: LayerDetail) => type === LayerDetailType.NORMAL))
+            
         }
         pCanvasController.addListener('init', init)
        return () => pCanvasController.removeListener('init', init)
@@ -31,8 +32,8 @@ export default ({ pCanvasController }: LayerProps) => {
                     renderItem={({}: LayerDetail) => (
                     <List.Item>
                         <List.Item.Meta
-                        avatar={<canvas style={{background: 'origin'}} width="24" height="24"></canvas>}
-                        title={name}
+                        avatar={<canvas className={styles.canvas} width="45" height="24"></canvas>}
+                        title={"new layer"}
                         description="visible"
                         />
                     </List.Item>
