@@ -1,25 +1,33 @@
-import React, { Fragment, ReactNode, ReactNodeArray, Component } from 'react'
-import ColorSelector from '../tool-item/color-selector'
-import { RGBA } from '../tool-item/color-selector/rgba'
+import React, { Fragment, ReactNode, ReactNodeArray, Component, useEffect } from 'react'
+import ColorSelector from './tool-item/color-selector'
+import { RGBA } from './tool-item/color-selector/rgba'
 import style from './index.less'
 import { PCanvasController } from '../pcanvas'
+import LayerPannel from './tool-item/layer-pannel'
 
 export interface TopToolBarProps{
-    pCanvasController?: PCanvasController
-    // onChange?: ()
+    pCanvasController: PCanvasController
 }
 
+const DEFAULT_COLOR = RGBA.BLACK
 export default ({ pCanvasController }:TopToolBarProps) => {
 
-    const onColorChange = (val:RGBA) => {
-        if(pCanvasController){
-            pCanvasController.setColor(val)
-        }
+
+    const changeColor = (val=DEFAULT_COLOR) => {
+        pCanvasController.setColor(val)
     }
+    useEffect(() => {
+        if(pCanvasController){
+            pCanvasController.addListener('init', changeColor)
+            return pCanvasController.removeListener('init', changeColor)
+        }
+    },[])
 
     return <div className={style.topToolBar}>
+        <LayerPannel pCanvasController={pCanvasController}/>
        <ColorSelector
-            onChange={onColorChange}
+            defaultValue={DEFAULT_COLOR}
+            onChange={changeColor}
        />
     </div>
 }

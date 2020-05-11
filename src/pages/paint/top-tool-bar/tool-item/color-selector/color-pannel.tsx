@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react'
 import style from './index.less'
 import { debounce} from 'lodash'
 import { RGBA } from './rgba'
-import { Vector2 } from '../../../../util/data/Vector2'
+import { Vector2 } from '../../../../../util/data/Vector2'
 
 type CircleInfo = Vector2 & { r: number, width: number, pixX: number, pixY: number, pixR: number, pixWidth: number }
 

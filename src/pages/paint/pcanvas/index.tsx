@@ -2,7 +2,7 @@ import React, { useRef, useEffect, MutableRefObject, useState } from 'react'
 import styles from './style.less'
 import { WorkDetail, LayerDetail } from '../../../workStorage'
 import useTransform from '../../../hooks/useTransform'
-import { RGBA } from '../tool-item/color-selector/rgba'
+import { RGBA } from '../top-tool-bar/tool-item/color-selector/rgba'
 import { PCanvasController, WrapInfo } from './pcnvas.controller'
 import { PCanvasContext } from './pcanvas.context'
  

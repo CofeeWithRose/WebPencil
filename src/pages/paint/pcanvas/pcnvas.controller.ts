@@ -1,7 +1,7 @@
-import { RGBA } from "../tool-item/color-selector/rgba"
+import { RGBA } from "../top-tool-bar/tool-item/color-selector/rgba"
 import { emitterble, emitAfter } from "../../../decorators/emiterble"
 import { PCanvasContext } from "./pcanvas.context"
-import { Brush, BrushStatus } from "../tool-item/brush"
+import { Brush, BrushStatus } from "../top-tool-bar/tool-item/brush"
 import { WorkDetail } from "../../../workStorage"
 import { PcanvasLayers } from "./pcanvas.layer"
 
@@ -39,6 +39,8 @@ class PCanvasControllerOrg {
         this.context = new PCanvasContext(
             this.layerManager.getCanvas(),
             this.layerManager.getContext(),
+            width,
+            height,
         )
     }
 
@@ -46,6 +48,10 @@ class PCanvasControllerOrg {
     setColor(color: RGBA) {
         this.context.color = color.toRGBAString()
         this.color = color
+    }
+
+    getLayers(){
+        return this.layerManager.layers
     }
 
     setBrushWidth(width: number){

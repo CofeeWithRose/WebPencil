@@ -7,7 +7,7 @@ import { history } from '../../app'
 import { FileMenu, WorkForm } from './FileMenu';
 import qs from 'qs'
 import WorkStorage, { WorkInfo, WorkDetail } from '../../workStorage';
-import { RGBA } from '../paint/tool-item/color-selector/rgba';
+import { RGBA } from '../paint/top-tool-bar/tool-item/color-selector/rgba';
 
 export default () => {
     

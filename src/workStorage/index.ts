@@ -1,5 +1,5 @@
 import { uniqueId } from 'lodash'
-import { RGBA } from '../pages/paint/tool-item/color-selector/rgba';
+import { RGBA } from '../pages/paint/top-tool-bar/tool-item/color-selector/rgba';
 import { Link } from '../util/link';
 import { createCanvas } from './canvas.util';
 
@@ -65,6 +65,8 @@ export class LayerDetail {
         public canvas: HTMLCanvasElement,
 
         public type: LayerDetailType = LayerDetailType.NORMAL,
+
+        public name = 'new layer',
 
         public visible: boolean = true,
 
