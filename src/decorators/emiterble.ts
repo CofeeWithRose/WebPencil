@@ -22,17 +22,25 @@ export const emitterble = <C>() =>
 }
 
 export type EmitAfterOptions = {
-    shouldEmitParams: boolean
+
+    shouldEmitParams?: boolean,
+
+    paramsSource?: 'return'| 'params',
 }
 
 const defaultOptions:EmitAfterOptions = {
+
     shouldEmitParams: true,
+
+    paramsSource: 'params',
+
 }
 /**
  * 函数后
  */
-export const emitAfter = <T>(eventName: keyof T, options=defaultOptions) => {
-    const {shouldEmitParams} = options
+export const emitAfter = <T>(eventName: keyof T, options?: EmitAfterOptions) => {
+    options={ ...defaultOptions, ...options }
+    const {shouldEmitParams, paramsSource} = options
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
         const fun = target[propertyKey] 
 
@@ -47,7 +55,9 @@ export const emitAfter = <T>(eventName: keyof T, options=defaultOptions) => {
             }
             const res = (fun as Function).call(this, ...params)
             try{
-                const p = shouldEmitParams? params : []
+                const p = shouldEmitParams?  
+                    paramsSource === 'params'? params: [res]
+                        : []
                 eventEmitter.emit(eventName as string, ...p)
             }catch(error){
                 console.error(error)

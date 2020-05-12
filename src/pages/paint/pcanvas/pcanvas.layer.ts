@@ -34,6 +34,7 @@ export class PcanvasLayers{
         const newLayer = LayerDetail.create(this.wrapInfo)
         this.layers.push(newLayer)
         wrap.insertBefore(newLayer.canvas, lastLayer.canvas)
+        return newLayer
     }
 
     getContext(){

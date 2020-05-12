@@ -2,7 +2,7 @@ import { RGBA } from "../top-tool-bar/tool-item/color-selector/rgba"
 import { emitterble, emitAfter } from "../../../decorators/emiterble"
 import { PCanvasContext } from "./pcanvas.context"
 import { Brush, BrushStatus } from "../top-tool-bar/tool-item/brush"
-import { WorkDetail } from "../../../workStorage"
+import { WorkDetail, LayerDetail } from "../../../workStorage"
 import { PcanvasLayers } from "./pcanvas.layer"
 
 interface Listeners{
@@ -11,6 +11,7 @@ interface Listeners{
 
     init: () => void
 
+    addLayer: ( layerDetail: LayerDetail ) => void
 } 
 
 const pointEvent2BrunshStatus = ({offsetX: x, offsetY: y,tiltX,tiltY, pressure}: PointerEvent) => {
@@ -51,11 +52,12 @@ class PCanvasControllerOrg {
     }
 
     getLayers(){
-        return this.layerManager.layers
+        return [...this.layerManager.layers]
     }
 
+    @emitAfter<Listeners>('addLayer', { paramsSource: 'return'} )
     addLayer(){
-        this.layerManager.addLayer()
+        return this.layerManager.addLayer()
     }
 
     setBrushWidth(width: number){

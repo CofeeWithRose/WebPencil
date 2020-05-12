@@ -10,13 +10,13 @@ export interface  LayerProps{
 
 export default ({ pCanvasController }: LayerProps) => {
 
-    const [layers, setLayers] = useState<LayerDetail[]>([])
+    const [layers, setLayers] = useState<LayerDetail[]>(null)
 
     const [ activeLayerId, setActiveLayerId ] = useState('')
     
     useEffect(() => {
         const init = () => {
-            const layers = pCanvasController.getLayers()
+            const layers = pCanvasController.getLayers().reverse() 
             setLayers(layers.filter( ({type}: LayerDetail) => type === LayerDetailType.NORMAL))
             const coverIndex = layers.findIndex(({type}) => type === LayerDetailType.TEMP_COVER )
             const curLayer = layers[coverIndex + 1]
@@ -27,6 +27,17 @@ export default ({ pCanvasController }: LayerProps) => {
         pCanvasController.addListener('init', init)
        return () => pCanvasController.removeListener('init', init)
     },[])
+
+    useEffect(() => {
+        const onAddLayer = (layerDetail: LayerDetail) => {
+            if(layers){
+                layers.push(layerDetail)
+                setLayers([...layers])
+            }
+        }
+        pCanvasController.addListener('addLayer', onAddLayer)
+        return () => pCanvasController.removeListener('addLayer', addLayer)
+    })
 
     const addLayer =() => {
         pCanvasController.addLayer()
@@ -42,6 +53,7 @@ export default ({ pCanvasController }: LayerProps) => {
                         className={styles.pannelWrap}
                         itemLayout="horizontal"
                         dataSource={layers}
+                        rowKey="layerId"
                         renderItem={({name, visible, layerId}: LayerDetail) => (
                         <List.Item>
                             <List.Item.Meta
