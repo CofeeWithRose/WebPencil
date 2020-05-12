@@ -74,8 +74,11 @@ export class LayerDetail {
 
     ){}
 
-    static create({width, height}: WorkInfo, color?: RGBA, type?: LayerDetailType){
-        return new LayerDetail(createCanvas(width, height, color), type)
+    static create({width, height}: Pick<WorkInfo, 'width'| 'height'>, color?: RGBA, type?: LayerDetailType){
+        const canvas = createCanvas(width, height, color)
+        const layer = new LayerDetail(canvas, type)
+        canvas.setAttribute('layerId', layer.layerId)
+        return layer
     }
 
 }

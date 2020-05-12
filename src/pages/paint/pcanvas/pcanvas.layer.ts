@@ -1,19 +1,20 @@
 import { LayerDetail, LayerDetailType } from "../../../workStorage";
 
+export type WrapInfo = { 
+    wrap: HTMLElement,
+    width: number,
+    height: number,
+ }
 export class PcanvasLayers{
 
     protected tempcover:HTMLCanvasElement;
 
-    
-
-    constructor(public wrap: HTMLElement, public layers: LayerDetail[]){
-        
+    constructor(protected wrapInfo: WrapInfo, public layers: LayerDetail[]){
+        const { wrap } = wrapInfo
         let lastCanvas: HTMLCanvasElement|null = null
         layers.forEach( ({ canvas, layerId, type, visible }, order) => {
-            canvas.setAttribute('layerid', layerId)
             wrap.insertBefore(canvas, lastCanvas);
             lastCanvas = canvas
-            // canvas.style.zIndex = `${order * 10}`
             if(!visible){
                 canvas.className = 'unvisible'
             }
@@ -25,6 +26,14 @@ export class PcanvasLayers{
 
     getCanvas(){
         return this.tempcover
+    }
+
+    addLayer(){
+        const { wrap } = this.wrapInfo
+        const lastLayer = this.layers[this.layers.length-1]
+        const newLayer = LayerDetail.create(this.wrapInfo)
+        this.layers.push(newLayer)
+        wrap.insertBefore(newLayer.canvas, lastLayer.canvas)
     }
 
     getContext(){

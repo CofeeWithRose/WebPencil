@@ -35,7 +35,7 @@ class PCanvasControllerOrg {
         const { width, height } = workDetail.workInfo
         wrap.style.width = `${width}px`
         wrap.style.height = `${height}px`
-        this.layerManager = new PcanvasLayers(wrap, workDetail.contens.layers)
+        this.layerManager = new PcanvasLayers({wrap, width, height}, workDetail.contens.layers)
         this.context = new PCanvasContext(
             this.layerManager.getCanvas(),
             this.layerManager.getContext(),
@@ -52,6 +52,10 @@ class PCanvasControllerOrg {
 
     getLayers(){
         return this.layerManager.layers
+    }
+
+    addLayer(){
+        this.layerManager.addLayer()
     }
 
     setBrushWidth(width: number){
