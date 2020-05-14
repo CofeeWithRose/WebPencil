@@ -32,8 +32,9 @@ export class PcanvasLayers{
         const { wrap } = this.wrapInfo
         const lastLayer = this.layers[this.layers.length-1]
         const newLayer = LayerDetail.create(this.wrapInfo)
-        this.layers.push(newLayer)
         wrap.insertBefore(newLayer.canvas, lastLayer.canvas)
+        this.layers.push(newLayer)
+        // console.log('new layer:', newLayer.layerId)
         return newLayer
     }
 

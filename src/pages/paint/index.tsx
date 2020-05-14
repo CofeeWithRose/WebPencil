@@ -26,10 +26,12 @@ export default function Paint(){
 
 	return <BasicLayout 
 				contentClassName={style.layout} 
-				headNode={<TopToolBar pCanvasController={pCanvas}/>}
-				asideNode={<AsideToolBar 
-					pCanvasController={pCanvas}
-				/>}
+				headNode={<TopToolBar pCanvasController={pCanvas} />}
+				asideNode={
+					<AsideToolBar 
+						pCanvasController={pCanvas}
+					/>
+				}
 			>
 				{
 					workDetail &&
@@ -38,6 +40,5 @@ export default function Paint(){
 						initValue={workDetail}
 					/>
 				}
-			
 	</BasicLayout>
 }
