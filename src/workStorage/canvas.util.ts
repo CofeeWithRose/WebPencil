@@ -8,7 +8,6 @@ export const createCanvas = (width = 0, height =0, background?: RGBA) => {
     canvas.setAttribute('uuid', uniqueId('canvasId-'))
         const ctx = canvas.getContext('2d')
         if(ctx){
-            ctx.scale(devicePixelRatio, devicePixelRatio)
             if(background){
                 ctx.fillStyle = background.toRGBAString()
                 ctx.fillRect(0,0,width,height)
