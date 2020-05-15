@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[22],{30:function(o,c,n){o.exports={colorBar:"colorBar_ca9ba",colorPannelWrap:"colorPannelWrap_958de",colorPannel:"colorPannel_5cd66",circlePoint:"circlePoint_73c37",selectPoint:"selectPoint_9bef5",canvasCover:"canvasCover_d4f17"}}}]);

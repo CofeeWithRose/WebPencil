@@ -1,6 +1,7 @@
 const path = require('path')
 const theme = require('./theme')
 module.exports = {
+    filename: "manifest.webmanifest",
     start_url: './#/home',
     name: 'draw in everywhere',
     short_name: 'HappyDrawer',
