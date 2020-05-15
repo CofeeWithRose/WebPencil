@@ -71,6 +71,10 @@ class PCanvasControllerOrg {
     }
 
     setBrush(brush: Brush){
+        if(this.context.brush){
+            this.context.brush.destory()
+        }
+        brush.init()
         this.context.brush = brush
     }
 

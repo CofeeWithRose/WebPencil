@@ -39,6 +39,14 @@ export class Brush {
 
     lastVerPath: [ Vector2, Vector2]|null;
 
+    init(){
+
+    }
+
+    destory(){
+        
+    }
+
     onStart(status: BrushStatus, context: PCanvasContext) {
         const {curCanvasContext2D: ctx, color, brushWidth} = context
         this. lastBrush = status
