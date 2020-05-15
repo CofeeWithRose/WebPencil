@@ -12,6 +12,8 @@ interface Listeners{
     init: () => void
 
     addLayer: ( layerDetail: LayerDetail ) => void
+
+    contentChange: ( layerDetail: LayerDetail ) => void
 } 
 
 const pointEvent2BrunshStatus = ({offsetX: x, offsetY: y,tiltX,tiltY, pressure}: PointerEvent) => {
@@ -51,6 +53,7 @@ class PCanvasControllerOrg {
         this.color = color
     }
 
+
     getLayers(){
         return [...this.layerManager.layers]
     }
@@ -83,7 +86,7 @@ class PCanvasControllerOrg {
         this.context.brush.onStart(pointEvent2BrunshStatus(p),this.context)
     }
 
-    onPointerMove(pointerEvent: PointerEvent){
+    onPointerMove(pointerEvent: PointerEvent):void{
         let ponterEvents: PointerEvent[];
         if((pointerEvent as any).getCoalescedEvents){
             ponterEvents = (pointerEvent as any ).getCoalescedEvents()
@@ -96,8 +99,11 @@ class PCanvasControllerOrg {
         )
     }
 
-    onPointerUp(p: PointerEvent){
+    @emitAfter<Listeners>('contentChange', { paramsSource: 'return' })
+    onPointerUp(p: PointerEvent): LayerDetail{
         this.context.brush.onEnd(pointEvent2BrunshStatus(p),this.context)
+        this.layerManager.applyTempCanvas()
+        return this.layerManager.getFocusDetail()
     }
  }
 

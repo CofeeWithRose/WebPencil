@@ -15,8 +15,8 @@ export default ({pCanvasController}:AsideToolBarProps) => {
                 pCanvasController.setBrushWidth(10)
                 pCanvasController.setOpacity(1)
             }
-            pCanvasController.addListener('init', onInit)
-           return () => pCanvasController.removeListener('init', onInit)
+            pCanvasController.on('init', onInit)
+           return () => pCanvasController.off('init', onInit)
         }
         pCanvasController && pCanvasController
     },[])

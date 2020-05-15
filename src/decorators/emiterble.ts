@@ -10,11 +10,11 @@ export const emitterble = <C>() =>
     return class Emitterble extends constructor {
         protected eventEmitterDec = new EventEmitter()
 
-        public addListener<K extends keyof C>(eventName: K, listener: C[K]): void{
+        public on<K extends keyof C>(eventName: K, listener: C[K]): void{
             this.eventEmitterDec.addListener(eventName as string, listener as any)
         }
         
-        public removeListener<K extends keyof C>(eventName: K, listener: C[K]): void {
+        public off<K extends keyof C>(eventName: K, listener: C[K]): void {
             this.eventEmitterDec.removeListener(eventName as string, listener as any)
         }
         

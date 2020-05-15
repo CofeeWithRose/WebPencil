@@ -39,8 +39,8 @@ export default ({ pCanvasController }: LayerProps) => {
             setLayers(pre => [...pre,...layers])
             // console.log('init..')
         }
-        pCanvasController.addListener('init', init)
-       return () => pCanvasController.removeListener('init', init)
+        pCanvasController.on('init', init)
+       return () => pCanvasController.off('init', init)
     },[])
    
 
@@ -51,8 +51,19 @@ export default ({ pCanvasController }: LayerProps) => {
                 setLayers( preLayers =>  [layerDetail, ...preLayers])
             }
         }
-        pCanvasController.addListener('addLayer', onAddLayer)
-        return () => pCanvasController.removeListener('addLayer', onAddLayer)
+        pCanvasController.on('addLayer', onAddLayer)
+        return () => pCanvasController.off('addLayer', onAddLayer)
+    }, [])
+
+    useEffect(() => {
+        const onContentChange = (layerDetail:LayerDetail) => {
+            console.log('lklklkl')
+            if(layerDetail){
+                needCopIdRef.current.push(layerDetail)
+            }
+        }
+        pCanvasController.on('contentChange', onContentChange)
+        return () => pCanvasController.off('contentChange', onContentChange)
     }, [])
 
     const { copyCanvas } =  useCopyLayer(layers, needCopIdRef, canvasesRef)

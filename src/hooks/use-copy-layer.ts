@@ -1,5 +1,6 @@
 import { LayerDetail } from "../workStorage"
 import { useEffect, MutableRefObject } from "react"
+import { uniqBy } from 'lodash'
 
 export type CanvasMap = {[layerId:string]:HTMLCanvasElement}
 
@@ -10,12 +11,19 @@ export const mapCanvas = (srcCanvas:HTMLCanvasElement, targetCanvas: HTMLCanvasE
         targetCtx.drawImage(srcCanvas, 0, 0, srcCanvas.width, srcCanvas.height, 0, 0, targetCanvas.width, targetCanvas.height)
     }
 }
-const copCanvas = (needCopyLayers:LayerDetail[], cnvasMap: CanvasMap) => {
+const copCanvas = (   
+    needCopyRef: MutableRefObject<LayerDetail[]>, 
+    canvasesRef: MutableRefObject<CanvasMap>
+) => {
+    const needCopyLayers: LayerDetail[] =uniqBy(needCopyRef.current, ({layerId}:LayerDetail) => layerId )
+    const cnvasMap = canvasesRef.current
+    // console.log('c...', needCopyLayers)
+
     const needCopys = [...needCopyLayers]
     needCopys.forEach( la => {
       const srcCanvas = cnvasMap[la.layerId]
         if(srcCanvas){
-            // console.log('map..')
+            console.log('map..')
             mapCanvas(la.canvas, srcCanvas )
             const ind = needCopyLayers.findIndex( ({layerId}) => layerId === la.layerId )
             needCopyLayers.splice(ind, 1)
@@ -28,7 +36,7 @@ export default (
     needCopyRef: MutableRefObject<LayerDetail[]>, 
     canvasesRef: MutableRefObject<CanvasMap>
     ) => {
-    const copyCanvas = () => copCanvas(needCopyRef.current, canvasesRef.current)
+    const copyCanvas = () => copCanvas(needCopyRef, canvasesRef)
     useEffect(copyCanvas, [layers])
     return {
         copyCanvas
