@@ -3,19 +3,13 @@ import { Tooltip, List } from 'antd'
 import { PCanvasController } from '../../../pcanvas/pcnvas.controller'
 import { LayerDetail, LayerDetailType } from '../../../../../workStorage'
 import styles from './style.less'
+import useCopyLayer from '../../../../../hooks/use-copy-layer'
 
 export interface  LayerProps{
     pCanvasController: PCanvasController
 }
 
-export const mapCanvas = (srcCanvas:HTMLCanvasElement, targetCanvas: HTMLCanvasElement) => {
-    const targetCtx = targetCanvas.getContext('2d');
-    if(targetCtx){
-        targetCtx.clearRect(0,0,targetCanvas.width, targetCanvas.height)
-        // TODO TEST.
-        targetCtx.drawImage(srcCanvas, 0, 0, srcCanvas.width, srcCanvas.height, 0, 0, targetCanvas.width, targetCanvas.height)
-    }
-}
+
 export default ({ pCanvasController }: LayerProps) => {
 
     const [layers, setLayers] = useState<LayerDetail[]>([])
@@ -26,19 +20,7 @@ export default ({ pCanvasController }: LayerProps) => {
 
     const [ activeLayerId, setActiveLayerId ] = useState('')
 
-    const copCanvas = () => {
-        // console.log('cop...')
-        const needCopys = [...needCopIdRef.current]
-        needCopys.forEach( la => {
-          const srcCanvas = canvasesRef.current[la.layerId]
-            if(srcCanvas){
-                // console.log('map..')
-                mapCanvas(la.canvas, srcCanvas )
-                const ind = needCopIdRef.current.findIndex( ({layerId}) => layerId === la.layerId )
-                needCopIdRef.current.splice(ind, 1)
-            }
-        })
-    }
+   
 
     useEffect(() => {
         const init = () => {
@@ -66,17 +48,14 @@ export default ({ pCanvasController }: LayerProps) => {
         const onAddLayer = (layerDetail: LayerDetail) => {
             if(layerDetail.type === LayerDetailType.NORMAL ){
                 needCopIdRef.current.push(layerDetail)
-                setLayers( preLayers =>  [...preLayers , layerDetail])
-                // console.log('add')
+                setLayers( preLayers =>  [layerDetail, ...preLayers])
             }
         }
         pCanvasController.addListener('addLayer', onAddLayer)
         return () => pCanvasController.removeListener('addLayer', onAddLayer)
     }, [])
 
-  
-    useEffect(copCanvas, [layers])
-
+    const { copyCanvas } =  useCopyLayer(layers, needCopIdRef, canvasesRef)
    
 
     const addLayer =() => {
@@ -87,7 +66,7 @@ export default ({ pCanvasController }: LayerProps) => {
                 className={styles.layerPannel}
                 placement="bottomLeft"
                 trigger="click"
-                onVisibleChange={() =>setTimeout(copCanvas, 100)}
+                onVisibleChange={() =>setTimeout(copyCanvas, 100)}
                 title={
                     <List
                         header={<span onClick={addLayer}>+</span>}

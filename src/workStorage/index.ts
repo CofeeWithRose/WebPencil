@@ -1,6 +1,5 @@
 import { uniqueId } from 'lodash'
 import { RGBA } from '../pages/paint/top-tool-bar/tool-item/color-selector/rgba';
-import { Link } from '../util/link';
 import { createCanvas } from './canvas.util';
 
 // document.addEventListener("deviceready", onDeviceReady, false);
@@ -153,7 +152,7 @@ export default class WorkStorage {
     static async getWorkDetail(workId: string): Promise<WorkDetail>{
         //TODO  Implement.
         // const workInfo = new WorkInfo(2048, 2048);
-        return WorkDetail.createEmpty(823, 627, RGBA.WHITE)
+        return WorkDetail.createEmpty(screen.width, screen.height, RGBA.WHITE)
     }
 
     /**

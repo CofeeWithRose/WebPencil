@@ -31,9 +31,9 @@ export default ({pCanvasController}:AsideToolBarProps) => {
     return <div className={styles.asideTool} >
         <Divider/>
             <Slider
-                defaultValue={10} 
+                defaultValue={1} 
                 vertical 
-                min={10} max={200} step={2}
+                min={1} max={200} step={2}
                 onChange={onWidthChange} 
             />
             <Divider/>
