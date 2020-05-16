@@ -38,17 +38,16 @@ const defaultOptions:EmitAfterOptions = {
 /**
  * 函数后
  */
-export const emitAfter = <T>(eventName: keyof T, options?: EmitAfterOptions) => {
+export const emitAfter = function<T>(eventName: keyof T, options?: EmitAfterOptions){
+    
     options={ ...defaultOptions, ...options }
     const {shouldEmitParams, paramsSource} = options
-    return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-        const fun = target[propertyKey] 
-
+    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+        const fun = descriptor.value
         if(typeof fun !== 'function'){
             throw `the property [${propertyKey}] should be function!`
         }
-
-        descriptor.value =  function(...params: any[]){
+        descriptor.value =  function E(...params: any[]){
             const eventEmitter = this.eventEmitterDec as EventEmitter
             if(!eventEmitter){
                 throw `${this} should be decorate by  emitterble!`

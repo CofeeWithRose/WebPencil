@@ -25,8 +25,8 @@ const copCanvas = (
         if(srcCanvas){
             console.log('map..', la.layerId)
             mapCanvas(la.canvas, srcCanvas )
-            const ind = needCopyLayers.findIndex( ({layerId}) => layerId === la.layerId )
-            needCopyLayers.splice(ind, 1)
+            const ind = needCopyRef.current.findIndex( ({layerId}) => layerId === la.layerId )
+            needCopyRef.current.splice(ind, 1)
         }
     })
 }
@@ -38,8 +38,6 @@ export default (
     ) => {
     const copyCanvas = () => copCanvas(needCopyRef, canvasesRef)
     useEffect(copyCanvas, [layers])
-    return {
-        copyCanvas
-    }
+    return { copyCanvas }
 }
 

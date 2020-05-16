@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useRef, MutableRefObject, RefObject } from 'react'
-import { Tooltip, List } from 'antd'
+import { Tooltip, List, Drawer, Tag, Divider } from 'antd'
 import { PCanvasController } from '../../../pcanvas/pcnvas.controller'
 import { LayerDetail, LayerDetailType } from '../../../../../workStorage'
 import styles from './style.less'
@@ -16,10 +16,23 @@ export default ({ pCanvasController }: LayerProps) => {
 
     const canvasesRef = useRef<{[layerId: string]:HTMLCanvasElement}>({})
 
-    const needCopIdRef = useRef<LayerDetail[]>([])
+    const needUpdateRef = useRef<LayerDetail[]>([])
+
+    const { copyCanvas } =  useCopyLayer(layers, needUpdateRef, canvasesRef)
 
     const [ activeLayerId, setActiveLayerId ] = useState('')
 
+    const [ showLayerDraw, setShowLayerDraw ] = useState(false)
+
+   
+    const onClickLayer = () => {
+        setShowLayerDraw( show => {
+            if(!show){
+              setTimeout(copyCanvas)
+            }
+            return !show
+        })
+    }
    
 
     useEffect(() => {
@@ -30,7 +43,7 @@ export default ({ pCanvasController }: LayerProps) => {
                 const layer = allLayers[i]
                 if(layer.type === LayerDetailType.NORMAL){
                     layers.push(layer)
-                    needCopIdRef.current.push(layer)
+                    needUpdateRef.current.push(layer)
                 }
                 if(layer.type === LayerDetailType.TEMP_COVER){
                     setActiveLayerId(allLayers[i+1]?.layerId)
@@ -45,70 +58,83 @@ export default ({ pCanvasController }: LayerProps) => {
    
 
     useEffect(() => {
+
+        const onFocusLayer = (layerDetail: LayerDetail) => {
+            console.log('foxus...')
+            setActiveLayerId(layerDetail.layerId)
+        }
         const onAddLayer = (layerDetail: LayerDetail) => {
+            console.log('add')
             if(layerDetail.type === LayerDetailType.NORMAL ){
-                needCopIdRef.current.push(layerDetail)
+                needUpdateRef.current.push(layerDetail)
                 setLayers( preLayers =>  [layerDetail, ...preLayers])
             }
         }
-        pCanvasController.on('addLayer', onAddLayer)
-        return () => pCanvasController.off('addLayer', onAddLayer)
-    }, [])
-
-    useEffect(() => {
         const onContentChange = (layerDetail:LayerDetail) => {
-            console.log('lklklkl')
             if(layerDetail){
-                needCopIdRef.current.push(layerDetail)
+                needUpdateRef.current.push(layerDetail)
             }
         }
+        pCanvasController.on('addLayer', onAddLayer)
         pCanvasController.on('contentChange', onContentChange)
-        return () => pCanvasController.off('contentChange', onContentChange)
+        pCanvasController.on('focusLayer', onFocusLayer)
+        return () => {
+            pCanvasController.off('contentChange', onContentChange)
+            pCanvasController.off('addLayer', onAddLayer)
+            pCanvasController.off('focusLayer', onFocusLayer)
+        }
     }, [])
-
-    const { copyCanvas } =  useCopyLayer(layers, needCopIdRef, canvasesRef)
    
 
     const addLayer =() => {
         pCanvasController.addLayer()
     }
 
-    return <Tooltip 
-                className={styles.layerPannel}
-                placement="bottomLeft"
-                trigger="click"
-                onVisibleChange={() =>setTimeout(copyCanvas, 100)}
-                title={
+    const focusLayer = (layerDetail: LayerDetail) => {
+        pCanvasController.focusLayer(layerDetail)
+    }
+
+    const listItemLRender = ( layer: LayerDetail, index ) => {
+        const { visible, layerId, name } = layer
+        return <List.Item
+                className={layerId === activeLayerId? styles.active : ''}
+            >
+                <List.Item.Meta
+                    avatar={
+                    <canvas 
+                        onClick={() => focusLayer(layer)}
+                        key={layerId}
+                        id={layerId}
+                        ref={(ref:HTMLCanvasElement)=> {
+                            canvasesRef.current[layerId] = ref
+                        }} 
+                        className={styles.canvases}
+                        width="45" 
+                        height="45"
+                    >
+                    </canvas>}
+                    title={<span>{`layer ${layers.length - index}`}</span>}
+                    description={visible? "visible": "unvisible"}
+                    />
+                </List.Item>
+        }
+
+    return <div>
+                <Tag onClick={onClickLayer}>111</Tag>
+                <Drawer
+                    title={null}
+                    width={200}
+                    visible={showLayerDraw}
+                    onClose={onClickLayer}
+                >
                     <List
                         header={<span onClick={addLayer}>+</span>}
                         className={styles.pannelWrap}
                         itemLayout="horizontal"
                         dataSource={layers}
                         rowKey="layerId"
-                        renderItem={({name, visible, layerId}: LayerDetail ) => (
-                        <List.Item>
-                            <List.Item.Meta
-                            className={layerId === activeLayerId? styles.active : ''}
-                            avatar={
-                            <canvas 
-                                key={layerId}
-                                id={layerId}
-                                ref={(ref:HTMLCanvasElement)=> {
-                                    canvasesRef.current[layerId] = ref
-                                }} 
-                                className={styles.canvases}
-                                width="45" 
-                                height="45"
-                            >
-                            </canvas>}
-                            title={name}
-                            description={visible? "visible": "unvisible"}
-                            />
-                        </List.Item>
-                        )}
+                        renderItem={listItemLRender}
                     />
-                }
-            >
-                lll
-            </Tooltip>
+                </Drawer>
+            </div>
 }

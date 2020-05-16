@@ -6,13 +6,14 @@ export type WrapInfo = {
     width: number,
     height: number,
  }
+
 export class PcanvasLayers{
 
     protected tempLayer:LayerDetail;
 
     protected focusedLayerDetail: LayerDetail;
 
-    constructor(protected wrapInfo: WrapInfo, public layers: LayerDetail[]): void{
+    constructor(protected wrapInfo: WrapInfo, public layers: LayerDetail[]){
         const { wrap, cover } = wrapInfo
         let lastElement: HTMLElement= cover
         layers.forEach( (layer, index) => {
@@ -49,7 +50,7 @@ export class PcanvasLayers{
         return this.focusedLayerDetail
     }
 
-    protected focusLayer(layerDetail: LayerDetail){
+    focusLayer(layerDetail: LayerDetail){
         const nextLayer = this.layers[this.layers.indexOf(layerDetail) - 1]
         const nextCanvas = nextLayer&&nextLayer.canvas && nextLayer !== this.tempLayer ? nextLayer.canvas :  this.wrapInfo.cover
         this.wrapInfo.wrap.insertBefore(this.tempLayer.canvas, nextCanvas)
@@ -58,12 +59,9 @@ export class PcanvasLayers{
 
     addLayer(){
         const { wrap } = this.wrapInfo
-        const lastLayer = this.layers[0]
         const newLayer = LayerDetail.create(this.wrapInfo)
-        wrap.insertBefore(newLayer.canvas, lastLayer.canvas)
+        wrap.insertBefore(newLayer.canvas, this.wrapInfo.cover)
         this.layers.unshift(newLayer)
-        this.focusLayer(newLayer)
-        // console.log('new layer:', newLayer.layerId)
         return newLayer
     }
 

@@ -14,6 +14,8 @@ interface Listeners{
     addLayer: ( layerDetail: LayerDetail ) => void
 
     contentChange: ( layerDetail: LayerDetail ) => void
+
+    focusLayer: ( layerDetail: LayerDetail ) => void
 } 
 
 const pointEvent2BrunshStatus = ({offsetX: x, offsetY: y,tiltX,tiltY, pressure}: PointerEvent) => {
@@ -58,9 +60,17 @@ class PCanvasControllerOrg {
         return [...this.layerManager.layers]
     }
 
-    @emitAfter<Listeners>('addLayer', { paramsSource: 'return'} )
+    @emitAfter<Listeners>('focusLayer', { paramsSource: 'return' })
+    @emitAfter<Listeners>('addLayer', { paramsSource: 'return' } )
     addLayer(){
-        return this.layerManager.addLayer()
+        const layerDetail =  this.layerManager.addLayer()
+        this.layerManager.focusLayer(layerDetail)
+        return layerDetail
+    }
+
+    @emitAfter<Listeners>('focusLayer')
+    focusLayer(layerDetail: LayerDetail):void {
+        this.layerManager.focusLayer(layerDetail)
     }
 
     setBrushWidth(width: number){

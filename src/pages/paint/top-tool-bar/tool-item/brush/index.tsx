@@ -52,11 +52,6 @@ export class Brush {
         this. lastBrush = status
         this.isPainting = true
         ctx.fillStyle = color
-        // ctx.beginPath()
-        // ctx.moveTo(status.x, status.y)
-        // ctx.arc(status.x, status.y, brushWidth* status.pressure * 0.5, 0, Math.PI * 2);
-        // ctx.closePath()
-        // ctx.fill()
     }
 
     protected getVerticalPath = (point:Vector2, verticalVect:Vector2): [Vector2, Vector2] => {
@@ -97,8 +92,9 @@ export class Brush {
                 ctx.lineTo(p1.x, p1.y)
                 this.lastBrush = p
                 this.lastVerPath = [ 
-                    Vector2.subtract(p4, Vector2.multipy(norDirection, 0.1)), 
-                    Vector2.subtract(p3, Vector2.multipy(norDirection, 0.1)),  
+                    p4, p3
+                    // Vector2.subtract(p4, Vector2.multipy(norDirection, 0.1)), 
+                    // Vector2.subtract(p3, Vector2.multipy(norDirection, 0.1)),  
                 ]
             })
             ctx.closePath()
