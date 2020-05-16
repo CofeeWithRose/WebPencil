@@ -34,11 +34,11 @@ class PCanvasControllerOrg {
 
 
     @emitAfter<Listeners>('init', { shouldEmitParams: false })
-    init( {wrap}:  WrapInfo, workDetail: WorkDetail ){
+    init( {wrap, cover}:  WrapInfo, workDetail: WorkDetail ){
         const { width, height } = workDetail.workInfo
         wrap.style.width = `${width}px`
         wrap.style.height = `${height}px`
-        this.layerManager = new PcanvasLayers({wrap, width, height}, workDetail.contens.layers)
+        this.layerManager = new PcanvasLayers({cover, wrap, width, height}, workDetail.contens.layers)
         this.context = new PCanvasContext(
             this.layerManager.getCanvas(),
             this.layerManager.getContext(),

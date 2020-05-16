@@ -23,7 +23,7 @@ const copCanvas = (
     needCopys.forEach( la => {
       const srcCanvas = cnvasMap[la.layerId]
         if(srcCanvas){
-            console.log('map..')
+            console.log('map..', la.layerId)
             mapCanvas(la.canvas, srcCanvas )
             const ind = needCopyLayers.findIndex( ({layerId}) => layerId === la.layerId )
             needCopyLayers.splice(ind, 1)
