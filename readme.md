@@ -2,10 +2,12 @@
 
 访问地址： https://cofeewithrose.github.io/WebPencil/
 
-npm config set registry https://registry.npm.taobao.org
+首次启动步骤：
 
-npm i
+1、设置npm源：npm config set registry https://registry.npm.taobao.org
 
-npm start
+2、 安装 npm i
+
+3、 启动 npm start
 
 本地地址： http://localhost/WebPencil/
