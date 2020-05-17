@@ -7,13 +7,16 @@ export interface AsideToolBarProps {
     pCanvasController:PCanvasController
 }
 
+const defaultWidth = 1;
+
+const defaultOpacity = 1;
 export default ({pCanvasController}:AsideToolBarProps) => {
 
     useEffect(() => {
         if(pCanvasController){
             const onInit = () => {
-                pCanvasController.setBrushWidth(10)
-                pCanvasController.setOpacity(1)
+                pCanvasController.setBrushWidth(defaultWidth)
+                pCanvasController.setOpacity(defaultOpacity)
             }
             pCanvasController.on('init', onInit)
            return () => pCanvasController.off('init', onInit)
@@ -31,7 +34,7 @@ export default ({pCanvasController}:AsideToolBarProps) => {
     return <div className={styles.asideTool} >
         <Divider/>
             <Slider
-                defaultValue={1} 
+                defaultValue={defaultWidth} 
                 vertical 
                 min={1} max={200} step={2}
                 onChange={onWidthChange} 
@@ -39,7 +42,7 @@ export default ({pCanvasController}:AsideToolBarProps) => {
             <Divider/>
             <Slider 
                 vertical 
-                defaultValue={1}
+                defaultValue={defaultOpacity}
                 min={0} max={1} step={0.01}
                 onChange={onOpacityChange} 
             />

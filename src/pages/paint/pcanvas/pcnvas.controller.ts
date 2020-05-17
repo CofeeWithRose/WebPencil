@@ -49,10 +49,21 @@ class PCanvasControllerOrg {
         )
     }
 
+    setColor({r,g,b}: RGBA) {
+        const color = new RGBA(r,g,b, this.color.a)
+        this.setRGBA(color)
+    }
+
     @emitAfter<Listeners>('colorchange')
-    setColor(color: RGBA) {
+    setRGBA(color: RGBA):void{
         this.context.color = color.toRGBAString()
         this.color = color
+    }
+
+    setOpacity(opacity: number){
+        const {r,g,b} = this.color
+        const color = new RGBA(r, g, b, opacity)
+        this.setRGBA(color)
     }
 
 
@@ -77,11 +88,7 @@ class PCanvasControllerOrg {
         this.context.brushWidth = width
     }
 
-    setOpacity(opacity: number){
-        const {r,g,b} = this.color
-        const color = new RGBA(r, g, b, opacity)
-        this.setColor(color)
-    }
+  
 
     setBrush(brush: Brush){
         if(this.context.brush){
