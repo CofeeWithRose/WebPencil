@@ -19,6 +19,7 @@ interface Listeners{
 } 
 
 const pointEvent2BrunshStatus = ({offsetX: x, offsetY: y,tiltX,tiltY, pressure}: PointerEvent) => {
+    console.log('point...')
     pressure = pressure>1? pressure * 0.01 : pressure;
     return new BrushStatus(x, y,  pressure, tiltX, tiltY)
 }

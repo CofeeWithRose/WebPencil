@@ -1,6 +1,6 @@
-import VConcole from 'vconsole'
-new VConcole()
 
+import SConsole from './util/console'
+new SConsole()
 import React from 'react'
 import ReactDom from 'react-dom'
 import {App} from './app/index'
