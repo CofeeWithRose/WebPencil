@@ -60,11 +60,11 @@ export default ({ pCanvasController }: LayerProps) => {
     useEffect(() => {
 
         const onFocusLayer = (layerDetail: LayerDetail) => {
-            console.log('foxus...')
+            console.log('onFocusLayer...')
             setActiveLayerId(layerDetail.layerId)
         }
         const onAddLayer = (layerDetail: LayerDetail) => {
-            console.log('add')
+            console.log('onAddLayer')
             if(layerDetail.type === LayerDetailType.NORMAL ){
                 needUpdateRef.current.push(layerDetail)
                 setLayers( preLayers =>  [layerDetail, ...preLayers])

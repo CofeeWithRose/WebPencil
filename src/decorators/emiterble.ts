@@ -47,7 +47,7 @@ export const emitAfter = function<T>(eventName: keyof T, options?: EmitAfterOpti
         if(typeof fun !== 'function'){
             throw `the property [${propertyKey}] should be function!`
         }
-        descriptor.value =  function E(...params: any[]){
+        descriptor.value =  function (...params: any[]){
             const eventEmitter = this.eventEmitterDec as EventEmitter
             if(!eventEmitter){
                 throw `${this} should be decorate by  emitterble!`
