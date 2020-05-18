@@ -30,6 +30,6 @@ window.addEventListener('load', () => {
 		e.preventDefault()
 	},{passive:false,})
 })
-window.addEventListener('pageshow', () => {
-	console.log('pageshow')
+document.addEventListener('visibilitychange', (e) => {
+	console.log('focusin', document.visibilityState)
 })
