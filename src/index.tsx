@@ -27,6 +27,7 @@ if('serviceWorker' in navigator && process.env.BUILD_ENV !== 'development'){
 		})
 		workBox.register()
 	}
+
 	regist()
 	document.addEventListener('visibilitychange', (e) => {
 		if(document.visibilityState){
@@ -34,11 +35,31 @@ if('serviceWorker' in navigator && process.env.BUILD_ENV !== 'development'){
 			regist()
 		}
 	})
-	window.addEventListener('pageshow', () => {
-		console.log('show...')
-	})
+	let deferredPrompt: any;
+	window.addEventListener('beforeinstallprompt', (e) => {
+		// Prevent the mini-infobar from appearing on mobile
+		e.preventDefault();
+		// Stash the event so it can be triggered later.
+		deferredPrompt = e;
+		const installAction = () => {
+			deferredPrompt.prompt();
+			deferredPrompt.userChoice.then((choiceResult: any) => {
+				if (choiceResult.outcome === 'accepted') {
+				  console.log('User accepted the install prompt');
+				} else {
+				  console.log('User dismissed the install prompt');
+				}
+			  })
+		}
+		// Update UI notify the user they can install the PWA
+		message.info(<span onClick={installAction}>将网站显示在桌面</span>)
+	  });
+
 }
 window.addEventListener('load', () => {
+	/**
+	 * 禁用safari拖拽.
+	 */
 	document.addEventListener('touchmove', (e) => {
 		e.preventDefault()
 	},{passive:false,})
