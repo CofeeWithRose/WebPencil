@@ -1,3 +1,7 @@
+// const fs = require('fs')
+// const path = require('path')
+// process.env.PWD
+// console.log('pwd======>: ', process.env)
 module.exports = [
     
     {

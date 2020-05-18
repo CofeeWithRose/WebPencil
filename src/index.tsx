@@ -25,4 +25,8 @@ if('serviceWorker' in navigator && process.env.BUILD_ENV !== 'development'){
 	})
 	workBox.register()
 }
-
+window.addEventListener('load', () => {
+	document.addEventListener('touchmove', (e) => {
+		e.preventDefault()
+	},{passive:false,})
+})
