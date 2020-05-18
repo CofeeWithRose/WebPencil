@@ -30,3 +30,6 @@ window.addEventListener('load', () => {
 		e.preventDefault()
 	},{passive:false,})
 })
+window.addEventListener('pageshow', () => {
+	console.log('pageshow')
+})
