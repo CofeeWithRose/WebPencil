@@ -48,6 +48,7 @@ import { PCanvasContext } from './pcanvas.context'
   useEffect(() => {
     const cover = coverRef.current
     if(cover){
+
       const onPointerDown = (pointEvent: PointerEvent) => {
         if(pCanvasController){
           pCanvasController.onPointerDown(pointEvent)
@@ -63,15 +64,18 @@ import { PCanvasContext } from './pcanvas.context'
           pCanvasController.onPointerUp(pointEvent)
         }
       }
-      cover.addEventListener('pointerdown', onPointerDown)
-      cover.addEventListener('pointermove', onPointerMove)
-      cover.addEventListener('pointerup', onPointerUp)
+      cover.addEventListener('pointerdown', onPointerDown, {passive: false})
+      cover.addEventListener('pointermove', onPointerMove, {passive: false})
+      cover.addEventListener('pointerup', onPointerUp, {passive: false})
+    console.log('add....')
+
       return () => {
         cover.removeEventListener('pointerdown', onPointerDown)
         cover.removeEventListener('pointermove', onPointerMove)
         cover.removeEventListener('pointerup', onPointerUp)
       }
     }
+    
   }, [coverRef.current])
 
   

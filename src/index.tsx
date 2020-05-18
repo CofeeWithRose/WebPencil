@@ -19,17 +19,27 @@ ReactDom.render(
 );
 
 if('serviceWorker' in navigator && process.env.BUILD_ENV !== 'development'){
-	const workBox = new Workbox(`${process.env.PUBLIC_PATH||'./'}service-worker.js`);
-	workBox.addEventListener('activated', ({isUpdate}) => {
-		isUpdate && message.info(<span onClick={() => window.location.reload()}>应用已更新，点击加载.</span>, 0)
+	const regist = () => {
+		console.log('try resgist')
+		const workBox = new Workbox(`${process.env.PUBLIC_PATH||'./'}service-worker.js`);
+		workBox.addEventListener('activated', ({isUpdate}) => {
+			isUpdate && message.info(<span onClick={() => window.location.reload()}>应用已更新，点击加载.</span>, 0)
+		})
+		workBox.register()
+	}
+	regist()
+	document.addEventListener('visibilitychange', (e) => {
+		if(document.visibilityState){
+			console.log('focusin', document.visibilityState)
+			regist()
+		}
 	})
-	workBox.register()
+	window.addEventListener('pageshow', () => {
+		console.log('show...')
+	})
 }
 window.addEventListener('load', () => {
 	document.addEventListener('touchmove', (e) => {
 		e.preventDefault()
 	},{passive:false,})
-})
-document.addEventListener('visibilitychange', (e) => {
-	console.log('focusin', document.visibilityState)
 })
