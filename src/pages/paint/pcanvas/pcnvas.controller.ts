@@ -19,8 +19,9 @@ interface Listeners{
 } 
 
 const pointEvent2BrunshStatus = ({offsetX: x, offsetY: y,tiltX,tiltY, pressure}: PointerEvent) => {
-    console.log('point...')
-    pressure = pressure>1? pressure * 0.01 : pressure;
+    // console.log('pressure...', pressure)
+    pressure = pressure>1? pressure * 0.01 : 
+                pressure === 0? 1: pressure;
     return new BrushStatus(x, y,  pressure, tiltX, tiltY)
 }
 export type WrapInfo = { wrap: HTMLElement, cover: HTMLElement }
@@ -83,6 +84,10 @@ class PCanvasControllerOrg {
     @emitAfter<Listeners>('focusLayer')
     focusLayer(layerDetail: LayerDetail):void {
         this.layerManager.focusLayer(layerDetail)
+    }
+
+    removeLayer(layerDetail: LayerDetail){
+        this.layerManager.addLayer
     }
 
     setBrushWidth(width: number){

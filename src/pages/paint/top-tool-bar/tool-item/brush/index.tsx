@@ -116,7 +116,7 @@ export class Brush {
             ctx.lineTo(x,y)
         })
         ctx.closePath()
-        ctx.stroke()
+        ctx.fill()
         
         // this.pathList = [[left[left.length-1]], [right[right.length-1]]]
     }
