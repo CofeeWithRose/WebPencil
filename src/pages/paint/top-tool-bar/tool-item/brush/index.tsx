@@ -37,6 +37,7 @@ export class Brush {
 
     lastBrush: BrushStatus;
 
+    lastNormalizedDirection: Vector2;
     // protected lastVerPath: [ Vector2, Vector2]|null;
 
     protected pathList: [ Vector2[], Vector2[] ] = [[], []]
@@ -86,14 +87,22 @@ export class Brush {
                 halfWidth = pressure * brushWidth * 0.5
                 const verticalVector = Vector2.multipy(verticalDirection, halfWidth)
                 const [p1,p2] = this.getVerticalPath(p, verticalVector)
-                this.pathList[0].push(p1)
-                this.pathList[1].push(p2)
+
+                if(this.lastNormalizedDirection && Vector2.degree(Vector2.ZERO, this.lastNormalizedDirection, norDirection) > 180){
+                    this.pathList[1].push(p1)
+                    this.pathList[0].push(p2) 
+                }else{
+                    this.pathList[0].push(p1)
+                    this.pathList[1].push(p2)
+                }
+                
                 // ctx.moveTo(p1.x, p1.y)
                 // ctx.lineTo(p2.x, p2.y)
                 // ctx.lineTo(p3.x, p3.y)
                 // ctx.lineTo(p4.x, p4.y)
                 // ctx.lineTo(p1.x, p1.y)
                 this.lastBrush = p
+                this.lastNormalizedDirection = norDirection
                 // this.lastVerPath = [ p3, p4]
                
             })

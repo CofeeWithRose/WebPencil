@@ -17,6 +17,8 @@ export class Vector2 {
         public readonly y = 0,
     ){}
 
+    static ZERO = new Vector2()
+
     static normalize(v:Vector2){
         const scale = 1 / Vector2.magnitude(v)
         return new Vector2(v.x * scale, v.y * scale)
