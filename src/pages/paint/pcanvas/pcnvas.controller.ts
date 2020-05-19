@@ -16,6 +16,8 @@ interface Listeners{
     contentChange: ( layerDetail: LayerDetail ) => void
 
     focusLayer: ( layerDetail: LayerDetail ) => void
+
+    removeLayer: ( layerDetail: LayerDetail ) => void
 } 
 
 const pointEvent2BrunshStatus = ({offsetX: x, offsetY: y,tiltX,tiltY, pressure}: PointerEvent) => {
@@ -86,8 +88,13 @@ class PCanvasControllerOrg {
         this.layerManager.focusLayer(layerDetail)
     }
 
-    removeLayer(layerDetail: LayerDetail){
-        this.layerManager.addLayer
+    @emitAfter<Listeners>('removeLayer')
+    removeLayer(layerDetail: LayerDetail): number{
+        const { index, isFocus } =  this.layerManager.removeLayer(layerDetail)
+        if(isFocus){
+              this.focusLayer(this.layerManager.layers[0])
+        }
+        return index
     }
 
     setBrushWidth(width: number){

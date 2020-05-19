@@ -76,9 +76,11 @@ export class PcanvasLayers{
         const index = this.layers.indexOf(layerDetail)
         if(index > -1){
             this.wrapInfo.wrap.removeChild(layerDetail.canvas)
-            this.layers.splice(index, 0)
-            return { index, isFocus:  this.focusedLayerDetail === layerDetail}
+            this.layers.splice(index, 1)
+        }else{
+            console.warn('layerDetail has been removed')
         }
+        return { index, isFocus:  this.focusedLayerDetail === layerDetail}
     }
 
     getContext(){

@@ -70,6 +70,15 @@ export default ({ pCanvasController }: LayerProps) => {
                 setLayers( preLayers =>  [layerDetail, ...preLayers])
             }
         }
+        const onRemoveLayer = (layerDetail:LayerDetail) => {
+            setLayers( preLayers => {
+                const index = preLayers.indexOf(layerDetail)
+                if(index > -1){
+                    preLayers.splice(index, 1)
+                }
+                return [...preLayers]
+            })
+        }
         const onContentChange = (layerDetail:LayerDetail) => {
             if(layerDetail){
                 needUpdateRef.current.push(layerDetail)
@@ -78,10 +87,12 @@ export default ({ pCanvasController }: LayerProps) => {
         pCanvasController.on('addLayer', onAddLayer)
         pCanvasController.on('contentChange', onContentChange)
         pCanvasController.on('focusLayer', onFocusLayer)
+        pCanvasController.on('removeLayer', onRemoveLayer)
         return () => {
             pCanvasController.off('contentChange', onContentChange)
             pCanvasController.off('addLayer', onAddLayer)
             pCanvasController.off('focusLayer', onFocusLayer)
+            pCanvasController.off('removeLayer', onRemoveLayer)
         }
     }, [])
    
@@ -94,7 +105,11 @@ export default ({ pCanvasController }: LayerProps) => {
         pCanvasController.focusLayer(layerDetail)
     }
 
-    const listItemLRender = ( layer: LayerDetail, index ) => {
+    const onRemove = (layerDetail: LayerDetail) => {
+        pCanvasController.removeLayer(layerDetail)
+    }
+
+    const listItemLRender = ( layer: LayerDetail, index: number ) => {
         const { visible, layerId, name } = layer
         return <List.Item
                 className={layerId === activeLayerId? styles.active : ''}
@@ -114,7 +129,12 @@ export default ({ pCanvasController }: LayerProps) => {
                     >
                     </canvas>}
                     title={<span>{`layer ${layers.length - index}`}</span>}
-                    description={visible? "visible": "unvisible"}
+                    description={ 
+                        <div>
+                            <span>{visible? "visible": "unvisible"}</span>
+                            <span onClick={ () => onRemove(layer)} >remove</span> 
+                        </div>
+                    }
                     />
                 </List.Item>
         }
