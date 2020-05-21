@@ -1,14 +1,19 @@
 import { EventEmitter } from 'events'
+
+export interface AbstractEventMap {
+    [key: string]: (...params: any[]) => void
+}
+
 export default class PEventEmiter <EventMap> {
   
     protected eventEmitter = new EventEmitter()
 
-    addListener<T extends keyof EventMap>(event: T, listener: EventMap[T]){
+    on<T extends keyof EventMap>(event: T, listener: EventMap[T]){
     	const fun: (...p: any[]) => void = listener as any 
     	this.eventEmitter.addListener(event as string, fun )
     }
 
-    removeListener<T extends keyof EventMap>(event: T, listener: EventMap[T]){
+    off<T extends keyof EventMap>(event: T, listener: EventMap[T]){
     	const fun: (...p: any[]) => void = listener as any 
     	this.eventEmitter.removeListener(event as string, fun )
     }

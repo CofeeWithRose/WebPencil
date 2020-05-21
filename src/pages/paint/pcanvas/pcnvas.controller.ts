@@ -4,20 +4,21 @@ import { PCanvasContext } from "./pcanvas.context"
 import { Brush, BrushStatus } from "../top-tool-bar/tool-item/brush"
 import { WorkDetail, LayerDetail } from "../../../workStorage"
 import { PcanvasLayers } from "./pcanvas.layer"
+import PEventEmiter, { AbstractEventMap } from "../../../util/event"
 
-interface Listeners{
+interface Listeners {
 
     colorchange: (color:RGBA) => void
 
     init: () => void
 
-    addLayer: ( layerDetail: LayerDetail ) => void
+    addLayer: ( layerDetail: LayerDetail, index: number ) => void
 
     contentChange: ( layerDetail: LayerDetail ) => void
 
     focusLayer: ( layerDetail: LayerDetail ) => void
 
-    removeLayer: ( layerDetail: LayerDetail ) => void
+    removeLayer: ( layerDetail: LayerDetail, index: number ) => void
 } 
 
 const pointEvent2BrunshStatus = ({offsetX: x, offsetY: y,tiltX,tiltY, pressure}: PointerEvent) => {
@@ -30,7 +31,7 @@ export type WrapInfo = { wrap: HTMLElement, cover: HTMLElement }
 /**
  * 用于控制PCanvascontroller component 的对象.
  */
-class PCanvasControllerOrg {
+export class PCanvasController extends PEventEmiter<Listeners> {
 
     protected context: PCanvasContext;
 
@@ -39,7 +40,6 @@ class PCanvasControllerOrg {
     protected color = RGBA.BLACK;
 
 
-    @emitAfter<Listeners>('init', { shouldEmitParams: false })
     init( {wrap, cover}:  WrapInfo, workDetail: WorkDetail ){
         const { width, height } = workDetail.workInfo
         wrap.style.width = `${width}px`
@@ -51,6 +51,7 @@ class PCanvasControllerOrg {
             width,
             height,
         )
+        this.emit('init')
     }
 
     setColor({r,g,b}: RGBA) {
@@ -58,10 +59,10 @@ class PCanvasControllerOrg {
         this.setRGBA(color)
     }
 
-    @emitAfter<Listeners>('colorchange')
     setRGBA(color: RGBA):void{
         this.context.color = color.toRGBAString()
         this.color = color
+        this.emit('colorchange', color)
     }
 
     setOpacity(opacity: number){
@@ -75,26 +76,24 @@ class PCanvasControllerOrg {
         return [...this.layerManager.layers]
     }
 
-    @emitAfter<Listeners>('focusLayer', { paramsSource: 'return' })
-    @emitAfter<Listeners>('addLayer', { paramsSource: 'return' } )
     addLayer(){
         const layerDetail =  this.layerManager.addLayer()
         this.layerManager.focusLayer(layerDetail)
-        return layerDetail
+        this.emit('addLayer', layerDetail, this.layerManager.layers.indexOf(layerDetail))
+        this.emit('focusLayer', layerDetail)
     }
 
-    @emitAfter<Listeners>('focusLayer')
     focusLayer(layerDetail: LayerDetail):void {
         this.layerManager.focusLayer(layerDetail)
+        this.emit('focusLayer', layerDetail)
     }
 
-    @emitAfter<Listeners>('removeLayer')
-    removeLayer(layerDetail: LayerDetail): number{
+    removeLayer(layerDetail: LayerDetail): void{
         const { index, isFocus } =  this.layerManager.removeLayer(layerDetail)
         if(isFocus){
               this.focusLayer(this.layerManager.layers[0])
         }
-        return index
+        this.emit('removeLayer', layerDetail, index)
     }
 
     setBrushWidth(width: number){
@@ -129,13 +128,9 @@ class PCanvasControllerOrg {
         )
     }
 
-    @emitAfter<Listeners>('contentChange', { paramsSource: 'return' })
-    onPointerUp(p: PointerEvent): LayerDetail{
+    onPointerUp(p: PointerEvent): void{
         this.context.brush.onEnd(pointEvent2BrunshStatus(p),this.context)
         this.layerManager.applyTempCanvas()
-        return this.layerManager.getFocusDetail()
+        this.emit('contentChange', this.layerManager.getFocusDetail()) 
     }
  }
-
-export const PCanvasController =  emitterble<Listeners>()(PCanvasControllerOrg)
-export type PCanvasController = InstanceType<typeof PCanvasController>

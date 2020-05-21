@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { PCanvasController } from '../pcanvas'
 import { Slider, Divider } from 'antd'
 import styles from './index.less'
+import Record from './record'
 
 export interface AsideToolBarProps {
     pCanvasController:PCanvasController
@@ -46,6 +47,8 @@ export default ({pCanvasController}:AsideToolBarProps) => {
                 min={0} max={1} step={0.01}
                 onChange={onOpacityChange} 
             />
+            <Divider />
+            <Record pCanvasController={pCanvasController}/>
         <Divider/>
        
     </div>
