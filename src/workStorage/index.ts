@@ -43,17 +43,16 @@ export class WorkDetail {
         const workInfo = new WorkInfo(width,height,'new work', createCanvas(width,height, background))
         const layer = new  WorkLayers();
         WorkLayers.addLayer(layer, workInfo, LayerDetail.create(workInfo, RGBA.WHITE))
-        WorkLayers.addLayer(layer, workInfo, LayerDetail.create(workInfo, undefined, LayerDetailType.TEMP_COVER ))
         return new WorkDetail(workInfo,layer)
     }
 }
 
-export enum  LayerDetailType{
+// export enum  LayerDetailType{
 
-    TEMP_COVER= 1,
+//     TEMP_COVER= 1,
     
-    NORMAL = 2,
-}
+//     NORMAL = 2,
+// }
 
 /**
  * 作品的图层信息.
@@ -63,8 +62,6 @@ export class LayerDetail {
     constructor(
         public canvas: HTMLCanvasElement,
 
-        public type: LayerDetailType = LayerDetailType.NORMAL,
-
         public name = 'new layer',
 
         public visible: boolean = true,
@@ -73,9 +70,9 @@ export class LayerDetail {
 
     ){}
 
-    static create({width, height}: Pick<WorkInfo, 'width'| 'height'>, color?: RGBA, type?: LayerDetailType){
+    static create({width, height}: Pick<WorkInfo, 'width'| 'height'>, color?: RGBA){
         const canvas = createCanvas(width, height, color)
-        const layer = new LayerDetail(canvas, type)
+        const layer = new LayerDetail(canvas)
         canvas.setAttribute('layerId', layer.layerId)
         return layer
     }
@@ -94,7 +91,7 @@ export class WorkLayers {
     public layers: LayerDetail[] =[]
 
     
-    static addLayer(workLayers: WorkLayers, {width, height}: WorkInfo, layerDetail?: LayerDetail, ){
+    static addLayer(workLayers: WorkLayers, {width, height}: WorkInfo, layerDetail?: LayerDetail){
         if(!layerDetail){
             layerDetail = new LayerDetail(createCanvas(width, height))
         }

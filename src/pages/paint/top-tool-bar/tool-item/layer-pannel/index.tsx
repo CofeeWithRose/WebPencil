@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo, useRef, MutableRefObject, RefObject } from 'react'
 import { Tooltip, List, Drawer, Tag, Divider } from 'antd'
-import { PCanvasController } from '../../../pcanvas/pcnvas.controller'
-import { LayerDetail, LayerDetailType } from '../../../../../workStorage'
+import { PCanvasController, CanvasEventData } from '../../../pcanvas/pcnvas.controller'
+import { LayerDetail } from '../../../../../workStorage'
 import styles from './style.less'
 import useCopyLayer from '../../../../../hooks/use-copy-layer'
 
@@ -41,13 +41,8 @@ export default ({ pCanvasController }: LayerProps) => {
             let layers: LayerDetail[] =[]
             for(let i = allLayers.length -1 ; i >= 0 ; i--){
                 const layer = allLayers[i]
-                if(layer.type === LayerDetailType.NORMAL){
-                    layers.push(layer)
-                    needUpdateRef.current.push(layer)
-                }
-                if(layer.type === LayerDetailType.TEMP_COVER){
-                    setActiveLayerId(allLayers[i+1]?.layerId)
-                }
+                layers.push(layer)
+                needUpdateRef.current.push(layer)
             }
             setLayers(pre => [...pre,...layers])
             // console.log('init..')
@@ -59,18 +54,16 @@ export default ({ pCanvasController }: LayerProps) => {
 
     useEffect(() => {
 
-        const onFocusLayer = (layerDetail: LayerDetail) => {
+        const onFocusLayer = ( {data: {layerDetail}}: CanvasEventData['focusLayer']) => {
             console.log('onFocusLayer...')
             setActiveLayerId(layerDetail.layerId)
         }
-        const onAddLayer = (layerDetail: LayerDetail) => {
+        const onAddLayer = ( {data: {layerDetail}}: CanvasEventData['addLayer']) => {
             console.log('onAddLayer')
-            if(layerDetail.type === LayerDetailType.NORMAL ){
-                needUpdateRef.current.push(layerDetail)
-                setLayers( preLayers =>  [layerDetail, ...preLayers])
-            }
+            needUpdateRef.current.push(layerDetail)
+            setLayers( preLayers =>  [layerDetail, ...preLayers])
         }
-        const onRemoveLayer = (layerDetail:LayerDetail) => {
+        const onRemoveLayer = ( { data:{layerDetail}}:CanvasEventData['removeLayer']) => {
             setLayers( preLayers => {
                 const index = preLayers.indexOf(layerDetail)
                 if(index > -1){
@@ -79,7 +72,7 @@ export default ({ pCanvasController }: LayerProps) => {
                 return [...preLayers]
             })
         }
-        const onContentChange = (layerDetail:LayerDetail) => {
+        const onContentChange = ({ data:{ layerDetail}}:CanvasEventData['contentChange']) => {
             if(layerDetail){
                 needUpdateRef.current.push(layerDetail)
             }

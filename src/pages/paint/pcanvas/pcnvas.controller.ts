@@ -4,22 +4,35 @@ import { PCanvasContext } from "./pcanvas.context"
 import { Brush, BrushStatus } from "../top-tool-bar/tool-item/brush"
 import { WorkDetail, LayerDetail } from "../../../workStorage"
 import { PcanvasLayers } from "./pcanvas.layer"
-import PEventEmiter, { AbstractEventMap } from "../../../util/event"
+import PEventEmiter from "../../../util/event"
+import { copyCanvas } from "../../../workStorage/canvas.util"
 
-interface Listeners {
+type EvnetCreator = 'user'|'history'
 
-    colorchange: (color:RGBA) => void
+export class CanvasEvent<T> {
+    
+    constructor(
+       public data: T,
+       public creator:EvnetCreator='user',
+    ){}
 
-    init: () => void
+}
 
-    addLayer: ( layerDetail: LayerDetail, index: number ) => void
+export interface CanvasEventData {
 
-    contentChange: ( layerDetail: LayerDetail ) => void
+    init: CanvasEvent<null>
 
-    focusLayer: ( layerDetail: LayerDetail ) => void
+    colorchange: CanvasEvent<{color: RGBA}>
 
-    removeLayer: ( layerDetail: LayerDetail, index: number ) => void
-} 
+    addLayer: CanvasEvent<{layerDetail: LayerDetail, index: number}>
+
+    contentChange: CanvasEvent<{ layerDetail: LayerDetail, preContent: HTMLCanvasElement, index: number }>
+
+    focusLayer: CanvasEvent<{ layerDetail: LayerDetail }>
+
+    removeLayer: CanvasEvent<{ layerDetail: LayerDetail, index: number}>
+}
+
 
 const pointEvent2BrunshStatus = ({offsetX: x, offsetY: y,tiltX,tiltY, pressure}: PointerEvent) => {
     console.log('pressure...', pressure)
@@ -31,13 +44,14 @@ export type WrapInfo = { wrap: HTMLElement, cover: HTMLElement }
 /**
  * 用于控制PCanvascontroller component 的对象.
  */
-export class PCanvasController extends PEventEmiter<Listeners> {
+export class PCanvasController extends PEventEmiter<CanvasEventData> {
 
     protected context: PCanvasContext;
 
     protected layerManager:PcanvasLayers;
 
     protected color = RGBA.BLACK;
+
 
 
     init( {wrap, cover}:  WrapInfo, workDetail: WorkDetail ){
@@ -51,7 +65,8 @@ export class PCanvasController extends PEventEmiter<Listeners> {
             width,
             height,
         )
-        this.emit('init')
+        this.emit('init', new CanvasEvent(null) )
+        this.emit('focusLayer', new CanvasEvent({ layerDetail: this.layerManager.getFocusDetail() }))
     }
 
     setColor({r,g,b}: RGBA) {
@@ -62,7 +77,7 @@ export class PCanvasController extends PEventEmiter<Listeners> {
     setRGBA(color: RGBA):void{
         this.context.color = color.toRGBAString()
         this.color = color
-        this.emit('colorchange', color)
+        this.emit('colorchange', new CanvasEvent({color }))
     }
 
     setOpacity(opacity: number){
@@ -77,15 +92,42 @@ export class PCanvasController extends PEventEmiter<Listeners> {
     }
 
     addLayer(){
-        const layerDetail =  this.layerManager.addLayer()
+        const layerDetail =  this.layerManager.addLayer(LayerDetail.create(this.layerManager.wrapInfo))
         this.layerManager.focusLayer(layerDetail)
-        this.emit('addLayer', layerDetail, this.layerManager.layers.indexOf(layerDetail))
-        this.emit('focusLayer', layerDetail)
+        // this.emit('addLayer',  layerDetail, this.layerManager.layers.indexOf(layerDetail))
+        const index = this.layerManager.layers.indexOf(layerDetail)
+        this.emit('addLayer',  new CanvasEvent({ layerDetail, index }))
+        this.emit('focusLayer', new CanvasEvent({layerDetail}))
+
     }
+
+    addLayerContent(index: number, canvas:HTMLCanvasElement): LayerDetail {
+        const {width, height} = canvas
+        const layerDetail = LayerDetail.create({width, height})
+        const ctx = layerDetail.canvas.getContext('2d')
+        ctx?.drawImage(canvas, 0,0, width, height)
+        this.layerManager.addLayer(layerDetail, index)
+        return layerDetail
+
+    }
+
+    setLayerContent(index: number, canvas: HTMLCanvasElement) {
+        const layerDetail = this.layerManager.layers[index]
+        const oldCanvas = layerDetail.canvas
+        const {width, height} = oldCanvas
+        const preContent = copyCanvas(layerDetail.canvas)
+        const ctx = layerDetail.canvas.getContext('2d')
+        ctx?.clearRect(0,0, width, height)
+        ctx?.drawImage(canvas, width, height)
+        this.emit('contentChange', new CanvasEvent({ layerDetail, index, preContent }, 'history'))
+        return layerDetail
+    }
+
+
 
     focusLayer(layerDetail: LayerDetail):void {
         this.layerManager.focusLayer(layerDetail)
-        this.emit('focusLayer', layerDetail)
+        this.emit('focusLayer', new CanvasEvent({ layerDetail }))
     }
 
     removeLayer(layerDetail: LayerDetail): void{
@@ -93,13 +135,12 @@ export class PCanvasController extends PEventEmiter<Listeners> {
         if(isFocus){
               this.focusLayer(this.layerManager.layers[0])
         }
-        this.emit('removeLayer', layerDetail, index)
+        this.emit('removeLayer', new CanvasEvent({layerDetail, index}))
     }
 
     setBrushWidth(width: number){
         this.context.brushWidth = width
     }
-
   
 
     setBrush(brush: Brush){
@@ -130,7 +171,12 @@ export class PCanvasController extends PEventEmiter<Listeners> {
 
     onPointerUp(p: PointerEvent): void{
         this.context.brush.onEnd(pointEvent2BrunshStatus(p),this.context)
+        const curLayerDetail = this.layerManager.getFocusDetail()
+        const preContent = copyCanvas(curLayerDetail.canvas)
         this.layerManager.applyTempCanvas()
-        this.emit('contentChange', this.layerManager.getFocusDetail()) 
+        const index = this.layerManager.layers.indexOf(curLayerDetail)
+        this.emit('contentChange',new CanvasEvent({ layerDetail: curLayerDetail, preContent, index})) 
     }
+
+
  }

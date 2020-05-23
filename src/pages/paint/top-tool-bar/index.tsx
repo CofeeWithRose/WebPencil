@@ -18,8 +18,8 @@ export default ({ pCanvasController }:TopToolBarProps) => {
     }
     useEffect(() => {
         if(pCanvasController){
-            pCanvasController.on('init', changeColor)
-            return pCanvasController.off('init', changeColor)
+            pCanvasController.on('init', () =>  changeColor())
+            return pCanvasController.off('init', () =>  changeColor())
         }
     },[])
 

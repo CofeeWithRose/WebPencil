@@ -13,7 +13,8 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "moduleResolution": "Node",
-
+    "allowJs": false,
+    "strictFunctionTypes": true,
   },
   "exclude": ["bak"]
 }

@@ -3,7 +3,7 @@ import styles from './style.less'
 import { WorkDetail, LayerDetail } from '../../../workStorage'
 import useTransform from '../../../hooks/useTransform'
 import { RGBA } from '../top-tool-bar/tool-item/color-selector/rgba'
-import { PCanvasController, WrapInfo } from './pcnvas.controller'
+import { PCanvasController, WrapInfo, CanvasEventData, CanvasEvent } from './pcnvas.controller'
 import { PCanvasContext } from './pcanvas.context'
  
 
@@ -95,4 +95,6 @@ export {
   PCanvas,
   PCanvasController,
   usePCanvas,
+  CanvasEventData,
+  CanvasEvent,
 }

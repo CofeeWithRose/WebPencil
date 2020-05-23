@@ -1,10 +1,10 @@
 import { LayerDetail, LayerDetailType } from "../../../workStorage";
 
 export type WrapInfo = { 
-    wrap: HTMLElement,
-    cover: HTMLElement,
-    width: number,
-    height: number,
+  readonly  wrap: HTMLElement,
+  readonly  cover: HTMLElement,
+  readonly  width: number,
+  readonly  height: number,
  }
 
 export class PcanvasLayers{
@@ -19,23 +19,22 @@ export class PcanvasLayers{
      */
     protected focusedLayerDetail: LayerDetail;
 
-    constructor(protected wrapInfo: WrapInfo, public layers: LayerDetail[]){
+    constructor(public readonly wrapInfo: WrapInfo, public layers: LayerDetail[]){
         const { wrap, cover } = wrapInfo
         let lastElement: HTMLElement= cover
         layers.forEach( (layer, index) => {
-            const { canvas, layerId, type, visible } = layer
+            const { canvas, layerId, visible } = layer
             wrap.insertBefore(canvas, lastElement);
-            console.log('layerId:', layerId)
+            // console.log('layerId:', layerId)
             lastElement = canvas
             if(!visible){
                 canvas.className = 'unvisible'
             }
-            if(type === LayerDetailType.TEMP_COVER){
-                this.tempLayer = layer
-                console.log('temp: ', layerId)
-                this.focusedLayerDetail = layers[index+1]
-            }
+            
         })
+        this.tempLayer = LayerDetail.create(wrapInfo)
+        wrap.insertBefore( this.tempLayer.canvas, cover);
+        this.focusedLayerDetail = layers[0]
     }
 
     getCanvas():HTMLCanvasElement{
@@ -64,13 +63,15 @@ export class PcanvasLayers{
         // TOFIX: update templyer in layers.
     }
 
-    addLayer(){
+    addLayer(newLayer: LayerDetail, index = 0){
         const { wrap } = this.wrapInfo
-        const newLayer = LayerDetail.create(this.wrapInfo)
-        wrap.insertBefore(newLayer.canvas, this.wrapInfo.cover)
-        this.layers.unshift(newLayer)
+        const oldLayerDetail = this.layers[index]
+        const ele = oldLayerDetail&&oldLayerDetail.canvas || this.wrapInfo.cover
+        wrap.insertBefore(newLayer.canvas, ele)
+        this.layers.splice(index, 0, newLayer)
         return newLayer
     }
+
 
     removeLayer(layerDetail: LayerDetail){
         const index = this.layers.indexOf(layerDetail)
