@@ -75,6 +75,7 @@ export default ({ pCanvasController }: LayerProps) => {
         const onContentChange = ({ data:{ layerDetail}, creator}:CanvasEventData['contentChange']) => {
             if(layerDetail){
                 needUpdateRef.current.push(layerDetail)
+                setTimeout(copyCanvas)
                 if(creator === 'user'){
                     setShowLayerDraw( false)
                 }
