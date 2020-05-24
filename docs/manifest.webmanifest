@@ -31,7 +31,7 @@
       "type": "image/vnd.microsoft.icon"
     }
   ],
-  "name": "draw in everywhere",
+  "name": "drawing",
   "short_name": "HappyDrawer",
   "orientation": "landscape-primary",
   "display": "fullscreen",
