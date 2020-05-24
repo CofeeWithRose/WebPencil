@@ -66,9 +66,10 @@ export const recordListReducer: Reducer<RecorderInfo, RecorderAction> = (
 ) => {
     switch(type) {
         case 'add':
-            if( cursor++ > recorderList.length-1){
+            if( cursor < recorderList.length-1){
                 recorderList.splice(Math.max(cursor, 0))
             }
+            cursor++
             payload&&recorderList.push(payload)
             break;
         case 'redo':
