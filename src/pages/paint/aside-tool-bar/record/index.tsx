@@ -44,15 +44,16 @@ const getRevertRecor =<T extends keyof RecordData>( {type, data} : RecordInfo<T>
 
 const handleOperate = <T extends keyof RecordData>( record : RecordInfo<T>, pCanvas: PCanvasController) => {
     const { type, data } = record
+    console.log('handleOperate: ', type)
     if(type === 'add'){
         const {index, canvas} = data as RecordData['add']
-        const layerDetail = pCanvas.addLayerContent( index, canvas )
+        const layerDetail = pCanvas.addLayerContent( index, canvas, 'history' )
         pCanvas.focusLayer(layerDetail)
         return
     }
     if(type === 'modify'){
         const {index, from, to} = data as RecordData['modify']
-        const layerDetail = pCanvas.setLayerContent( index, to )
+        const layerDetail = pCanvas.setLayerContent( index, to, 'history' )
         pCanvas.focusLayer(layerDetail)
         return
     }

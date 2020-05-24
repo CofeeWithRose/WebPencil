@@ -94,24 +94,24 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
     addLayer(){
         const layerDetail =  this.layerManager.addLayer(LayerDetail.create(this.layerManager.wrapInfo))
         this.layerManager.focusLayer(layerDetail)
-        // this.emit('addLayer',  layerDetail, this.layerManager.layers.indexOf(layerDetail))
         const index = this.layerManager.layers.indexOf(layerDetail)
         this.emit('addLayer',  new CanvasEvent({ layerDetail, index }))
         this.emit('focusLayer', new CanvasEvent({layerDetail}))
 
     }
 
-    addLayerContent(index: number, canvas:HTMLCanvasElement): LayerDetail {
+    addLayerContent(index: number, canvas:HTMLCanvasElement, creator: EvnetCreator='user'): LayerDetail {
         const {width, height} = canvas
         const layerDetail = LayerDetail.create({width, height})
         const ctx = layerDetail.canvas.getContext('2d')
         ctx?.drawImage(canvas, 0,0, width, height)
         this.layerManager.addLayer(layerDetail, index)
+        this.emit('addLayer', new CanvasEvent({layerDetail, index}, creator))
         return layerDetail
 
     }
 
-    setLayerContent(index: number, canvas: HTMLCanvasElement) {
+    setLayerContent(index: number, canvas: HTMLCanvasElement, creator: EvnetCreator = 'user') {
         const layerDetail = this.layerManager.layers[index]
         const oldCanvas = layerDetail.canvas
         const {width, height} = oldCanvas
@@ -120,7 +120,7 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
         const ctx = layerDetail.canvas.getContext('2d')
         ctx?.clearRect(0,0, width, height)
         ctx?.drawImage(canvas, 0,0,width, height)
-        this.emit('contentChange', new CanvasEvent({ layerDetail, index, preContent }, 'history'))
+        this.emit('contentChange', new CanvasEvent({ layerDetail, index, preContent }, creator))
         return layerDetail
     }
 

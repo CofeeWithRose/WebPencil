@@ -25,12 +25,10 @@ export class PcanvasLayers{
         layers.forEach( (layer, index) => {
             const { canvas, layerId, visible } = layer
             wrap.insertBefore(canvas, lastElement);
-            // console.log('layerId:', layerId)
             lastElement = canvas
             if(!visible){
                 canvas.className = 'unvisible'
             }
-            
         })
         this.tempLayer = LayerDetail.create(wrapInfo)
         wrap.insertBefore( this.tempLayer.canvas, cover);
@@ -66,7 +64,7 @@ export class PcanvasLayers{
 
     addLayer(newLayer: LayerDetail, index = 0){
         const { wrap } = this.wrapInfo
-        const oldLayerDetail = this.layers[index]
+        const oldLayerDetail = this.layers[index-1]
         const ele = oldLayerDetail&&oldLayerDetail.canvas || this.wrapInfo.cover
         wrap.insertBefore(newLayer.canvas, ele)
         this.layers.splice(index, 0, newLayer)
