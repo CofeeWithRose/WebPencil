@@ -34,7 +34,7 @@ export interface CanvasEventData {
 
 
 const pointEvent2BrunshStatus = ({offsetX: x, offsetY: y,tiltX,tiltY, pressure}: PointerEvent) => {
-    console.log('pressure...', pressure)
+    // console.log('pressure...', pressure)
     pressure = pressure>1? pressure * 0.01 : 
                 pressure === 0? 1: pressure;
     return new BrushStatus(x, y,  pressure, tiltX, tiltY)
@@ -66,7 +66,7 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
         )
         this.emit('init', new CanvasEvent(null) )
         this.emit('focusLayer', new CanvasEvent({ layerDetail: this.layerManager.getFocusDetail() }))
-        logCanvasData('init: ', this.layerManager.layers[0].canvas)
+        // logCanvasData('init: ', this.layerManager.layers[0].canvas)
     }
 
     setColor({r,g,b}: RGBA) {
@@ -115,7 +115,6 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
         const layerDetail = this.layerManager.layers[index]
         const oldCanvas = layerDetail.canvas
         const {width, height} = oldCanvas
-        console.log('wh : ',width, height, layerDetail.layerId)
         const preContent = copyCanvas(layerDetail.canvas)
         const ctx = layerDetail.canvas.getContext('2d')
         ctx?.clearRect(0,0, width, height)
@@ -183,7 +182,6 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
         const preContent = copyCanvas(curLayerDetail.canvas)
         this.layerManager.applyTempCanvas()
         const index = this.layerManager.layers.indexOf(curLayerDetail)
-        logCanvasData('emit: ', preContent)
         this.emit('contentChange', new CanvasEvent({ layerDetail: curLayerDetail, preContent, index})) 
     }
 

@@ -68,14 +68,16 @@ const handleOperate = <T extends keyof RecordData>( record : RecordInfo<T>, pCan
 type RecorderInfo ={cursor: number, recorderList: RecordInfo<keyof RecordData>[]}
 type RecorderAction = { type: 'add'|'redo'|'undo', payload?: RecordInfo<keyof RecordData>, pCanvasController?: PCanvasController }
 
-const recordListReducer: Reducer<RecorderInfo, RecorderAction> = ({cursor, recorderList}, {type, payload, pCanvasController}) => {
+const recordListReducer: Reducer<RecorderInfo, RecorderAction> = (
+    {cursor, recorderList}, 
+    {type, payload, pCanvasController}
+) => {
     switch(type) {
         case 'add':
-                if( cursor > recorderList.length-1){
-                    recorderList.splice(Math.max(cursor, 0))
-                }
-                payload&&recorderList.push(payload)
-                cursor++
+            if( cursor++ > recorderList.length-1){
+                recorderList.splice(Math.max(cursor, 0))
+            }
+            payload&&recorderList.push(payload)
             break;
         case 'redo':
             if(++cursor<= recorderList.length -1 ){
@@ -86,7 +88,6 @@ const recordListReducer: Reducer<RecorderInfo, RecorderAction> = ({cursor, recor
         case 'undo': 
             if(cursor > -1){
                const record = recorderList[cursor]
-               console.log('record: ', record)
                pCanvasController&& handleOperate(getRevertRecor(record), pCanvasController )
             }
             cursor--
@@ -107,19 +108,6 @@ export default ({ pCanvasController }: RecordProps) => {
 
     const canRedo = cursor < recorderList.length -1
 
-    // console.log('recorderCursor: ', recorderCursor, 'length: ',recorderList.length)
-
-    // const addCursor = () => {
-       
-    //     setRecorderCursor(recorderCursor => {
-    //         console.log(recorderList.length-1, recorderCursor )
-    //         if(recorderList.length-1 > recorderCursor ){
-    //             recorderList.splice( Math.min(recorderCursor, 0))
-    //         }
-    //         return recorderCursor +1
-    //     })
-    // }
-
     useEffect(() => {
 
         const onAddLayer = (event: CanvasEventData['addLayer'] ) => {
@@ -127,7 +115,7 @@ export default ({ pCanvasController }: RecordProps) => {
             if(creator === 'history') return
             dispatchRecord({
                 type: 'add',
-                payload: new RecordInfo('add', {index, canvas:copyCanvas(canvas) })
+                payload: new RecordInfo('add', {index, canvas: copyCanvas(canvas) })
             })
         }
 
@@ -136,7 +124,7 @@ export default ({ pCanvasController }: RecordProps) => {
             if(creator === 'history') return
             dispatchRecord({
                 type: 'add',
-                payload:new RecordInfo('modify', {index, from: preContent,  to:copyCanvas(canvas) })
+                payload:new RecordInfo('modify', {index, from: preContent,  to: copyCanvas(canvas) })
             })
         }
 
