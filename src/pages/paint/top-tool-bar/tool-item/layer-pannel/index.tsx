@@ -75,6 +75,7 @@ export default ({ pCanvasController }: LayerProps) => {
         const onContentChange = ({ data:{ layerDetail}}:CanvasEventData['contentChange']) => {
             if(layerDetail){
                 needUpdateRef.current.push(layerDetail)
+                setLayers( preLayers =>  [...preLayers])
             }
         }
         pCanvasController.on('addLayer', onAddLayer)
@@ -139,6 +140,7 @@ export default ({ pCanvasController }: LayerProps) => {
                     width={200}
                     visible={showLayerDraw}
                     onClose={showLayerPannel}
+                    mask={false}
                 >
                     <List
                         header={<span onPointerUp={addLayer}>+</span>}
