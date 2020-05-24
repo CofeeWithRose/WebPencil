@@ -3,7 +3,7 @@ const theme = require('./theme')
 module.exports = {
     filename: "manifest.webmanifest",
     start_url: './#/home',
-    name: 'draw in everywhere',
+    name: 'drawing',
     short_name: 'HappyDrawer',
     description: 'Pick up your pencil anywhere at any time to be a happy drawer!',
     background_color:theme['primary-color'],

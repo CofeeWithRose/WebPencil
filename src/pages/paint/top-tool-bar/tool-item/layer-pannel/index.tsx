@@ -72,10 +72,12 @@ export default ({ pCanvasController }: LayerProps) => {
                 return [...preLayers]
             })
         }
-        const onContentChange = ({ data:{ layerDetail}}:CanvasEventData['contentChange']) => {
+        const onContentChange = ({ data:{ layerDetail}, creator}:CanvasEventData['contentChange']) => {
             if(layerDetail){
                 needUpdateRef.current.push(layerDetail)
-                setLayers( preLayers =>  [...preLayers])
+                if(creator === 'user'){
+                    setShowLayerDraw( false)
+                }
             }
         }
         pCanvasController.on('addLayer', onAddLayer)
@@ -143,7 +145,7 @@ export default ({ pCanvasController }: LayerProps) => {
                     mask={false}
                 >
                     <List
-                        header={<span onPointerUp={addLayer}>+</span>}
+                        header={<span onPointerUp={addLayer}>addlayer +</span>}
                         className={styles.pannelWrap}
                         itemLayout="horizontal"
                         dataSource={layers}
