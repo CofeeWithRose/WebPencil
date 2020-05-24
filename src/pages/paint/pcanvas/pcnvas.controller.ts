@@ -1,5 +1,4 @@
 import { RGBA } from "../top-tool-bar/tool-item/color-selector/rgba"
-import { emitterble, emitAfter } from "../../../decorators/emiterble"
 import { PCanvasContext } from "./pcanvas.context"
 import { Brush, BrushStatus } from "../top-tool-bar/tool-item/brush"
 import { WorkDetail, LayerDetail } from "../../../workStorage"
@@ -67,6 +66,7 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
         )
         this.emit('init', new CanvasEvent(null) )
         this.emit('focusLayer', new CanvasEvent({ layerDetail: this.layerManager.getFocusDetail() }))
+        logCanvasData('init: ', this.layerManager.layers[0].canvas)
     }
 
     setColor({r,g,b}: RGBA) {
@@ -115,10 +115,11 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
         const layerDetail = this.layerManager.layers[index]
         const oldCanvas = layerDetail.canvas
         const {width, height} = oldCanvas
+        console.log('wh : ',width, height, layerDetail.layerId)
         const preContent = copyCanvas(layerDetail.canvas)
         const ctx = layerDetail.canvas.getContext('2d')
         ctx?.clearRect(0,0, width, height)
-        ctx?.drawImage(canvas, width, height)
+        ctx?.drawImage(canvas, 0,0,width, height)
         this.emit('contentChange', new CanvasEvent({ layerDetail, index, preContent }, 'history'))
         return layerDetail
     }
@@ -130,12 +131,19 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
         this.emit('focusLayer', new CanvasEvent({ layerDetail }))
     }
 
-    removeLayer(layerDetail: LayerDetail): void{
+    removeLayer(layerDetail: LayerDetail, creator: EvnetCreator='user'): void{
         const { index, isFocus } =  this.layerManager.removeLayer(layerDetail)
+        this.emit('removeLayer', new CanvasEvent({layerDetail, index}, creator))
         if(isFocus){
-              this.focusLayer(this.layerManager.layers[0])
-        }
-        this.emit('removeLayer', new CanvasEvent({layerDetail, index}))
+            const layerDetail = this.layerManager.layers[0]
+            this.focusLayer(layerDetail)
+            this.emit('focusLayer', new CanvasEvent({layerDetail}, creator))
+      }
+    }
+
+    removeLayerByIndex(index: number, creator: EvnetCreator='user'): void {
+        const layerDetail = this.layerManager.layers[index]
+        this.removeLayer(layerDetail, creator)
     }
 
     setBrushWidth(width: number){
@@ -175,8 +183,13 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
         const preContent = copyCanvas(curLayerDetail.canvas)
         this.layerManager.applyTempCanvas()
         const index = this.layerManager.layers.indexOf(curLayerDetail)
-        this.emit('contentChange',new CanvasEvent({ layerDetail: curLayerDetail, preContent, index})) 
+        logCanvasData('emit: ', preContent)
+        this.emit('contentChange', new CanvasEvent({ layerDetail: curLayerDetail, preContent, index})) 
     }
 
 
+ }
+function logCanvasData(rep='', canvas: HTMLCanvasElement) {
+    const ctx = canvas.getContext('2d')
+   console.log(rep, ctx?.getImageData(0,0,1,1).data) 
  }

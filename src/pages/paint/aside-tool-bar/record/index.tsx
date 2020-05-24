@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState, useRef} from 'react'
+import React, {Fragment, useEffect, useState, useRef, useReducer, Reducer} from 'react'
 import { Divider } from 'antd'
 import { LayerDetail } from '../../../../workStorage'
 import { PCanvasController, CanvasEventData } from '../../pcanvas'
@@ -35,14 +35,15 @@ const getRevertRecor =<T extends keyof RecordData>( {type, data} : RecordInfo<T>
     if(type === 'modify'){
         const { index, from, to } = data as RecordData['modify']
         return new RecordInfo('modify', {index, from: to, to: from })
-    }else{
-        // remove.
-        const { index, canvas } = data as RecordData['remove']
-        return new RecordInfo('add', {index, canvas})
     }
+
+    // remove.
+    const { index, canvas } = data as RecordData['remove']
+    return new RecordInfo('add', {index, canvas})
 }
 
-const handleOperate = <T extends keyof RecordData>( { type, data } : RecordInfo<T>, pCanvas: PCanvasController) => {
+const handleOperate = <T extends keyof RecordData>( record : RecordInfo<T>, pCanvas: PCanvasController) => {
+    const { type, data } = record
     if(type === 'add'){
         const {index, canvas} = data as RecordData['add']
         const layerDetail = pCanvas.addLayerContent( index, canvas )
@@ -55,53 +56,98 @@ const handleOperate = <T extends keyof RecordData>( { type, data } : RecordInfo<
         pCanvas.focusLayer(layerDetail)
         return
     }
+    if(type === 'remove'){
+        const {index } = data as RecordData['remove']
+        const layerDetail = pCanvas.removeLayerByIndex(index, 'history')
+        return
+    }
 
+}
+
+type RecorderInfo ={cursor: number, recorderList: RecordInfo<keyof RecordData>[]}
+type RecorderAction = { type: 'add'|'redo'|'undo', payload?: RecordInfo<keyof RecordData>, pCanvasController?: PCanvasController }
+
+const recordListReducer: Reducer<RecorderInfo, RecorderAction> = ({cursor, recorderList}, {type, payload, pCanvasController}) => {
+    switch(type) {
+        case 'add':
+                if( cursor > recorderList.length-1){
+                    recorderList.splice(Math.max(cursor, 0))
+                }
+                payload&&recorderList.push(payload)
+                cursor++
+            break;
+        case 'redo':
+            if(++cursor<= recorderList.length -1 ){
+                const operate = recorderList[cursor]
+                pCanvasController&& handleOperate( operate, pCanvasController )
+            }
+            break;
+        case 'undo': 
+            if(cursor > -1){
+               const record = recorderList[cursor]
+               console.log('record: ', record)
+               pCanvasController&& handleOperate(getRevertRecor(record), pCanvasController )
+            }
+            cursor--
+            break
+
+    }
+    return { 
+        cursor: Math.max(Math.min(cursor, recorderList.length -1), -1), 
+        recorderList 
+    }
 }
 
 export default ({ pCanvasController }: RecordProps) => {
 
-    const [ recorderCursor, setRecorderCursor ] = useState(-1)
+    const [ {cursor, recorderList}, dispatchRecord ] = useReducer(recordListReducer, { cursor: -1, recorderList: []})
 
-    const recorderRef = useRef<RecordInfo<keyof RecordData>[]>([])
+    const canUndo = cursor >= 0
 
-    const canUndo = recorderCursor >= 0
+    const canRedo = cursor < recorderList.length -1
 
-    const canRedo = recorderCursor < recorderRef.current.length -1
-    console.log(recorderCursor, recorderRef.current.length)
+    // console.log('recorderCursor: ', recorderCursor, 'length: ',recorderList.length)
 
-    const addCursor = () => {
+    // const addCursor = () => {
        
-        setRecorderCursor(recorderCursor => {
-            if(recorderRef.current.length-1 > recorderCursor ){
-                recorderRef.current.splice( Math.min(recorderCursor, 0))
-            }
-            return recorderCursor +1
-        })
-    }
+    //     setRecorderCursor(recorderCursor => {
+    //         console.log(recorderList.length-1, recorderCursor )
+    //         if(recorderList.length-1 > recorderCursor ){
+    //             recorderList.splice( Math.min(recorderCursor, 0))
+    //         }
+    //         return recorderCursor +1
+    //     })
+    // }
 
     useEffect(() => {
+
         const onAddLayer = (event: CanvasEventData['addLayer'] ) => {
             const {data: {layerDetail: {canvas}, index}, creator} = event
             if(creator === 'history') return
-            // TODO
-            addCursor()
-            recorderRef.current.push(new RecordInfo('add', {index, canvas:copyCanvas(canvas) }))
-
+            dispatchRecord({
+                type: 'add',
+                payload: new RecordInfo('add', {index, canvas:copyCanvas(canvas) })
+            })
         }
+
         const onContentChange= (event: CanvasEventData['contentChange']) => {
             const {data: { layerDetail:  {canvas}, preContent, index}, creator  } = event
             if(creator === 'history') return
-            // TODO
-            addCursor() 
-            recorderRef.current.push(new RecordInfo('modify', {index, from: preContent,  to:copyCanvas(canvas) }))
+            dispatchRecord({
+                type: 'add',
+                payload:new RecordInfo('modify', {index, from: preContent,  to:copyCanvas(canvas) })
+            })
         }
+
         const onRemoveLayer = (event: CanvasEventData['removeLayer']) => {
             const {  data: {layerDetail:{canvas}, index}, creator } = event
             if(creator === 'history') return
-            // TODO
-            addCursor()
-            recorderRef.current.push(new RecordInfo('remove', {index, canvas: copyCanvas(canvas)}))
+            dispatchRecord({
+                type: 'add',
+                payload: new RecordInfo('remove', {index, canvas: copyCanvas(canvas)})
+            })
         }
+
         pCanvasController.on('addLayer', onAddLayer)
         pCanvasController.on('contentChange', onContentChange)
         pCanvasController.on('removeLayer', onRemoveLayer)
@@ -113,21 +159,12 @@ export default ({ pCanvasController }: RecordProps) => {
     },[])
 
     const redo = () => {
-        // TODO
-        setRecorderCursor(cursor => {
-            const recordIndex = Math.min(++cursor,recorderRef.current.length -1)
-            const operate = recorderRef.current[recordIndex]
-           return recordIndex
-        })
+        dispatchRecord({ type:'redo',pCanvasController })
+       
     }
 
     const undo = () => {
-        // TODO
-        setRecorderCursor( cursor => {
-            const recordIndex = Math.max(--cursor, -1)
-            const operate = recorderRef.current[recordIndex]
-            return recordIndex
-        })
+       dispatchRecord({ type: 'undo', pCanvasController })
     }
     return <Fragment>
         <span className={ canRedo&&styles.recordBtnActive||''} onClick={redo}>redo</span>

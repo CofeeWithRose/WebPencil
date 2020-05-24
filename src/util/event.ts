@@ -16,7 +16,9 @@ export default class PEventEmiter <EventData> {
     }
 
     emit<T extends keyof EventData>(event: T, params: EventData[T]){
-    	this.eventEmitter.emit(event as string, params)
+        setTimeout(() => {
+            this.eventEmitter.emit(event as string, params)
+        },1)
     }
 
 }

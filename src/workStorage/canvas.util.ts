@@ -21,6 +21,7 @@ export const copyCanvas = (canvas: HTMLCanvasElement) =>{
     newC.width = canvas.width
     newC.height = canvas.height
     const ctx = newC.getContext('2d')
+    ctx?.clearRect(0,0, newC.width, newC.height)
     ctx?.drawImage(canvas, 0, 0, canvas.width, canvas.height)
     return newC;
 }
