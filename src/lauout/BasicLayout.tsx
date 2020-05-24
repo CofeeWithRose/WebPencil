@@ -40,7 +40,7 @@ export default function Home ({
            showBackButton && 
            <Button 
             ghost={true}
-            onClick={onGoBack}
+            onPointerUp={onGoBack}
             shape="circle"
             size="small"
             icon={<LeftOutlined />}
@@ -50,7 +50,7 @@ export default function Home ({
             process.env.BUILD_ENV === 'development'&&
             <Button 
             ghost={true}
-            onClick={() => location.reload()}
+            onPointerUp={() => location.reload()}
             shape="circle"
             size="small"
             >reload</Button>

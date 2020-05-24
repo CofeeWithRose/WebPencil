@@ -25,7 +25,7 @@ export default ({ pCanvasController }: LayerProps) => {
     const [ showLayerDraw, setShowLayerDraw ] = useState(false)
 
    
-    const onClickLayer = () => {
+    const showLayerPannel = () => {
         setShowLayerDraw( show => {
             if(!show){
               setTimeout(copyCanvas)
@@ -110,7 +110,7 @@ export default ({ pCanvasController }: LayerProps) => {
                 <List.Item.Meta
                     avatar={
                     <canvas 
-                        onClick={() => focusLayer(layer)}
+                        onPointerUp={() => focusLayer(layer)}
                         key={layerId}
                         id={layerId}
                         ref={(ref:HTMLCanvasElement)=> {
@@ -125,7 +125,7 @@ export default ({ pCanvasController }: LayerProps) => {
                     description={ 
                         <div>
                             <span>{visible? "visible": "unvisible"}</span>
-                            <span onClick={ () => onRemove(layer)} >remove</span> 
+                            <span onPointerUp={ () => onRemove(layer)} >remove</span> 
                         </div>
                     }
                     />
@@ -133,15 +133,15 @@ export default ({ pCanvasController }: LayerProps) => {
         }
 
     return <div>
-                <Tag onClick={onClickLayer}>111</Tag>
+                <Tag onPointerUp={showLayerPannel}>111</Tag>
                 <Drawer
                     title={null}
                     width={200}
                     visible={showLayerDraw}
-                    onClose={onClickLayer}
+                    onClose={showLayerPannel}
                 >
                     <List
-                        header={<span onClick={addLayer}>+</span>}
+                        header={<span onPointerUp={addLayer}>+</span>}
                         className={styles.pannelWrap}
                         itemLayout="horizontal"
                         dataSource={layers}

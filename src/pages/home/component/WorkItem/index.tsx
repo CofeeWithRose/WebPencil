@@ -5,12 +5,12 @@ export interface WorkItemProps {
     id: string,
     name: string,
     content: ReactNode,
-    onClick?: (id: string) => void
+    onPointerUp?: (id: string) => void
 }
-export default ({name, content, id, onClick }: WorkItemProps) => {
+export default ({name, content, id, onPointerUp }: WorkItemProps) => {
     return <section 
         className={style.workItem}
-        onClick={() => onClick && onClick(id)}
+        onPointerUp={() => onPointerUp && onPointerUp(id)}
     >
         <div 
             className={style.imgBox}

@@ -23,7 +23,7 @@ if('serviceWorker' in navigator && process.env.BUILD_ENV !== 'development'){
 		console.log('try resgist')
 		const workBox = new Workbox(`${process.env.PUBLIC_PATH||'./'}service-worker.js`);
 		workBox.addEventListener('activated', ({isUpdate}) => {
-			isUpdate && message.info(<span onClick={() => window.location.reload()}>应用已更新，点击加载.</span>, 0)
+			isUpdate && message.info(<span onPointerUp={() => window.location.reload()}>应用已更新，点击加载.</span>, 0)
 		})
 		workBox.register()
 	}
@@ -52,7 +52,7 @@ if('serviceWorker' in navigator && process.env.BUILD_ENV !== 'development'){
 			  })
 		}
 		// Update UI notify the user they can install the PWA
-		message.info(<span onClick={installAction}>将网站显示在桌面</span>)
+		message.info(<span onPointerUp={installAction}>将网站显示在桌面</span>)
 	  });
 
 }

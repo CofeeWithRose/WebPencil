@@ -40,7 +40,7 @@ export default  ({value, onChange, defaultValue}: ColorSelectorProps) => {
 		<div 
 			style={{backgroundColor: rgba.toRGBAString()}}
 			className={style.colorBar}
-			onClick={modaleChange} 
+			onPointerUp={modaleChange} 
 		>
         
 		</div>

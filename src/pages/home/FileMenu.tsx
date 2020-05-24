@@ -40,7 +40,7 @@ export const FileMenu: FC<FileMenuProps> = ( {className='', isVisibale, onComple
 				visible={isVisibale}
 				title={'创建'}
 				className={className}
-				okButtonProps={{onClick:onSubmit}}
+				okButtonProps={{onPointerUp:onSubmit}}
 			> 
 			
 				

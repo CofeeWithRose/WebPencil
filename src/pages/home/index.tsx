@@ -55,7 +55,7 @@ export default () => {
                 id='add' 
                 name="新建"
                 content={ <PlusOutlined style={{ fontSize: '30px' }} />}  
-                onClick={addWork}
+                onPointerUp={addWork}
             />
             {
                 workList.map(({workId, name, thumbnail}: WorkInfo) => 
@@ -63,7 +63,7 @@ export default () => {
                     id={workId}
                     name={name}
                     content={thumbnail}
-                    onClick={() => editWork(workId)}
+                    onPointerUp={() => editWork(workId)}
                 />)
             }
 
