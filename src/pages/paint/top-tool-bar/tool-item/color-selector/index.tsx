@@ -48,6 +48,7 @@ export default  ({value, onChange, defaultValue}: ColorSelectorProps) => {
 			title="colors"
 			visible={showColorPanel}
 			onClose={modaleChange}
+			mask={false}
 		>
 			<ColorPannel 
 				value={rgba} 
