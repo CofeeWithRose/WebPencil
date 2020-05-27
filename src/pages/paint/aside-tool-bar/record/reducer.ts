@@ -78,12 +78,27 @@ export const recordListReducer: Reducer<RecorderInfo, RecorderAction> = (
             // console.log('recorlength: ',recorderList.length )
             break;
         case 'redo':
+
+          /**
+             *  state1 operate1=>  state2(current)  <=revert(operate2)  state3
+             *         cursor
+             * 
+             * state1 operate1=>  state2  handle(operate2)=>  state3
+             *                                    cursor
+             */
             if(++cursor<= recorderList.length -1 ){
                 const operate = recorderList[cursor]
                 pCanvasController&& handleOperate( operate, pCanvasController )
             }
             break;
         case 'undo': 
+            /**
+             * state1  operate1=>  state2  operate2=> state3(current)
+             *                               cursor
+             * 
+             * state1 operate1=>  state2(current)  <=handle( revert(operate2) )  state3
+             *         cursor
+             */
             if(cursor > -1){
                const record = recorderList[cursor]
                pCanvasController&& handleOperate(getRevertRecor(record), pCanvasController )
