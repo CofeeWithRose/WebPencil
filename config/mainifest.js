@@ -9,7 +9,7 @@ module.exports = {
     background_color:theme['primary-color'],
     crossorigin: 'use-credentials', 
     display:'fullscreen',
-    orientation: 'landscape-primary',
+    orientation: 'portrait-primary',
     icons: [
       {
         src: path.resolve('src/assets/favicon.ico'),
