@@ -33,7 +33,7 @@
   ],
   "name": "drawing",
   "short_name": "HappyDrawer",
-  "orientation": "landscape-primary",
+  "orientation": "portrait-primary",
   "display": "fullscreen",
   "start_url": "./#/home",
   "description": "Pick up your pencil anywhere at any time to be a happy drawer!",
