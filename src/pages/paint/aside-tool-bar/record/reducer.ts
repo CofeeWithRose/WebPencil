@@ -60,7 +60,7 @@ const handleOperate = <T extends keyof RecordData>( record : RecordInfo<T>, pCan
 export type RecorderInfo ={cursor: number, recorderList: RecordInfo<keyof RecordData>[]}
 export type RecorderAction = { type: 'add'|'redo'|'undo', payload?: RecordInfo<keyof RecordData>, pCanvasController?: PCanvasController }
 
-const MAX_ROCORD_NUMBER = 200
+const MAX_ROCORD_NUMBER = 100
 export const recordListReducer: Reducer<RecorderInfo, RecorderAction> = (
     {cursor, recorderList}, 
     {type, payload, pCanvasController}
@@ -75,7 +75,7 @@ export const recordListReducer: Reducer<RecorderInfo, RecorderAction> = (
             }
             cursor++
             payload&&recorderList.push(payload)
-            // console.log('recorlength: ',recorderList.length )
+            console.log('recorlength: ',recorderList.length )
             break;
         case 'redo':
 
