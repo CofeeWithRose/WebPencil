@@ -29,7 +29,7 @@ export default () => {
      */
     const newWork = async ({width, height}: WorkForm) => {
         const work = WorkDetail.createEmpty(width, height, RGBA.WHITE)
-        await  WorkStorage.addWork(work)
+        await  WorkStorage.saveWork(work)
         editWork(work.workInfo.workId)
     }
 
