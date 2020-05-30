@@ -16,7 +16,7 @@ export class WorkInfo {
         public width: number,
         public height: number,
         public name: string = '', 
-        public thumbnail: HTMLCanvasElement|null= null,
+        public thumbnail: string,
         public createTime: number = Date.now(),
         public updateTime: number = Date.now(),
         public readonly workId = uniqueId(`work_${Date.now()}_`),

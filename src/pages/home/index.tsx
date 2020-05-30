@@ -60,9 +60,10 @@ export default () => {
             {
                 workList.map(({workId, name, thumbnail}: WorkInfo) => 
                 <WorkItem 
+                    key={workId}
                     id={workId}
                     name={name}
-                    content={thumbnail}
+                    content={<img src={thumbnail} />}
                     onPointerUp={() => editWork(workId)}
                 />)
             }

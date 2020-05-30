@@ -1,7 +1,9 @@
 import { WorkDetail, WorkInfo, LayerDetail, WorkLayers } from "./work-data"
 import { RGBA } from "../pages/paint/top-tool-bar/tool-item/color-selector/rgba"
 import { FileApi } from "./file.system"
-import { createCanvas } from "./canvas.util"
+import { createCanvas, copyCanvas } from "./canvas.util"
+import { message } from "antd"
+import React from 'react'
 export type WorkDetailFile = Omit<LayerDetail, 'canvas'> & { filePath: string }
 export type WorkInfoFile =  Omit<WorkInfo, 'thumbnail'>& {thumbnail: string}
 export class WorkLayerFile {
@@ -32,6 +34,22 @@ export class WorkDetailDesFile {
         this.content = new WorkLayerFile(contens)
     }
 }
+
+FileApi.init({ permissionTip: (callback) => {
+    return new Promise<void>(resolve => {
+        const handleClick = async () => {
+            try{
+                await callback()
+            }catch(e){
+                console.error(e)
+            }
+            message.destroy()
+            resolve()
+        }
+        message.info(<span onClick={handleClick}>获取文件读取权限</span>, 0)
+    }) as any
+   
+}})
 
 /**
  * 对作品的持久化存储操作的中间接口.
@@ -139,10 +157,32 @@ export default class WorkStorage {
      */
     static async getWorkList(): Promise<WorkInfo[]>{
         //TODO  Implement.
+        const workInfoList: WorkInfo[] = []
         const names = await  FileApi.getFileNames('')
-        console.log('getWorkList: ', names)
-        return []
-     }
+        for(let i = 0; i< names.length; i++){
+          const file =  await FileApi.getFile(names[i])
+          const text = await file.text()
+          const {workInfo: { thumbnail, ...rest }}: WorkDetailDesFile = JSON.parse(text)
+          const canvasFile = await FileApi.getFile(thumbnail)
+          workInfoList.push({
+               ...rest, 
+               thumbnail: URL.createObjectURL(canvasFile)
+            })
+        }
+        return workInfoList
+    }
+
+    protected static getCanvasByFile(canvasFile: File){
+        return new Promise<HTMLCanvasElement>(resolve => {
+            const img = new Image()
+            img.onload= () => {
+                img.onload = null
+                resolve(copyCanvas(img))
+            }
+            img.src = URL.createObjectURL(canvasFile)
+        })
+    }
+
 }
 
 export {

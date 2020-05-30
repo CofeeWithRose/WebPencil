@@ -16,7 +16,7 @@ export const createCanvas = (width = 0, height =0, background?: RGBA) => {
     return canvas
 }
 
-export const copyCanvas = (canvas: HTMLCanvasElement) =>{
+export const copyCanvas = (canvas: HTMLCanvasElement| HTMLImageElement) =>{
     const newC = document.createElement('canvas')
     newC.width = canvas.width
     newC.height = canvas.height

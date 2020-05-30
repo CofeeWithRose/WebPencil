@@ -1,4 +1,5 @@
 import Dexie from 'dexie'
+import { message } from 'antd'
 const db: any = new Dexie('WebPencil')
 db.version(1).stores({
     handles: '++id, type, handle'
@@ -14,14 +15,28 @@ export interface FileInfo<T extends keyof FileData> {
     type: T
     data:FileData[T]
 }
+
+let fileApiOptions = {
+    permissionTip: (call: () => void) => Promise.reject(' you should init.')
+}
+
 export class FileApi {
+    
+
+    static init(option = fileApiOptions ){
+        fileApiOptions = option
+    }
 
     static async save<T extends keyof FileData>({path, data }: FileInfo<T>){
-      const rootHandle =  await this.getRootFileHandle()
       const fileHandle = await this.getFileHandle(path, {isFile: true, create: true})
       if(fileHandle){
         await FileApi.writeData( fileHandle, data)
       }
+    }
+
+    static async getFile(path: string){
+        const fileHandle = await this.getFileHandle(path, {isFile: true, create: false})
+        return await fileHandle.getFile()
     }
 
     static async getFileNames(path: string): Promise<string[]>{
@@ -79,28 +94,41 @@ export class FileApi {
                 if(permission !== 'garented'){
                     fileHandle.requestPermission()
                 }
-
             }
         }
-        console.log('fileHandle: ',fileHandle)
         return fileHandle
     }
 
     protected static async getRootFileHandle() {
         if('chooseFileSystemEntries' in window){
-            let rootHandle
-            rootHandle =  (await db.handles.where({type: 'rootDir'}).toArray())[0].handle
-            if(!rootHandle){
-                rootHandle =  await (window as any).chooseFileSystemEntries({ 
-                    type: 'open-directory',
-                 })
-                 await db.handles.add({ type: 'rootDir', handle: rootHandle })
+            const isUserAction = window.event?.target instanceof Element
+            let fileHandle: any;
+            fileHandle =  (await db.handles.where({type: 'rootDir'}).toArray())[0].handle
+            if(!fileHandle){
+                const reqHandle = async () => {
+                    fileHandle =  await (window as any).chooseFileSystemEntries({ 
+                        type: 'open-directory',
+                     })
+                     await db.handles.add({ type: 'rootDir', handle: fileHandle })
+                }
+                if(isUserAction){
+                    // ui操作.
+                  await  reqHandle()
+                }else{
+                    await fileApiOptions.permissionTip(reqHandle)
+                }
+               
             }
-            const permission =  await rootHandle.queryPermission()
-            if(permission !== 'garented'){
-              await rootHandle.requestPermission()
+            const permission =  await fileHandle.queryPermission()
+            if(permission !== 'granted'){
+                if(isUserAction){
+                    await fileHandle.requestPermission()
+                }else{
+                    await fileApiOptions.permissionTip(() => fileHandle.requestPermission())
+                }
+              
             }
-          return rootHandle
+          return fileHandle
            
         }else {
             throw 'Not support native file system api'
