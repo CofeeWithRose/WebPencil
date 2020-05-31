@@ -11,10 +11,10 @@ export class WorkLayerFile {
 
     public workDetailFiles: WorkDetailFile[] = []
 
-    constructor({workLayersId, layers}: WorkLayers ){
+    constructor({ workLayersId, layers }: WorkLayers) {
         this.workLayersId = workLayersId
-        layers.forEach( ({canvas, layerId ,...rest}) => {
-            this.workDetailFiles.push({ ...rest, layerId, filePath: `layers/${layerId}.png`})
+        layers.forEach(({ canvas, layerId, ...rest }) => {
+            this.workDetailFiles.push({ ...rest, layerId, filePath: `layers/${layerId}.png` })
         })
     }
 
@@ -26,29 +26,31 @@ export class WorkDetailDesFile {
 
     public content: WorkLayerFile
 
-    constructor(workedetail: WorkDetail){
-        const { workInfo,  contens} = workedetail
-        const {thumbnail, ...restWorkInfo} = workInfo
-        this.workInfo = {...restWorkInfo, thumbnail: `thumbnail/${workedetail.workInfo.workId}.png`}
+    constructor(workedetail: WorkDetail) {
+        const { workInfo, contens } = workedetail
+        const { thumbnail, ...restWorkInfo } = workInfo
+        this.workInfo = { ...restWorkInfo, thumbnail: `thumbnail/${workedetail.workInfo.workId}.png` }
         this.content = new WorkLayerFile(contens)
     }
 }
 
-FileApi.init({ permissionTip: (callback) => {
-    return new Promise<void>(resolve => {
-        const handleClick = async () => {
-            try{
-                await callback()
-            }catch(e){
-                console.error(e)
+FileApi.init({
+    permissionTip: (callback) => {
+        return new Promise<void>(resolve => {
+            const handleClick = async () => {
+                try {
+                    await callback()
+                } catch (e) {
+                    console.error(e)
+                }
+                message.destroy()
+                resolve()
             }
-            message.destroy()
-            resolve()
-        }
-        message.info(<span onClick={handleClick}>获取文件读取权限</span>, 0)
-    }) as any
-   
-}})
+            message.info(<span onClick={handleClick}>获取文件读取权限</span>, 0)
+        }) as any
+
+    }
+})
 
 /**
  * 对作品的持久化存储操作的中间接口.
@@ -61,37 +63,37 @@ export default class WorkStorage {
      * 添加作品.
      * @param workedetail 
      */
-    static async saveWork(workedetail: WorkDetail): Promise<void>{
+    static async saveWork(workedetail: WorkDetail): Promise<void> {
         const desFileDate = new WorkDetailDesFile(workedetail)
-        await FileApi.save({ 
-            type: 'text', 
-            path: `${workedetail.workInfo.workId}.json` , 
-            data: JSON.stringify(desFileDate) 
+        await FileApi.save({
+            type: 'text',
+            path: `${workedetail.workInfo.workId}.json`,
+            data: JSON.stringify(desFileDate)
         })
         const canvasFileList = this.getCanvasFileList(workedetail, desFileDate)
-        for( let i = 0; i < canvasFileList.length; i++ ){
+        for (let i = 0; i < canvasFileList.length; i++) {
             const { path, canvas } = canvasFileList[i]
             const data = await this.getBlob(canvas)
-            if(data){
+            if (data) {
                 await FileApi.save({
                     type: 'blob',
                     path,
                     data,
                 })
             }
-           
+
         }
     }
 
-    protected static  getCanvasFileList(workedetail: WorkDetail, desFileDate: WorkDetailDesFile ){
-        const { contens: {layers}  } = workedetail
+    protected static getCanvasFileList(workedetail: WorkDetail, desFileDate: WorkDetailDesFile) {
+        const { contens: { layers } } = workedetail
         const { content: { workDetailFiles } } = desFileDate
         const thumbnail = {
             path: desFileDate.workInfo.thumbnail,
-            canvas: this.combimeCanvas(  100, 100 ,workedetail.contens.layers.map(({canvas}) => canvas ))
+            canvas: this.combimeCanvas(100, 100, workedetail.contens.layers.map(({ canvas }) => canvas))
         }
-        const canvasFileList: {path: string, canvas:HTMLCanvasElement}[] = [thumbnail] 
-        layers.forEach( ({canvas}, index) => {
+        const canvasFileList: { path: string, canvas: HTMLCanvasElement }[] = [thumbnail]
+        layers.forEach(({ canvas }, index) => {
             canvasFileList.push({
                 canvas,
                 path: workDetailFiles[index].filePath
@@ -100,18 +102,18 @@ export default class WorkStorage {
         return canvasFileList
     }
 
-    protected static getBlob(canvas:HTMLCanvasElement){
-        return new Promise<Blob| null>( resolve => {
+    protected static getBlob(canvas: HTMLCanvasElement) {
+        return new Promise<Blob | null>(resolve => {
             canvas.toBlob(resolve)
         })
     }
 
-    protected  static combimeCanvas( width: number, height: number ,canvasList: HTMLCanvasElement[]){
+    protected static combimeCanvas(width: number, height: number, canvasList: HTMLCanvasElement[]) {
         const canvas = createCanvas(width, height)
         const ctx = canvas.getContext('2d')
-        if(ctx){
-            canvasList.forEach( canvas => {
-                ctx.drawImage(canvas, 0,0,canvas.width, canvas.height, 0,0 , width, height)
+        if (ctx) {
+            canvasList.forEach(canvas => {
+                ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, width, height)
             })
         }
         return canvas
@@ -129,15 +131,16 @@ export default class WorkStorage {
      * 更新作品的描述信息.
      * @param workInfo 
      */
-    static async updateWorkInfo(workInfo: WorkInfo): Promise<void>{
-         //TODO  Implement.
+    static async updateWorkInfo(workInfo: WorkInfo): Promise<void> {
+        //TODO  Implement.
     }
 
     /**
      * 更新作品的内容, 此时会自动更新 WorkInfo 的 updateTime.
      */
-    static async batchUpdateLayerDetail(workId: string, layerdetails:LayerDetail[]): Promise<void> {
-         //TODO  Implement.
+    static async updateLayerDetail(workId: string, layerdetails: LayerDetail[]): Promise<void> {
+        //TODO  Implement.
+
     }
 
     /**
@@ -145,48 +148,53 @@ export default class WorkStorage {
      * 
      * @param workId 作品ID.
      */
-    static async getWorkDetail(workId: string): Promise<WorkDetail>{
+    static async getWorkDetail(workId: string): Promise<WorkDetail> {
         //TODO  Implement.
-        const file = await FileApi.getFile(`${workId}.json`)
+        const file = await FileApi.get(`${workId}.json`)
         const text = await file.text()
         const { workInfo, content: { workLayersId, workDetailFiles } }: WorkDetailDesFile = JSON.parse(text)
         const workLayers: WorkLayers = new WorkLayers(workLayersId)
-        for(let i=0; i< workDetailFiles.length; i++){
+        for (let i = 0; i < workDetailFiles.length; i++) {
             const { layerId, visible, name, filePath } = workDetailFiles[i]
-            console.log('filePath:', filePath)
-            const imgFile = await FileApi.getFile(filePath)
-            const canvas = await this.getCanvasByFile(imgFile)
-            const layerDetail = new LayerDetail( canvas, name, visible, layerId )
+            const canvasFile = await FileApi.get(filePath)
+            if (canvasFile.lastModified > workInfo.updateTime) {
+                workInfo.updateTime = canvasFile.lastModified
+                console.log('canvasFile.lastModified', canvasFile.lastModified)
+            }
+            const canvas = await this.getCanvasByFile(canvasFile)
+            const layerDetail = new LayerDetail(canvas, name, visible, layerId)
             WorkLayers.addLayer(workLayers, workInfo, layerDetail)
         }
-        return new WorkDetail( workInfo, workLayers)
+        return new WorkDetail(workInfo, workLayers)
         // return WorkDetail.createEmpty(screen.width, screen.height, RGBA.WHITE)
     }
 
     /**
      * 获取作品描述信息列表.
      */
-    static async getWorkList(): Promise<WorkInfo[]>{
-        //TODO  Implement.
+    static async getWorkList(): Promise<WorkInfo[]> {
         const workInfoList: WorkInfo[] = []
-        const names = await  FileApi.getFileNames('')
-        for(let i = 0; i< names.length; i++){
-          const file =  await FileApi.getFile(names[i])
-          const text = await file.text()
-          const {workInfo: { thumbnail, ...rest }}: WorkDetailDesFile = JSON.parse(text)
-          const canvasFile = await FileApi.getFile(thumbnail)
-          workInfoList.push({
-               ...rest, 
-               thumbnail: URL.createObjectURL(canvasFile)
+        const names = (await FileApi.getNames('')).filter(name => /^work_/.test(name))
+        // console.log('getWorkList', names)
+        for (let i = 0; i < names.length; i++) {
+            // console.log('getWorkList1', names[i])
+            const file = await FileApi.get(names[i])
+            // console.log('getWorkList2', file.name)
+            const text = await file.text()
+            const { workInfo: { thumbnail, ...rest } }: WorkDetailDesFile = JSON.parse(text)
+            const canvasFile = await FileApi.get(thumbnail)
+            workInfoList.push({
+                ...rest,
+                thumbnail: URL.createObjectURL(canvasFile)
             })
         }
         return workInfoList
     }
 
-    protected static getCanvasByFile(canvasFile: File){
+    protected static getCanvasByFile(canvasFile: File) {
         return new Promise<HTMLCanvasElement>(resolve => {
             const img = new Image()
-            img.onload= () => {
+            img.onload = () => {
                 img.onload = null
                 resolve(copyCanvas(img))
             }
