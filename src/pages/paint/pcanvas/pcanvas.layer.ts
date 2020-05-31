@@ -1,4 +1,4 @@
-import { LayerDetail, LayerDetailType } from "../../../workStorage";
+import { LayerDetail } from "../../../workStorage";
 
 export type WrapInfo = { 
   readonly  wrap: HTMLElement,

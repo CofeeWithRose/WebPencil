@@ -1,5 +1,5 @@
 import { WorkDetail, WorkInfo, LayerDetail, WorkLayers } from "./work-data"
-import { FileApi } from "./file.system"
+import { FileApi } from "./file-system"
 import { createCanvas, copyCanvas } from "./canvas.util"
 import { message } from "antd"
 import React from 'react'

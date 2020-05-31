@@ -1,26 +1,16 @@
 import Dexie from 'dexie'
+import { FileData, FileOperate, FileInfo } from './data'
 let db: any 
-
-export interface FileData {
-    text:string
-    blob: Blob
-}
-
-export interface FileInfo<T extends keyof FileData> {
-    path:string
-    type: T
-    data:FileData[T]
-}
 
 let fileApiOptions = {
     permissionTip: (callback: () => Promise<void>) => Promise.reject(' you should init.')
 }
-export type FileOperate = {name: 'saveFile'|'getFileNames'|'getFile', params: any[], callback: Function}
+
 export class FileApi {
     
-    static operates:FileOperate[] = []
+    protected static operates:FileOperate[] = []
 
-    static isOperating = false
+    protected static isOperating = false
 
     static async init(option = fileApiOptions ){
         fileApiOptions = option
@@ -28,7 +18,6 @@ export class FileApi {
          await db.version(1).stores({
             handles: '++id, type, handle'
         });
-        
     }
 
     static async save<T extends keyof FileData>({path, data }: FileInfo<T>): Promise<void>{
@@ -101,12 +90,8 @@ export class FileApi {
     }
 
     protected static async writeData(fileHandle: any, data: any) {
-        
-        // Create a FileSystemWritableFileStream to write to.
         const writable = await fileHandle.createWritable();
-        // Write the contents of the file to the stream.
         await writable.write(data);
-        // Close the file and write the contents to disk.
         await writable.close();
     }
 
