@@ -63,7 +63,7 @@ export default () => {
                     key={workId}
                     id={workId}
                     name={name}
-                    content={<img src={thumbnail} />}
+                    content={<img src={thumbnail} onLoad={() =>URL.revokeObjectURL(thumbnail)}/>}
                     onPointerUp={() => editWork(workId)}
                 />)
             }

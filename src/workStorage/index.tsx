@@ -5,7 +5,6 @@ import { createCanvas, copyCanvas } from "./canvas.util"
 import { message } from "antd"
 import React from 'react'
 export type WorkDetailFile = Omit<LayerDetail, 'canvas'> & { filePath: string }
-export type WorkInfoFile =  Omit<WorkInfo, 'thumbnail'>& {thumbnail: string}
 export class WorkLayerFile {
 
     public workLayersId: string
@@ -23,7 +22,7 @@ export class WorkLayerFile {
 
 export class WorkDetailDesFile {
 
-    public workInfo: WorkInfoFile
+    public workInfo: WorkInfo
 
     public content: WorkLayerFile
 
@@ -148,8 +147,20 @@ export default class WorkStorage {
      */
     static async getWorkDetail(workId: string): Promise<WorkDetail>{
         //TODO  Implement.
-        // const workInfo = new WorkInfo(2048, 2048);
-        return WorkDetail.createEmpty(screen.width, screen.height, RGBA.WHITE)
+        const file = await FileApi.getFile(`${workId}.json`)
+        const text = await file.text()
+        const { workInfo, content: { workLayersId, workDetailFiles } }: WorkDetailDesFile = JSON.parse(text)
+        const workLayers: WorkLayers = new WorkLayers(workLayersId)
+        for(let i=0; i< workDetailFiles.length; i++){
+            const { layerId, visible, name, filePath } = workDetailFiles[i]
+            console.log('filePath:', filePath)
+            const imgFile = await FileApi.getFile(filePath)
+            const canvas = await this.getCanvasByFile(imgFile)
+            const layerDetail = new LayerDetail( canvas, name, visible, layerId )
+            WorkLayers.addLayer(workLayers, workInfo, layerDetail)
+        }
+        return new WorkDetail( workInfo, workLayers)
+        // return WorkDetail.createEmpty(screen.width, screen.height, RGBA.WHITE)
     }
 
     /**

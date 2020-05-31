@@ -1,9 +1,5 @@
 import Dexie from 'dexie'
-import { message } from 'antd'
-const db: any = new Dexie('WebPencil')
-db.version(1).stores({
-    handles: '++id, type, handle'
-});
+let db: any 
 
 export interface FileData {
     text:string
@@ -17,7 +13,7 @@ export interface FileInfo<T extends keyof FileData> {
 }
 
 let fileApiOptions = {
-    permissionTip: (call: () => void) => Promise.reject(' you should init.')
+    permissionTip: (callback: () => Promise<void>) => Promise.reject(' you should init.')
 }
 
 export class FileApi {
@@ -25,6 +21,10 @@ export class FileApi {
 
     static init(option = fileApiOptions ){
         fileApiOptions = option
+        db = new Dexie('WebPencil')
+        db.version(1).stores({
+            handles: '++id, type, handle'
+        });
     }
 
     static async save<T extends keyof FileData>({path, data }: FileInfo<T>){
@@ -102,15 +102,16 @@ export class FileApi {
     protected static async getRootFileHandle() {
         if('chooseFileSystemEntries' in window){
             const isUserAction = window.event?.target instanceof Element
-            let fileHandle: any;
-            fileHandle =  (await db.handles.where({type: 'rootDir'}).toArray())[0].handle
-            if(!fileHandle){
-                const reqHandle = async () => {
-                    fileHandle =  await (window as any).chooseFileSystemEntries({ 
-                        type: 'open-directory',
-                     })
-                     await db.handles.add({ type: 'rootDir', handle: fileHandle })
-                }
+            let dirHandle: any;
+            const res = await db.handles.where({type: 'rootDir'}).toArray()
+            dirHandle =  res && res[0] && res[0].handle
+            const reqHandle = async () => {
+                dirHandle =  await (window as any).chooseFileSystemEntries({ 
+                    type: 'open-directory',
+                })
+                 await db.handles.add({ type: 'rootDir', handle: dirHandle })
+            }
+            if(!dirHandle){
                 if(isUserAction){
                     // ui操作.
                   await  reqHandle()
@@ -118,17 +119,19 @@ export class FileApi {
                     await fileApiOptions.permissionTip(reqHandle)
                 }
                
+            }else{
+                // TODO 检查文件夹是否已经被删除.
             }
-            const permission =  await fileHandle.queryPermission()
+            const permission =  await dirHandle.queryPermission()
             if(permission !== 'granted'){
                 if(isUserAction){
-                    await fileHandle.requestPermission()
+                    await dirHandle.requestPermission()
                 }else{
-                    await fileApiOptions.permissionTip(() => fileHandle.requestPermission())
+                    await fileApiOptions.permissionTip(() => dirHandle.requestPermission())
                 }
               
             }
-          return fileHandle
+          return dirHandle
            
         }else {
             throw 'Not support native file system api'
