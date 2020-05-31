@@ -1,5 +1,4 @@
 import { WorkDetail, WorkInfo, LayerDetail, WorkLayers } from "./work-data"
-import { RGBA } from "../pages/paint/top-tool-bar/tool-item/color-selector/rgba"
 import { FileApi } from "./file.system"
 import { createCanvas, copyCanvas } from "./canvas.util"
 import { message } from "antd"
@@ -81,7 +80,6 @@ export default class WorkStorage {
                     data,
                 })
             }
-
         }
     }
 
@@ -112,9 +110,10 @@ export default class WorkStorage {
         const canvas = createCanvas(width, height)
         const ctx = canvas.getContext('2d')
         if (ctx) {
-            canvasList.forEach(canvas => {
+            for(let i = canvasList.length-1; i> -1; i--){
+                const canvas = canvasList[i]
                 ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, width, height)
-            })
+            }
         }
         return canvas
     }
@@ -159,11 +158,11 @@ export default class WorkStorage {
             const canvasFile = await FileApi.get(filePath)
             if (canvasFile.lastModified > workInfo.updateTime) {
                 workInfo.updateTime = canvasFile.lastModified
-                console.log('canvasFile.lastModified', canvasFile.lastModified)
+                // console.log('canvasFile.lastModified', canvasFile.lastModified)
             }
             const canvas = await this.getCanvasByFile(canvasFile)
             const layerDetail = new LayerDetail(canvas, name, visible, layerId)
-            WorkLayers.addLayer(workLayers, workInfo, layerDetail)
+            workLayers.layers.push(layerDetail)
         }
         return new WorkDetail(workInfo, workLayers)
         // return WorkDetail.createEmpty(screen.width, screen.height, RGBA.WHITE)

@@ -75,7 +75,7 @@ export const recordListReducer: Reducer<RecorderInfo, RecorderAction> = (
             }
             cursor++
             payload&&recorderList.push(payload)
-            console.log('recorlength: ',recorderList.length )
+            // console.log('recorlength: ',recorderList.length )
             break;
         case 'redo':
 

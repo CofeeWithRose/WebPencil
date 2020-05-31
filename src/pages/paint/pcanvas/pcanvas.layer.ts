@@ -32,7 +32,7 @@ export class PcanvasLayers{
         })
         this.tempLayer = LayerDetail.create(wrapInfo)
         wrap.insertBefore( this.tempLayer.canvas, cover);
-        console.log('this.tempLayer: ', this.tempLayer.layerId)
+        // console.log('this.tempLayer: ', this.tempLayer.layerId)
         this.focusedLayerDetail = layers[0]
     }
 

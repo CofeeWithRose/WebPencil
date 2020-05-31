@@ -115,9 +115,7 @@ export class FileApi {
         const names = path.split('/')
         for(let i = 0; i< names.length; i++){
             const name = names[i]
-            console.log('name: ',name)
             if(name){
-                console.log('name2: ',name)
                 if(isFile && i === names.length -1){
                     fileHandle =  await fileHandle.getFile(name,{create})
                 }else{

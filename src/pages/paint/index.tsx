@@ -12,7 +12,8 @@ import AsideToolBar from './aside-tool-bar'
 
 export default function Paint(){
 
-	const [ workDetail, setWorkDetail ] = useState<WorkDetail>()
+	const workStateHandle = useState<WorkDetail>()
+	const [ workDetail, setWorkDetail ] = workStateHandle
 	const {pCanvas} = usePCanvas()
 
 	useEffect(() => {
@@ -21,8 +22,15 @@ export default function Paint(){
 			const work = await WorkStorage.getWorkDetail(workId)
 			setWorkDetail(work)
 		})()
-		
 	},[])
+
+	useEffect(() => {
+		return () => {
+			if(workDetail){
+				WorkStorage.saveWork(workDetail)
+			}
+		}
+	},[workDetail])
 
 	return <BasicLayout 
 				contentClassName={style.layout} 
