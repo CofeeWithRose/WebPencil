@@ -12,7 +12,7 @@ export interface RecordProps {
 
 const saveRecordCanvas = async (canvas: HTMLCanvasElement) => {
     const fileName = `record_${Date.now()}_${uniqueId()}.png`
-    const blob = await toBlob(copyCanvas(canvas))
+    const blob = await toBlob(canvas)
     const canvasPath = `record/${fileName}`
     if(blob){
         await FileApi.save({ type: 'blob', data: blob, path: canvasPath })
