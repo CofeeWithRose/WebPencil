@@ -70,10 +70,11 @@ export default ({ pCanvasController }: RecordProps) => {
         pCanvasController.on('addLayer', onAddLayer)
         pCanvasController.on('contentChange', onContentChange)
         pCanvasController.on('removeLayer', onRemoveLayer)
-        return () => {
+        return  () => {
             pCanvasController.off('addLayer', onAddLayer)
             pCanvasController.off('contentChange', onContentChange)
             pCanvasController.off('removeLayer', onRemoveLayer)
+            FileApi.remove('record')
         }
     },[])
 

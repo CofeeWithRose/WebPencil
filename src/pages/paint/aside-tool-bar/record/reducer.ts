@@ -12,6 +12,25 @@ export class RecordData {
     modify: { fromCanvasPath: string, toCanvasPath: string, index: number }
 }
 
+const deleteRecordFile = async ({ type, data  }: RecordInfo<keyof RecordData>) => {
+    switch(type){
+        case 'add':
+            data = data as RecordData['add']
+            await FileApi.remove(data.canvasPath)
+            break;
+        case 'modify':
+            const { fromCanvasPath, toCanvasPath} = data as RecordData['modify']
+            await Promise.all([ 
+                FileApi.remove(fromCanvasPath),
+                FileApi.remove(toCanvasPath),
+             ])
+            break;
+        case 'remove': 
+            const { canvasPath } = data as RecordData['remove']
+            await FileApi.remove(canvasPath)
+            break;
+    }
+}
 export class RecordInfo <T extends keyof RecordData>{
 
     constructor(
@@ -41,7 +60,7 @@ const  handleOperate = async <T extends keyof RecordData>( record : RecordInfo<T
     console.log('handleOperate: ', type)
     if(type === 'add'){
         const {index, canvasPath} = data as RecordData['add']
-        const file = await FileApi.getFile(canvasPath)
+        const file = await FileApi.get(canvasPath)
         const canvas = await createCanvasByFile(file)
         const layerDetail = pCanvas.addLayerContent( index, canvas, 'history' )
         pCanvas.focusLayer(layerDetail)
@@ -49,7 +68,7 @@ const  handleOperate = async <T extends keyof RecordData>( record : RecordInfo<T
     }
     if(type === 'modify'){
         const {index, fromCanvasPath: from, toCanvasPath} = data as RecordData['modify']
-        const file = await FileApi.getFile(toCanvasPath)
+        const file = await FileApi.get(toCanvasPath)
         const to = await createCanvasByFile(file)
         const layerDetail = pCanvas.setLayerContent( index, to, 'history' )
         pCanvas.focusLayer(layerDetail)
@@ -67,17 +86,19 @@ export type RecorderInfo ={cursor: number, recorderList: RecordInfo<keyof Record
 export type RecorderAction = { type: 'add'|'redo'|'undo', payload?: RecordInfo<keyof RecordData>, pCanvasController?: PCanvasController }
 
 const MAX_ROCORD_NUMBER = 100
-export const recordListReducer: Reducer<RecorderInfo, RecorderAction> = (
+export const recordListReducer: Reducer<RecorderInfo, RecorderAction> =  (
     {cursor, recorderList}, 
     {type, payload, pCanvasController}
 ) => {
     switch(type) {
         case 'add':
             if( cursor < recorderList.length-1){
-                recorderList.splice(Math.max(cursor, 0))
+               const deleted =  recorderList.splice(Math.max(cursor, 0))
+               deleted.map( record => deleteRecordFile(record))
             }
             if(MAX_ROCORD_NUMBER <= recorderList.length){
-                recorderList.splice(0, recorderList.length - MAX_ROCORD_NUMBER + 1)
+                const deleted  = recorderList.splice(0, recorderList.length - MAX_ROCORD_NUMBER + 1)
+                deleted.map( record => deleteRecordFile(record))
             }
             cursor++
             payload&&recorderList.push(payload)

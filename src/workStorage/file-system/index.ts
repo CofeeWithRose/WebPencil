@@ -11,7 +11,7 @@ export class FileApi {
     static async init(option: FileApiOptions){
          db = await new Dexie('WebPencilVitureFile')
          await db.version(1).stores({
-            files: '++id, path, name, file'
+            files: '++id, [path+name]'
         });
     }
 
@@ -25,6 +25,17 @@ export class FileApi {
     static async get(path: string): Promise<File>{
         return new Promise( callback => {
             const operte: FileOperate = { name: 'getFile', params:[path], callback }
+            this.sheduleOperate(operte)
+        })
+    }
+
+    /**
+     * 文件夹以 / 结尾.
+     * @param path 
+     */
+    static async remove(path:string): Promise<void> {
+        return new Promise( callback => {
+            const operte: FileOperate = { name: 'removeFile', params:[path], callback }
             this.sheduleOperate(operte)
         })
     }
@@ -58,7 +69,7 @@ export class FileApi {
         }
     }
 
-    static async saveFile<T extends keyof FileData>({path, data, type }: FileInfo<T>): Promise<void>{
+    protected static async saveFile<T extends keyof FileData>({path, data, type }: FileInfo<T>): Promise<void>{
         const {pathName, name} = this.analyzePath(path)
         const res = await db.files.where({path: pathName, name}).toArray()
         const oldFileItem = res&&res[0]&&res[0]
@@ -77,15 +88,19 @@ export class FileApi {
         return {name, pathName}
     }
 
-    static async getFile(path: string): Promise<File>{
+    protected static async getFile(path: string): Promise<File>{
        const {name, pathName} = this.analyzePath(path)
        const res = await db.files.where({path: pathName, name}).toArray()
        return  res&&res[0]&&res[0].file
     }
 
-    static async getFileNames(path: string): Promise<string[]>{
+    protected static async getFileNames(path: string): Promise<string[]>{
         const res = await db.files.where({path}).toArray()
         return res.map( ({name}: {name:string}) => name )
+    }
+
+    protected static async removeFile(path: string): Promise<void> {
+        await db.files.where('path').startsWith(path).delete()
     }
 
 }

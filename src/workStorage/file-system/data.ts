@@ -13,4 +13,4 @@ export interface FileApiOptions {
     permissionTip: (callback: () => Promise<void>) => Promise<void>
 }
 
-export type FileOperate = {name: 'saveFile'|'getFileNames'|'getFile', params: any[], callback: Function}
+export type FileOperate = {name: 'saveFile'|'getFileNames'|'getFile'|'removeFile', params: any[], callback: Function}
