@@ -38,14 +38,9 @@ export default ({ pCanvasController }: LayerProps) => {
     useEffect(() => {
         const init = () => {
             const allLayers = pCanvasController.getLayers() 
-            let layers: LayerDetail[] =[]
-            for(let i = allLayers.length -1 ; i >= 0 ; i--){
-                const layer = allLayers[i]
-                layers.push(layer)
-                needUpdateRef.current.push(layer)
-            }
+            let layers: LayerDetail[] =[...allLayers]
+            needUpdateRef.current.push(...allLayers)
             setLayers(pre => [...pre,...layers])
-            // console.log('init..')
         }
         pCanvasController.on('init', init)
        return () => pCanvasController.off('init', init)
