@@ -11,7 +11,7 @@ export class FileApi {
     static async init(option: FileApiOptions){
          db = await new Dexie('WebPencilVitureFile')
          await db.version(1).stores({
-            files: '++id, path,  name'
+            files: '++id, [path+name]'
         });
     }
 
@@ -70,7 +70,7 @@ export class FileApi {
 
     protected static async saveFile<T extends keyof FileData>({path, data, type }: FileInfo<T>): Promise<void>{
         const {pathName, name} = this.analyzePath(path)
-        const res = await db.files.where({path: pathName, name}).toArray()
+        const res = await db.files.where('[path+name]').equals([pathName, name]).toArray()
         const oldFileItem = res&&res[0]&&res[0]
         if(oldFileItem){
             const { id } = oldFileItem
@@ -89,7 +89,7 @@ export class FileApi {
 
     protected static async getFile(path: string): Promise<File>{
        const {name, pathName} = this.analyzePath(path)
-       const res = await db.files.where({path: pathName, name}).toArray()
+       const res = await db.files.where('[path+name]').equals([pathName, name]).toArray()
        return  res&&res[0]&&res[0].file
     }
 
@@ -102,7 +102,7 @@ export class FileApi {
         let count = 0
         if(isFile){
            const {name, pathName} =  this.analyzePath(path)
-           count = await db.files.where({ path: pathName, name }).delete()
+           count = await db.files.where('[path+name]').equals([pathName, name]).delete()
         }else{
             count =  await db.files.where('path').startsWith(path).delete()
         }

@@ -83,8 +83,8 @@ export default ({ pCanvasController }: RecordProps) => {
        dispatchRecord({ type: 'undo', pCanvasController })
     }
     return <Fragment>
-        <span className={ canRedo&&styles.recordBtnActive||''} onPointerUp={canRedo&&redo|| undefined}>redo</span>
+        <span className={ `${styles.recordBtn} ${canRedo&&styles.recordBtnActive||''} `} onPointerUp={canRedo&&redo|| undefined}>redo</span>
         <Divider/>
-        <span className={canUndo&&styles.recordBtnActive ||''} onPointerUp={canUndo&&undo||undefined} >undo</span>
+        <span className={`${styles.recordBtn} ${canUndo&&styles.recordBtnActive ||''}` } onPointerUp={canUndo&&undo||undefined} >undo</span>
     </Fragment>
 }
