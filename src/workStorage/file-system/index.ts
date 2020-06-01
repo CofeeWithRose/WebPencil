@@ -70,14 +70,15 @@ export class FileApi {
 
     protected static async saveFile<T extends keyof FileData>({path, data, type }: FileInfo<T>): Promise<void>{
         const {pathName, name} = this.analyzePath(path)
-        const res = await db.files.where('[path+name]').equals([pathName, name]).toArray()
-        const oldFileItem = res&&res[0]&&res[0]
+        const oldFileItem = await db.files.where('[path+name]').equals([pathName, name]).first()
+        console.time('saveFile')
         if(oldFileItem){
             const { id } = oldFileItem
             await db.files.put({ id, path: pathName, name, file:  new File([data], name)})
         }else{
             await db.files.add({path: pathName, name,   file:  new File([data], name)})
         }
+        console.timeEnd('saveFile')
     }
 
     protected static analyzePath(path:string){
@@ -89,7 +90,9 @@ export class FileApi {
 
     protected static async getFile(path: string): Promise<File>{
        const {name, pathName} = this.analyzePath(path)
+       console.time('getFile')
        const res = await db.files.where('[path+name]').equals([pathName, name]).toArray()
+       console.timeEnd('getFile')
        return  res&&res[0]&&res[0].file
     }
 
@@ -100,12 +103,14 @@ export class FileApi {
 
     protected static async removeFile(path: string, {isFile} = {isFile: false}): Promise<void> {
         let count = 0
+        console.time('removeFile')
         if(isFile){
            const {name, pathName} =  this.analyzePath(path)
            count = await db.files.where('[path+name]').equals([pathName, name]).delete()
         }else{
             count =  await db.files.where('path').startsWith(path).delete()
         }
+        console.timeEnd('removeFile')
         console.log('removeFile: ', count)
        
     }
