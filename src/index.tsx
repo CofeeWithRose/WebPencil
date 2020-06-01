@@ -63,4 +63,6 @@ window.addEventListener('load', () => {
 	document.addEventListener('touchmove', (e) => {
 		e.preventDefault()
 	},{passive:false,})
-})
+});
+
+(window as any ).VERSION = process.env.VERSION
