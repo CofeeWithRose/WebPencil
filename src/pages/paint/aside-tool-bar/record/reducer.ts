@@ -60,7 +60,7 @@ const  handleOperate = async <T extends keyof RecordData>( record : RecordInfo<T
     console.log('handleOperate: ', type)
     if(type === 'add'){
         const {index, canvasPath} = data as RecordData['add']
-        const file = await FileApi.get(canvasPath)
+        const [file] = await FileApi.get(canvasPath, {isDir:false})
         const canvas = await createCanvasByFile(file)
         const layerDetail = pCanvas.addLayerContent( index, canvas, 'history' )
         pCanvas.focusLayer(layerDetail)
@@ -68,7 +68,7 @@ const  handleOperate = async <T extends keyof RecordData>( record : RecordInfo<T
     }
     if(type === 'modify'){
         const {index, fromCanvasPath: from, toCanvasPath} = data as RecordData['modify']
-        const file = await FileApi.get(toCanvasPath)
+        const [file] = await FileApi.get(toCanvasPath, {isDir:false})
         const to = await createCanvasByFile(file)
         const layerDetail = pCanvas.setLayerContent( index, to, 'history' )
         pCanvas.focusLayer(layerDetail)
