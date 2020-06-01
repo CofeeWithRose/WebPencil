@@ -39,6 +39,6 @@ export const createCanvasByFile = (canvasFile: File)  => {
 
 export const toBlob = (canvas: HTMLCanvasElement) => {
     return new Promise<Blob | null>(resolve => {
-        canvas.toBlob(resolve)
+        canvas.toBlob(resolve, 'image/png', 1)
     })
 }

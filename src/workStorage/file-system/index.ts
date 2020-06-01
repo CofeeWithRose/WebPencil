@@ -11,7 +11,7 @@ export class FileApi {
     static async init(option: FileApiOptions){
          db = await new Dexie('WebPencilVitureFile')
          await db.version(1).stores({
-            files: '++id, [path+name]'
+            files: '++id, path,  name'
         });
     }
 
@@ -30,12 +30,11 @@ export class FileApi {
     }
 
     /**
-     * 文件夹以 / 结尾.
      * @param path 
      */
-    static async remove(path:string): Promise<void> {
+    static async remove(path:string, option = {isFile: false}): Promise<void> {
         return new Promise( callback => {
-            const operte: FileOperate = { name: 'removeFile', params:[path], callback }
+            const operte: FileOperate = { name: 'removeFile', params:[path, option], callback }
             this.sheduleOperate(operte)
         })
     }
@@ -99,8 +98,16 @@ export class FileApi {
         return res.map( ({name}: {name:string}) => name )
     }
 
-    protected static async removeFile(path: string): Promise<void> {
-        await db.files.where('path').startsWith(path).delete()
+    protected static async removeFile(path: string, {isFile} = {isFile: false}): Promise<void> {
+        let count = 0
+        if(isFile){
+           const {name, pathName} =  this.analyzePath(path)
+           count = await db.files.where({ path: pathName, name }).delete()
+        }else{
+            count =  await db.files.where('path').startsWith(path).delete()
+        }
+        console.log('removeFile: ', count)
+       
     }
 
 }

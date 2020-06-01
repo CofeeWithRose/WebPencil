@@ -20,10 +20,6 @@ const saveRecordCanvas = async (canvas: HTMLCanvasElement) => {
     return  canvasPath
 }
 
-const getRecordCanvas = async (path: string) => {
-   const file = await  FileApi.get(path)
-   return await createCanvasByFile(file)
-}
 export default ({ pCanvasController }: RecordProps) => {
 
     const [ {cursor, recorderList}, dispatchRecord ] = useReducer(recordListReducer, { cursor: -1, recorderList: []})

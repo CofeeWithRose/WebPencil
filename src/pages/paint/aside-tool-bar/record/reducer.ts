@@ -16,18 +16,18 @@ const deleteRecordFile = async ({ type, data  }: RecordInfo<keyof RecordData>) =
     switch(type){
         case 'add':
             data = data as RecordData['add']
-            await FileApi.remove(data.canvasPath)
+            await FileApi.remove(data.canvasPath, {isFile: true})
             break;
         case 'modify':
             const { fromCanvasPath, toCanvasPath} = data as RecordData['modify']
             await Promise.all([ 
-                FileApi.remove(fromCanvasPath),
-                FileApi.remove(toCanvasPath),
+                FileApi.remove(fromCanvasPath, {isFile: true}),
+                FileApi.remove(toCanvasPath, {isFile: true}),
              ])
             break;
         case 'remove': 
             const { canvasPath } = data as RecordData['remove']
-            await FileApi.remove(canvasPath)
+            await FileApi.remove(canvasPath, {isFile: true})
             break;
     }
 }
