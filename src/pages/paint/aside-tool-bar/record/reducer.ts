@@ -1,13 +1,15 @@
 import { Reducer } from "react"
 import { PCanvasController } from "../../pcanvas"
+import { FileApi } from "../../../../workStorage/file-system"
+import { createCanvasByFile } from "../../../../workStorage/canvas.util"
 
 export class RecordData {
     
-    add: { index: number, canvas: HTMLCanvasElement }
+    add: { index: number, canvasPath: string }
 
-    remove: { index: number, canvas: HTMLCanvasElement }
+    remove: { index: number, canvasPath: string }
 
-    modify: { from: HTMLCanvasElement, to: HTMLCanvasElement, index: number }
+    modify: { fromCanvasPath: string, toCanvasPath: string, index: number }
 }
 
 export class RecordInfo <T extends keyof RecordData>{
@@ -21,30 +23,34 @@ export class RecordInfo <T extends keyof RecordData>{
 
 const getRevertRecor =<T extends keyof RecordData>( {type, data} : RecordInfo<T>): RecordInfo<keyof RecordData> => {
     if(type === 'add'){
-        const { index, canvas } = data as RecordData['add']
-        return new RecordInfo('remove', {index, canvas})
+        const { index, canvasPath: canvas } = data as RecordData['add']
+        return new RecordInfo('remove', {index, canvasPath: canvas})
     }
     if(type === 'modify'){
-        const { index, from, to } = data as RecordData['modify']
-        return new RecordInfo('modify', {index, from: to, to: from })
+        const { index, fromCanvasPath: from, toCanvasPath: to } = data as RecordData['modify']
+        return new RecordInfo('modify', {index, fromCanvasPath: to, toCanvasPath: from })
     }
 
     // remove.
-    const { index, canvas } = data as RecordData['remove']
-    return new RecordInfo('add', {index, canvas})
+    const { index, canvasPath: canvas } = data as RecordData['remove']
+    return new RecordInfo('add', {index, canvasPath: canvas})
 }
 
-const handleOperate = <T extends keyof RecordData>( record : RecordInfo<T>, pCanvas: PCanvasController) => {
+const  handleOperate = async <T extends keyof RecordData>( record : RecordInfo<T>, pCanvas: PCanvasController) => {
     const { type, data } = record
     console.log('handleOperate: ', type)
     if(type === 'add'){
-        const {index, canvas} = data as RecordData['add']
+        const {index, canvasPath} = data as RecordData['add']
+        const file = await FileApi.getFile(canvasPath)
+        const canvas = await createCanvasByFile(file)
         const layerDetail = pCanvas.addLayerContent( index, canvas, 'history' )
         pCanvas.focusLayer(layerDetail)
         return
     }
     if(type === 'modify'){
-        const {index, from, to} = data as RecordData['modify']
+        const {index, fromCanvasPath: from, toCanvasPath} = data as RecordData['modify']
+        const file = await FileApi.getFile(toCanvasPath)
+        const to = await createCanvasByFile(file)
         const layerDetail = pCanvas.setLayerContent( index, to, 'history' )
         pCanvas.focusLayer(layerDetail)
         return

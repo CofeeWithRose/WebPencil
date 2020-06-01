@@ -1,6 +1,6 @@
 import { WorkDetail, WorkInfo, LayerDetail, WorkLayers } from "./work-data"
 import { FileApi } from "./file-system"
-import { createCanvas, copyCanvas } from "./canvas.util"
+import { createCanvas, copyCanvas, createCanvasByFile, toBlob } from "./canvas.util"
 import { message } from "antd"
 import React from 'react'
 export type WorkDetailFile = Omit<LayerDetail, 'canvas'> & { filePath: string }
@@ -72,7 +72,7 @@ export default class WorkStorage {
         const canvasFileList = this.getCanvasFileList(workedetail, desFileDate)
         for (let i = 0; i < canvasFileList.length; i++) {
             const { path, canvas } = canvasFileList[i]
-            const data = await this.getBlob(canvas)
+            const data = await toBlob(canvas)
             if (data) {
                 await FileApi.save({
                     type: 'blob',
@@ -100,11 +100,7 @@ export default class WorkStorage {
         return canvasFileList
     }
 
-    protected static getBlob(canvas: HTMLCanvasElement) {
-        return new Promise<Blob | null>(resolve => {
-            canvas.toBlob(resolve)
-        })
-    }
+  
 
     protected static combimeCanvas(width: number, height: number, canvasList: HTMLCanvasElement[]) {
         const canvas = createCanvas(width, height)
@@ -160,7 +156,7 @@ export default class WorkStorage {
                 workInfo.updateTime = canvasFile.lastModified
                 // console.log('canvasFile.lastModified', canvasFile.lastModified)
             }
-            const canvas = await this.getCanvasByFile(canvasFile)
+            const canvas = await createCanvasByFile(canvasFile)
             const layerDetail = new LayerDetail(canvas, name, visible, layerId)
             workLayers.layers.push(layerDetail)
         }
@@ -188,17 +184,6 @@ export default class WorkStorage {
             })
         }
         return workInfoList
-    }
-
-    protected static getCanvasByFile(canvasFile: File) {
-        return new Promise<HTMLCanvasElement>(resolve => {
-            const img = new Image()
-            img.onload = () => {
-                img.onload = null
-                resolve(copyCanvas(img))
-            }
-            img.src = URL.createObjectURL(canvasFile)
-        })
     }
 
 }

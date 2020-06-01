@@ -25,3 +25,20 @@ export const copyCanvas = (canvas: HTMLCanvasElement| HTMLImageElement) =>{
     ctx?.drawImage(canvas, 0, 0, canvas.width, canvas.height)
     return newC;
 }
+
+export const createCanvasByFile = (canvasFile: File)  => {
+    return new Promise<HTMLCanvasElement>(resolve => {
+        const img = new Image()
+        img.onload = () => {
+            img.onload = null
+            resolve(copyCanvas(img))
+        }
+        img.src = URL.createObjectURL(canvasFile)
+    })
+}
+
+export const toBlob = (canvas: HTMLCanvasElement) => {
+    return new Promise<Blob | null>(resolve => {
+        canvas.toBlob(resolve)
+    })
+}
