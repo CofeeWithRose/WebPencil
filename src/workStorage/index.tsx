@@ -13,7 +13,7 @@ export class WorkLayerFile {
     constructor({ workLayersId, layers }: WorkLayers) {
         this.workLayersId = workLayersId
         layers.forEach(({ canvas, layerId, ...rest }) => {
-            this.workDetailFiles.push({ ...rest, layerId, filePath: `layers/${layerId}.png` })
+            this.workDetailFiles.push({ ...rest, layerId, filePath: `layers/${workLayersId}/${layerId}.png` })
         })
     }
 
@@ -145,20 +145,23 @@ export default class WorkStorage {
      */
     static async getWorkDetail(workId: string): Promise<WorkDetail> {
         //TODO  Implement.
-        const file = await FileApi.get(`${workId}.json`)
+        const [file] = await FileApi.get(`${workId}.json`,{isDir: false})
         const text = await file.text()
         const { workInfo, content: { workLayersId, workDetailFiles } }: WorkDetailDesFile = JSON.parse(text)
         const workLayers: WorkLayers = new WorkLayers(workLayersId)
+        const canvasFileMap: {[index: string]: File} = (await FileApi.get(`layers/${workLayersId}`, { isDir: true}))
+                .reduce((map, file) => ({...map, [file.name]:file}), {})
         for (let i = 0; i < workDetailFiles.length; i++) {
-            const { layerId, visible, name, filePath } = workDetailFiles[i]
-            const canvasFile = await FileApi.get(filePath)
-            if (canvasFile.lastModified > workInfo.updateTime) {
-                workInfo.updateTime = canvasFile.lastModified
-                // console.log('canvasFile.lastModified', canvasFile.lastModified)
+            const { layerId, visible, name } = workDetailFiles[i]
+            const canvasFile = canvasFileMap[`${layerId}.png`]
+            if(canvasFile){
+                const canvas = await createCanvasByFile(canvasFile)
+                const layerDetail = new LayerDetail(canvas, name, visible, layerId)
+                workLayers.layers.push(layerDetail)
+            }else{
+                console.error('no match file' + layerId)
             }
-            const canvas = await createCanvasByFile(canvasFile)
-            const layerDetail = new LayerDetail(canvas, name, visible, layerId)
-            workLayers.layers.push(layerDetail)
+          
         }
         return new WorkDetail(workInfo, workLayers)
         // return WorkDetail.createEmpty(screen.width, screen.height, RGBA.WHITE)
@@ -173,11 +176,11 @@ export default class WorkStorage {
         // console.log('getWorkList', names)
         for (let i = 0; i < names.length; i++) {
             // console.log('getWorkList1', names[i])
-            const file = await FileApi.get(names[i])
+            const [file] = await FileApi.get(names[i], {isDir:false})
             // console.log('getWorkList2', file.name)
             const text = await file.text()
             const { workInfo: { thumbnail, ...rest } }: WorkDetailDesFile = JSON.parse(text)
-            const canvasFile = await FileApi.get(thumbnail)
+            const [canvasFile] = await FileApi.get(thumbnail, {isDir:false})
             workInfoList.push({
                 ...rest,
                 thumbnail: URL.createObjectURL(canvasFile)

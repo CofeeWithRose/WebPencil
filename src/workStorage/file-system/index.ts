@@ -1,4 +1,4 @@
-import { FileData, FileInfo, FileOperate, FileApiOptions } from "./data"
+import { FileData, FileInfo, FileOperate, FileApiOptions, GetFile } from "./data"
 import Dexie from 'dexie'
 let db: any 
 
@@ -22,10 +22,10 @@ export class FileApi {
         })
     }
 
-    static async get(path: string): Promise<File>{
+    static get: GetFile = (...params) =>  {
         return new Promise( callback => {
-            const operte: FileOperate = { name: 'getFile', params:[path], callback }
-            this.sheduleOperate(operte)
+            const operte: FileOperate = { name: 'getFile', params, callback }
+            FileApi.sheduleOperate(operte)
         })
     }
 
@@ -88,12 +88,19 @@ export class FileApi {
         return {name, pathName}
     }
 
-    protected static async getFile(path: string): Promise<File>{
-       const {name, pathName} = this.analyzePath(path)
-       console.time('getFile')
-       const res = await db.files.where('[path+name]').equals([pathName, name]).toArray()
-       console.timeEnd('getFile')
-       return  res&&res[0]&&res[0].file
+    protected static getFile:GetFile = async (path, {isDir}) => {
+        console.time('getFile')
+        let files: File[]
+        if(isDir){
+            const res = await db.files.where('path').startsWith(path).toArray()
+            files = res.map(({file}: {file:File}) => file)
+        }else{
+            const {name, pathName} = FileApi.analyzePath(path)
+            const res = await db.files.where('[path+name]').equals([pathName, name]).first()
+            files = [res&&res.file]
+        }
+        console.timeEnd('getFile')
+        return files
     }
 
     protected static async getFileNames(path: string): Promise<string[]>{
