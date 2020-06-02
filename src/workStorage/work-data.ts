@@ -1,6 +1,6 @@
 import { uniqueId } from 'lodash'
 import { RGBA } from '../pages/paint/top-tool-bar/tool-item/color-selector/rgba';
-import { createCanvas } from './canvas.util';
+import { createCanvas } from '../util/canvas';
 
 // document.addEventListener("deviceready", onDeviceReady, false);
 // function onDeviceReady() {

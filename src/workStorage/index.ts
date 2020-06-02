@@ -1,8 +1,6 @@
 import { WorkDetail, WorkInfo, LayerDetail, WorkLayers } from "./work-data"
 import { FileApi } from "./file-system"
-import { createCanvas, copyCanvas, createCanvasByFile, toBlob } from "./canvas.util"
-import { message } from "antd"
-import React from 'react'
+import { createCanvas, copyCanvas, createCanvasByFile, toBlob } from "../util/canvas"
 export type WorkDetailFile = Omit<LayerDetail, 'canvas'> & { filePath: string }
 export class WorkLayerFile {
 
@@ -33,23 +31,6 @@ export class WorkDetailDesFile {
     }
 }
 
-FileApi.init({
-    permissionTip: (callback) => {
-        return new Promise<void>(resolve => {
-            const handleClick = async () => {
-                try {
-                    await callback()
-                } catch (e) {
-                    console.error(e)
-                }
-                message.destroy()
-                resolve()
-            }
-            message.info(<span onClick={handleClick}>获取文件读取权限</span>, 0)
-        }) as any
-
-    }
-})
 
 /**
  * 对作品的持久化存储操作的中间接口.
@@ -63,6 +44,7 @@ export default class WorkStorage {
      * @param workedetail 
      */
     static async saveWork(workedetail: WorkDetail): Promise<void> {
+        if(!workedetail) return
         const desFileDate = new WorkDetailDesFile(workedetail)
         await FileApi.save({
             type: 'text',
@@ -144,25 +126,31 @@ export default class WorkStorage {
      * @param workId 作品ID.
      */
     static async getWorkDetail(workId: string): Promise<WorkDetail> {
-        //TODO  Implement.
+       
         const [file] = await FileApi.get(`${workId}.json`,{isDir: false})
         const text = await file.text()
         const { workInfo, content: { workLayersId, workDetailFiles } }: WorkDetailDesFile = JSON.parse(text)
         const workLayers: WorkLayers = new WorkLayers(workLayersId)
         const canvasFileMap: {[index: string]: File} = (await FileApi.get(`layers/${workLayersId}`, { isDir: true}))
                 .reduce((map, file) => ({...map, [file.name]:file}), {})
+        const infoList = []
         for (let i = 0; i < workDetailFiles.length; i++) {
             const { layerId, visible, name } = workDetailFiles[i]
             const canvasFile = canvasFileMap[`${layerId}.png`]
             if(canvasFile){
-                const canvas = await createCanvasByFile(canvasFile)
-                const layerDetail = new LayerDetail(canvas, name, visible, layerId)
-                workLayers.layers.push(layerDetail)
+                const canvasPromise = createCanvasByFile(canvasFile)
+                infoList.push({canvasPromise, name, visible, layerId})
+                
             }else{
                 console.error('no match file' + layerId)
             }
-          
         }
+        const canvasList = await Promise.all( infoList.map(({canvasPromise}) => canvasPromise) )
+        infoList.forEach( ({canvasPromise, name, visible, layerId }, index) => {
+           const layerDetail = new  LayerDetail( canvasList[index] , name, visible, layerId)
+           workLayers.layers.push(layerDetail)
+        })
+
         return new WorkDetail(workInfo, workLayers)
         // return WorkDetail.createEmpty(screen.width, screen.height, RGBA.WHITE)
     }

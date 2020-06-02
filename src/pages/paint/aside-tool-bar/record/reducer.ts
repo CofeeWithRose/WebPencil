@@ -1,7 +1,7 @@
 import { Reducer } from "react"
 import { PCanvasController } from "../../pcanvas"
 import { FileApi } from "../../../../workStorage/file-system"
-import { createCanvasByFile } from "../../../../workStorage/canvas.util"
+import { createCanvasByFile } from "../../../../util/canvas"
 
 export class RecordData {
     

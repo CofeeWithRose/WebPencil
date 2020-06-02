@@ -4,7 +4,7 @@ import { Brush, BrushStatus } from "../top-tool-bar/tool-item/brush"
 import { WorkDetail, LayerDetail } from "../../../workStorage"
 import { PcanvasLayers } from "./pcanvas.layer"
 import PEventEmiter from "../../../util/event"
-import { copyCanvas } from "../../../workStorage/canvas.util"
+import { copyCanvas } from "../../../util/canvas"
 
 type EvnetCreator = 'user'|'history'
 
