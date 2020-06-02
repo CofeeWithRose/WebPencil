@@ -2,7 +2,7 @@ import React, {Fragment, useEffect, useState, useRef, useReducer, Reducer} from 
 import { Divider } from 'antd'
 import { PCanvasController, CanvasEventData } from '../../pcanvas'
 import styles from './index.less'
-import { copyCanvas, toBlob, createCanvasByFile } from '../../../../workStorage/canvas.util'
+import { copyCanvas, toBlob, createCanvasByFile } from '../../../../util/canvas'
 import { recordListReducer, RecordInfo } from './reducer'
 import { uniqueId } from 'lodash'
 import { FileApi } from '../../../../workStorage/file-system'

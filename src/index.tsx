@@ -7,10 +7,30 @@ import {App} from './app/index'
 import zhCN from 'antd/es/locale/zh_CN'
 import { ConfigProvider, Modal, message } from 'antd'
 import { Workbox } from 'workbox-window'
+import { FileApi } from './workStorage/file-system'
 
 import 'antd/dist/antd.dark.less';
 
 import './style.less'
+
+FileApi.init({
+    permissionTip: (callback) => {
+        return new Promise<void>(resolve => {
+            const handleClick = async () => {
+                try {
+                    await callback()
+                } catch (e) {
+                    console.error(e)
+                }
+                message.destroy()
+                resolve()
+            }
+            message.info(<span onClick={handleClick}>获取文件读取权限</span>, 0)
+        }) as any
+
+    }
+})
+
 ReactDom.render(
 	<ConfigProvider locale={zhCN}>
 		<App/>
