@@ -92,7 +92,7 @@ export class FileApi {
         console.time('getFile')
         let files: File[]
         if(isDir){
-            const res = await db.files.where('path').startsWith(path).toArray()
+            const res = await db.files.where('path').equals(path).toArray()
             files = res.map(({file}: {file:File}) => file)
         }else{
             const {name, pathName} = FileApi.analyzePath(path)

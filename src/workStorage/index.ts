@@ -45,6 +45,7 @@ export default class WorkStorage {
      */
     static async saveWork(workedetail: WorkDetail): Promise<void> {
         if(!workedetail) return
+        console.time('saveWork')
         const desFileDate = new WorkDetailDesFile(workedetail)
         await FileApi.save({
             type: 'text',
@@ -63,6 +64,7 @@ export default class WorkStorage {
                 })
             }
         }
+        console.timeEnd('saveWork')
     }
 
     protected static getCanvasFileList(workedetail: WorkDetail, desFileDate: WorkDetailDesFile) {
@@ -126,7 +128,7 @@ export default class WorkStorage {
      * @param workId 作品ID.
      */
     static async getWorkDetail(workId: string): Promise<WorkDetail> {
-       
+        console.time('getWorkDetail')
         const [file] = await FileApi.get(`${workId}.json`,{isDir: false})
         const text = await file.text()
         const { workInfo, content: { workLayersId, workDetailFiles } }: WorkDetailDesFile = JSON.parse(text)
@@ -145,35 +147,34 @@ export default class WorkStorage {
                 console.error('no match file' + layerId)
             }
         }
+        console.time('createCanvasByFile')
         const canvasList = await Promise.all( infoList.map(({canvasPromise}) => canvasPromise) )
+        console.timeEnd('createCanvasByFile')
         infoList.forEach( ({canvasPromise, name, visible, layerId }, index) => {
            const layerDetail = new  LayerDetail( canvasList[index] , name, visible, layerId)
            workLayers.layers.push(layerDetail)
         })
-
+        console.timeEnd('getWorkDetail')
         return new WorkDetail(workInfo, workLayers)
-        // return WorkDetail.createEmpty(screen.width, screen.height, RGBA.WHITE)
     }
 
     /**
      * 获取作品描述信息列表.
      */
     static async getWorkList(): Promise<WorkInfo[]> {
-        const workInfoList: WorkInfo[] = []
-        const names = (await FileApi.getNames('')).filter(name => /^work_/.test(name))
-        // console.log('getWorkList', names)
-        for (let i = 0; i < names.length; i++) {
-            // console.log('getWorkList1', names[i])
-            const [file] = await FileApi.get(names[i], {isDir:false})
-            // console.log('getWorkList2', file.name)
-            const text = await file.text()
-            const { workInfo: { thumbnail, ...rest } }: WorkDetailDesFile = JSON.parse(text)
-            const [canvasFile] = await FileApi.get(thumbnail, {isDir:false})
-            workInfoList.push({
+        console.time('getWorkList')
+        let workInfoList: WorkInfo[];
+        const [textFileList, imgFileList] =await Promise.all([FileApi.get('', {isDir: true}), FileApi.get('thumbnail', {isDir:true})])
+        const textList = await Promise.all( textFileList.map( textFile =>textFile.text() ) )
+        workInfoList =  textList.map( text => {
+            const { workInfo: { thumbnail, workId,...rest } }: WorkDetailDesFile = JSON.parse(text)
+           return {
                 ...rest,
-                thumbnail: URL.createObjectURL(canvasFile)
-            })
-        }
+                workId,
+                thumbnail: URL.createObjectURL(imgFileList.find( ({name}) => name === `${workId}.png` ))
+            }
+        } )
+        console.timeEnd('getWorkList')
         return workInfoList
     }
 
