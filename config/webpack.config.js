@@ -34,7 +34,23 @@ module.exports = {
     extensions: [ '.tsx', '.ts', '.js' ],
   },
   module: {
+    
     rules: [
+      {
+        rules: [
+          {
+            test: /\-worker\.ts$/,
+            exclude: /node_modules/,
+            use: { 
+              loader: 'worker-loader',
+              options: {
+                name: 'WorkerName.[hash].js'  
+              }
+            },
+            
+          }
+        ],
+      },
       {
         test: /\.(j|t)sx?$/,
         exclude: /node_modules/,
@@ -65,6 +81,7 @@ module.exports = {
           }
         }
       },
+    
       {
         oneOf: [
           {
