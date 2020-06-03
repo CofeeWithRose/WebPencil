@@ -147,7 +147,9 @@ export default class WorkStorage {
                 console.error('no match file' + layerId)
             }
         }
+        console.time('createCanvasByFile')
         const canvasList = await Promise.all( infoList.map(({canvasPromise}) => canvasPromise) )
+        console.timeEnd('createCanvasByFile')
         infoList.forEach( ({canvasPromise, name, visible, layerId }, index) => {
            const layerDetail = new  LayerDetail( canvasList[index] , name, visible, layerId)
            workLayers.layers.push(layerDetail)
