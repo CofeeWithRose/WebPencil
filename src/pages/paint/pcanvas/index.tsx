@@ -5,8 +5,8 @@ import useTransform from '../../../hooks/useTransform'
 import { RGBA } from '../top-tool-bar/tool-item/color-selector/rgba'
 import { PCanvasController, WrapInfo, CanvasEventData, CanvasEvent } from './pcnvas.controller'
 import { PCanvasContext } from './pcanvas.context'
-import Icon from '@ant-design/icons'
 import { setContent } from '../../../util/canvas'
+import { Spin } from 'antd'
  
 
  interface PCanvasProps {
@@ -160,8 +160,8 @@ import { setContent } from '../../../util/canvas'
         className={styles.canvasWrap}
       >
         { canvasList }
-        <div ref={coverRef} className={styles.cover}>
-          { decodeing? '...': null }
+        <div ref={coverRef} className={styles.cover} style={{zIndex: layerDetailList.length +1 }}>
+          { decodeing? <Spin  style={{ top:'50%', left:'50%', position: 'absolute', transform: 'translate3d(-50%, -50%, 0)' }}/>: null }
         </div>
       </section>
     </main>
