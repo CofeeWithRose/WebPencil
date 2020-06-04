@@ -9,7 +9,7 @@ import { PCanvasContext } from './pcanvas.context'
 
  interface PCanvasProps {
 
-    initValue: WorkDetail,
+    initValue: WorkDetail<Promise<HTMLImageElement>>,
 
     pCanvasController?: PCanvasController
 
@@ -41,6 +41,7 @@ import { PCanvasContext } from './pcanvas.context'
           wrap: wrapRef.current,
           cover: coverRef.current,
         }
+        // TODO 处理canvas异步问题.
        pCanvasController.init(wrapInfo, initValue)
     }
   }, [])

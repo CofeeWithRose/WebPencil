@@ -1,7 +1,7 @@
 import { Reducer } from "react"
 import { PCanvasController } from "../../pcanvas"
 import { FileApi } from "../../../../workStorage/file-system"
-import { createCanvasByFile } from "../../../../util/canvas"
+import { createImageByFile } from "../../../../util/canvas"
 
 export class RecordData {
     
@@ -61,7 +61,7 @@ const  handleOperate = async <T extends keyof RecordData>( record : RecordInfo<T
     if(type === 'add'){
         const {index, canvasPath} = data as RecordData['add']
         const [file] = await FileApi.get(canvasPath, {isDir:false})
-        const canvas = await createCanvasByFile(file)
+        const canvas = await createImageByFile(file)
         const layerDetail = pCanvas.addLayerContent( index, canvas, 'history' )
         pCanvas.focusLayer(layerDetail)
         return
@@ -69,7 +69,7 @@ const  handleOperate = async <T extends keyof RecordData>( record : RecordInfo<T
     if(type === 'modify'){
         const {index, fromCanvasPath: from, toCanvasPath} = data as RecordData['modify']
         const [file] = await FileApi.get(toCanvasPath, {isDir:false})
-        const to = await createCanvasByFile(file)
+        const to = await createImageByFile(file)
         const layerDetail = pCanvas.setLayerContent( index, to, 'history' )
         pCanvas.focusLayer(layerDetail)
         return

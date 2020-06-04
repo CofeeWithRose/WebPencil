@@ -12,7 +12,7 @@ import AsideToolBar from './aside-tool-bar'
 
 export default function Paint(){
 
-	const workStateHandle = useState<WorkDetail>()
+	const workStateHandle = useState<WorkDetail<Promise<HTMLImageElement>>>()
 	const [ workDetail, setWorkDetail ] = workStateHandle
 	const {pCanvas} = usePCanvas()
 
@@ -26,9 +26,9 @@ export default function Paint(){
 
 	useEffect(() => {
 		return () => {
-			if(workDetail){
-				WorkStorage.saveWork(workDetail)
-			}
+			// if(workDetail){
+			// 	WorkStorage.saveWork(workDetail)
+			// }
 		}
 	},[workDetail])
 
