@@ -17,8 +17,11 @@ export const createCanvas = (width = 0, height =0, background?: RGBA) => {
     return canvas
 }
 
-
-
+export const setContent = (des: HTMLCanvasElement, source: HTMLCanvasElement| HTMLImageElement) => {
+    const ctx = des.getContext('2d')
+    console.log(source.width, source.height)
+    ctx?.drawImage(source, 0, 0)
+}
 
 export const copyCanvas = (canvas: HTMLCanvasElement| HTMLImageElement) =>{
     const newC = document.createElement('canvas')
@@ -30,15 +33,11 @@ export const copyCanvas = (canvas: HTMLCanvasElement| HTMLImageElement) =>{
     return newC;
 }
 
-export const createImageByFile = (canvasFile: File)  => {
-    return new Promise<HTMLImageElement>(resolve => {
-        const img = new Image()
-        img.onload = () => {
-            img.onload = null
-            resolve(img)
-        }
-        img.src = URL.createObjectURL(canvasFile)
-    })
+export const createImageByFile = async (canvasFile: File)  => {
+    const img = new Image()
+    img.src = URL.createObjectURL(canvasFile)
+    await img.decode()
+    return img
 }
 
 export const toBlob = (canvas: HTMLCanvasElement) => {
