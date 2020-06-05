@@ -31,7 +31,7 @@ export default ({ pCanvasController }: RecordProps) => {
     useEffect(() => {
 
         const onAddLayer = async (event: CanvasEventData['addLayer'] ) => {
-            const {data: {layerDetail: {canvas}, index}, creator} = event
+            const {data: {layerDetail: {canvas}, index}, tag: creator} = event
             if(creator === 'history') return
                 const canvasPath = await saveRecordCanvas(canvas)
                 dispatchRecord({
@@ -41,7 +41,7 @@ export default ({ pCanvasController }: RecordProps) => {
         }
 
         const onContentChange= async (event: CanvasEventData['contentChange']) => {
-            const {data: { layerDetail:  {canvas}, preContent, index}, creator  } = event
+            const {data: { layerDetail:  {canvas}, preContent, index}, tag: creator  } = event
             if(creator === 'history') return
             dispatchRecord({
                 type: 'add',
@@ -54,7 +54,7 @@ export default ({ pCanvasController }: RecordProps) => {
         }
 
         const onRemoveLayer =  async (event: CanvasEventData['removeLayer']) => {
-            const {  data: {layerDetail:{canvas}, index}, creator } = event
+            const {  data: {layerDetail:{canvas}, index}, tag: creator } = event
             if(creator === 'history') return
             const canvasPath = await saveRecordCanvas(canvas)
             dispatchRecord({

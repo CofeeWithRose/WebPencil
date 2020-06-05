@@ -6,20 +6,20 @@ import { PcanvasLayers } from "./pcanvas.layer"
 import PEventEmiter from "../../../util/event"
 import { copyCanvas } from "../../../util/canvas"
 
-type EvnetCreator = 'user'|'history'
+export type EvnetCreator = 'user'|'history'
 
-export class CanvasEvent<T> {
+export class CanvasEvent<T=null> {
     
     constructor(
        public data: T,
-       public creator:EvnetCreator='user',
+       public tag:EvnetCreator='user',
     ){}
 
 }
 
 export interface CanvasEventData {
 
-    init: CanvasEvent<null>
+    init: CanvasEvent
 
     colorchange: CanvasEvent<{color: RGBA}>
 
