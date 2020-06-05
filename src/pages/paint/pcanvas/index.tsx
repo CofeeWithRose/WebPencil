@@ -39,16 +39,13 @@ import { Spin } from 'antd'
   /**
    * 解码后的layerDetail,在解码完成后canvas由img更新为canvas.
    */
-  const [layerDetailList, setLayerDetailList] = useState<LayerDetail<HTMLImageElement|HTMLCanvasElement>[]>([])
+  const [layerDetailList, setLayerDetailList] = useState<LayerDetail<HTMLImageElement|HTMLCanvasElement|null>[]>([])
   
+  const [ needUpdateLayerIdList, setNeedUpdateLayerIdList ] = useState<string[]>([])
   /**
    * layerId列表仅加载时使用.
    */
-  const needUpdateLayerIdRef = useRef({
-    total: 0, // 一共需要更新的个数.
-    updatedCount: 0,
-    layerIdList:new Array<string>()
-  })  
+  const needUpdateCountRef = useRef({ updatedCount: 0 })  
   /**
    * canvas 元素的引用.
    */
@@ -63,7 +60,7 @@ import { Spin } from 'antd'
   const canvasList = useMemo(() => {
     if(workInfo){
       const { width,  height} = workInfo
-      return layerDetailList.map( ({layerId, canvas}, index) => {
+      return layerDetailList.map( ({layerId}, index) => {
        return<canvas  
             ref={ref => canvasRef.current[layerId]=ref}
             key={layerId}
@@ -77,29 +74,33 @@ import { Spin } from 'antd'
   }, [layerDetailList])
 
   useEffect(() => {
-    needUpdateLayerIdRef.current.layerIdList.forEach( id => {
-      const layerDetail = layerDetailList.find(({layerId}) => id === layerId )
-      if(layerDetail){
-        const canvas = canvasRef.current[id]
-        if(canvas){
-          setContent(canvas, layerDetail.canvas)
-          layerDetail.canvas = canvas
-          needUpdateLayerIdRef.current.updatedCount++
-          if(needUpdateLayerIdRef.current.total === needUpdateLayerIdRef.current.updatedCount){
-            setDecoding(false)
+    
+    if(needUpdateLayerIdList.length){
+      needUpdateLayerIdList.forEach( id => {
+        const layerDetail = layerDetailList.find(({layerId}) => id === layerId )
+        if(layerDetail){
+          const canvas = canvasRef.current[id]
+          if(canvas && layerDetail.canvas){
+            setContent(canvas, layerDetail.canvas as HTMLImageElement)
+            layerDetail.canvas = canvas
+            needUpdateCountRef.current.updatedCount++
+            if(layerDetailList.length === needUpdateCountRef.current.updatedCount){
+              setDecoding(false)
+            }
           }
         }
-      }
-    })
-    console.log('canvasRef: ', Object.keys(canvasRef.current).length, layerDetailList.length, layerDetailList)
-  }, [layerDetailList])
+      });
+      setNeedUpdateLayerIdList([])
+    }
+  }, [ needUpdateLayerIdList ])
   
-  const processPromise = async ({canvas, layerId, ...rest}:LayerDetail<Promise<HTMLImageElement>>) => {
-    console.log('process', canvas)
+  const processPromise = async ({canvas, layerId }:LayerDetail<Promise<HTMLImageElement>>, layerDetailList:LayerDetail<null|HTMLImageElement>[]) => {
     const img = await canvas
-    setLayerDetailList( preInfoList => ([...preInfoList, { canvas: img, layerId, ...rest }]) ) 
-    needUpdateLayerIdRef.current.layerIdList.push(layerId)
-    console.log('process...')
+    const layerDetail = layerDetailList.find(({layerId: id}) => id === layerId)
+    if(layerDetail){
+      layerDetail.canvas = img
+    }
+    setNeedUpdateLayerIdList(pre => [...pre, layerId])
   }
 
   useEffect(() => {
@@ -108,11 +109,11 @@ import { Spin } from 'antd'
           wrap: wrapRef.current,
           cover: coverRef.current,
         }
-        // TODO 处理canvas异步问题.
         const { workInfo, contens } = initValue
         setWorkInfo(workInfo)
-        needUpdateLayerIdRef.current.total = contens.layers.length
-        contens.layers.forEach( layerDetail => processPromise(layerDetail) )
+        const lasyerDetailList =  contens.layers.map( ({canvas, ...rest}) => ({...rest, canvas: null}) )
+        setLayerDetailList(lasyerDetailList)
+          contens.layers.forEach( layerDetail => processPromise(layerDetail, lasyerDetailList) )
       //  pCanvasController.init(wrapInfo, initValue)
     }
   }, [])

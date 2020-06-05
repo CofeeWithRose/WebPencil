@@ -37,7 +37,7 @@ export default ({pCanvasController}:AsideToolBarProps) => {
             <Slider
                 defaultValue={defaultWidth} 
                 vertical 
-                min={1} max={200} step={2}
+                min={1} max={200} step={1}
                 onChange={onWidthChange} 
             />
             <Divider/>
