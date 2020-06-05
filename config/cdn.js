@@ -2,7 +2,8 @@
 // const path = require('path')
 // process.env.PWD
 // console.log('pwd======>: ', process.env)
-module.exports = [
+const { BUILD_ENV } = require('../script/const')
+const cdnConfigs = [
     
     {
         libName: 'vconsole',
@@ -48,3 +49,24 @@ module.exports = [
     },
     
 ]
+
+exports.externals = () => {
+  if(process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT){
+    return []
+  }
+  return cdnConfigs.reduce( (externals ,{libName, root}) => ({...externals, [libName]: root}), {} )
+}
+
+exports.scripts = () => {
+  if(process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT){
+    return []
+  }
+ return  cdnConfigs.map(({ devCDNPath, productionCDNPath }) => process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT? devCDNPath: productionCDNPath)
+}
+
+exports.css = () => {
+  if(process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT){
+    return []
+  }
+  return cdnConfigs.map(({ css }) => css).filter(_=>_)
+}

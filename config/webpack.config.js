@@ -10,13 +10,13 @@ const WebpackPwaManifest = require('webpack-pwa-manifest')
 const mainifestConfig = require('./mainifest')
 const defineds = require('./defines')
 const { BUILD_ENV } = require('../script/const')
-const cdnConfigs = require('./cdn')
+const { externals, scripts, css} = require('./cdn')
 
 module.exports = {
   mode: 'production',
   entry: path.resolve(__dirname, '../src/index.tsx'),
   externals:{
-    ...(cdnConfigs.reduce( (externals ,{libName, root}) => ({...externals, [libName]: root}), {} ))
+    ...externals(),
   },
   output: {
     publicPath: process.env.PUBLIC_PATH,
@@ -147,10 +147,10 @@ module.exports = {
       template:  path.resolve(__dirname, '../public/index.html'),
       favicon: path.resolve(__dirname, '../src/assets/favicon.ico'),
       scripts: [
-        ... cdnConfigs.map(({ devCDNPath, productionCDNPath }) => process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT? devCDNPath: productionCDNPath),
+        ...scripts(),
       ],
       css: [
-        ...cdnConfigs.map(({ css }) => css).filter(_=>_),
+        ...css(),
       ]
     }),
     new WebpackPwaManifest(mainifestConfig),
