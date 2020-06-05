@@ -1,6 +1,6 @@
 import { uniqueId } from 'lodash'
 import { RGBA } from '../pages/paint/top-tool-bar/tool-item/color-selector/rgba';
-import { createCanvas } from '../util/canvas';
+import { createCanvas, emptyUrl } from '../util/canvas';
 
 // document.addEventListener("deviceready", onDeviceReady, false);
 // function onDeviceReady() {
@@ -10,13 +10,13 @@ import { createCanvas } from '../util/canvas';
 /**
  * 作品的描述信息.
  */
-export class WorkInfo {
+export class WorkInfo<T=string> {
 
     constructor(
         public width: number,
         public height: number,
         public name: string = '', 
-        public thumbnail: string,
+        public thumbnail: T,
         public createTime: number = Date.now(),
         public updateTime: number = Date.now(),
         public readonly workId = uniqueId(`work_${Date.now()}_`),
@@ -26,11 +26,11 @@ export class WorkInfo {
 /**
  * 作品的全部信息.
  */
-export class WorkDetail {
+export class WorkDetail<T=HTMLCanvasElement> {
 
     constructor(
         public workInfo: WorkInfo,
-        public contens: WorkLayers, 
+        public contens: WorkLayers<T>, 
     ){}
 
       /**
@@ -40,9 +40,9 @@ export class WorkDetail {
      * @param background 
      */
     static createEmpty(width: number, height: number, background: RGBA){
-        const workInfo = new WorkInfo(width,height,'new work', createCanvas(width,height, background))
+        const workInfo = new WorkInfo(width,height,'new work', emptyUrl() )
         const layer = new  WorkLayers();
-        WorkLayers.addLayer(layer, workInfo, LayerDetail.create(workInfo, RGBA.WHITE))
+        layer.layers.push(LayerDetail.create(workInfo, RGBA.WHITE))
         return new WorkDetail(workInfo,layer)
     }
 }
@@ -57,10 +57,10 @@ export class WorkDetail {
 /**
  * 作品的图层信息.
  */
-export class LayerDetail {
+export class LayerDetail<T=HTMLCanvasElement> {
     
     constructor(
-        public canvas: HTMLCanvasElement,
+        public canvas: T,
 
         public name = 'new layer',
 
@@ -82,20 +82,13 @@ export class LayerDetail {
 /**
  * 图层信息.
  */
-export class WorkLayers {
+export class WorkLayers<T=HTMLCanvasElement> {
     
     constructor(
         public readonly workLayersId = uniqueId(`worklayer-${Date.now()}-`),
     ){}
 
-    public layers: LayerDetail[] =[]
+    public layers: LayerDetail<T>[] =[]
 
-    
-    static addLayer(workLayers: WorkLayers, {width, height}: WorkInfo, layerDetail?: LayerDetail){
-        if(!layerDetail){
-            layerDetail = new LayerDetail(createCanvas(width, height))
-        }
-        workLayers.layers.unshift(layerDetail)
-    }
 
 }

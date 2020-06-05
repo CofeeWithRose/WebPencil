@@ -42,12 +42,15 @@ const pointEvent2BrunshStatus = ({offsetX: x, offsetY: y,tiltX,tiltY, pressure}:
 export type WrapInfo = { wrap: HTMLElement, cover: HTMLElement }
 /**
  * 用于控制PCanvascontroller component 的对象.
+ * 
+ * // TODO
+ * 对的操作放入组件中.
  */
 export class PCanvasController extends PEventEmiter<CanvasEventData> {
 
     protected context: PCanvasContext;
 
-    protected layerManager:PcanvasLayers;
+    // protected layerManager:PcanvasLayers;
 
     protected color = RGBA.BLACK;
 
@@ -100,7 +103,7 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
 
     }
 
-    addLayerContent(index: number, canvas:HTMLCanvasElement, creator: EvnetCreator='user'): LayerDetail {
+    addLayerContent(index: number, canvas:HTMLCanvasElement| HTMLImageElement, creator: EvnetCreator='user'): LayerDetail {
         const {width, height} = canvas
         const layerDetail = LayerDetail.create({width, height})
         const ctx = layerDetail.canvas.getContext('2d')
@@ -111,7 +114,7 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
 
     }
 
-    setLayerContent(index: number, canvas: HTMLCanvasElement, creator: EvnetCreator = 'user') {
+    setLayerContent(index: number, canvas: HTMLCanvasElement| HTMLImageElement, creator: EvnetCreator = 'user') {
         const layerDetail = this.layerManager.layers[index]
         const oldCanvas = layerDetail.canvas
         const {width, height} = oldCanvas

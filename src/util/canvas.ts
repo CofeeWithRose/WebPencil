@@ -1,6 +1,7 @@
 import { RGBA } from "../pages/paint/top-tool-bar/tool-item/color-selector/rgba"
 import {uniqueId} from 'lodash'
 
+
 export const createCanvas = (width = 0, height =0, background?: RGBA) => {
     const canvas = document.createElement('canvas')
     canvas.width = width
@@ -16,6 +17,12 @@ export const createCanvas = (width = 0, height =0, background?: RGBA) => {
     return canvas
 }
 
+export const setContent = (des: HTMLCanvasElement, source: HTMLCanvasElement| HTMLImageElement) => {
+    const ctx = des.getContext('2d')
+    console.log(source.width, source.height)
+    ctx?.drawImage(source, 0, 0)
+}
+
 export const copyCanvas = (canvas: HTMLCanvasElement| HTMLImageElement) =>{
     const newC = document.createElement('canvas')
     newC.width = canvas.width
@@ -26,15 +33,11 @@ export const copyCanvas = (canvas: HTMLCanvasElement| HTMLImageElement) =>{
     return newC;
 }
 
-export const createCanvasByFile = (canvasFile: File)  => {
-    return new Promise<HTMLCanvasElement>(resolve => {
-        const img = new Image()
-        img.onload = () => {
-            img.onload = null
-            resolve(copyCanvas(img))
-        }
-        img.src = URL.createObjectURL(canvasFile)
-    })
+export const createImageByFile = async (canvasFile: File)  => {
+    const img = new Image()
+    img.src = URL.createObjectURL(canvasFile)
+    await img.decode()
+    return img
 }
 
 export const toBlob = (canvas: HTMLCanvasElement) => {
@@ -43,22 +46,13 @@ export const toBlob = (canvas: HTMLCanvasElement) => {
     })
 }
 
-export const fromFile = async (canvasFile: File, {width=0, height=0})  => {
-    const canvas = document.createElement('canvas')
-    canvas.width = width
-    canvas.height = height
-    const ctx = canvas.getContext('2d')
-    if(ctx){
-        const buffer = await canvasFile.arrayBuffer()
-        const imgData = new ImageData(new Uint8ClampedArray(buffer, 0), width, height)
-        ctx.putImageData(imgData, 0, 0)
-    }
-    return canvas
+let _emptyUrl = ():string => {
+    const canvas = createCanvas(0,0)
+    const str =  canvas.toDataURL()
+    _emptyUrl = () => str
+    return _emptyUrl()
 }
 
-export const toFile = (canvas: HTMLCanvasElement, fileName: string) => {
-    const ctx = canvas.getContext('2d')
-    const data = ctx?.getImageData(0,0,canvas.width,canvas.height)
-    const buffer = data?.data.buffer || new ArrayBuffer(0)
-    return new File([buffer], fileName)
+export const emptyUrl = () => {
+   return _emptyUrl()
 }
