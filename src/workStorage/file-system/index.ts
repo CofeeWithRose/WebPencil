@@ -11,7 +11,7 @@ export class FileApi {
     static async init(option: FileApiOptions){
          db = await new Dexie('WebPencilVitureFile')
          await db.version(1).stores({
-            files: '[path+name]'
+            files: '++id, [path+name]'
         });
     }
 
