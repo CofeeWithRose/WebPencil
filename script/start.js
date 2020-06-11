@@ -3,6 +3,7 @@ process.env.BUILD_ENV = process.env.BUILD_ENV || BUILD_ENV.DEVELOPMENT
 process.env.PUBLIC_PATH = process.env.PUBLIC_PATH || './'
 const webpack = require('webpack')
 const webpackDevServer = require('webpack-dev-server');
+const open = require('opn')
 
 const devPlugins = [
   new webpack.HotModuleReplacementPlugin()
@@ -18,9 +19,8 @@ function start(){
   })
   webpackDevServer.addDevServerEntrypoints(webpackConfig, devServerOptions);
   const server = new webpackDevServer(compiler, devServerOptions);
-  server.listen(80,() => {
-    console.log('dev server listening on port 5000, http://localhost:5000');
-  });
-  
+  server.listen(80);
+  console.log('dev server listening on port 80, http://localhost/WebPencil/');
+  open('http://localhost/WebPencil/')
 }
 start()
