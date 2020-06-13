@@ -50,17 +50,17 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
 
     protected context: PCanvasContext;
 
-    // protected layerManager:PcanvasLayers;
+    protected layerManager:PcanvasLayers;
 
     protected color = RGBA.BLACK;
 
 
-
-    init( {wrap, cover}:  WrapInfo, workDetail: WorkDetail ){
+    async init( {wrap, cover}:  WrapInfo, workDetail: WorkDetail<Promise<HTMLImageElement>> ){
         const { width, height } = workDetail.workInfo
         wrap.style.width = `${width}px`
         wrap.style.height = `${height}px`
-        this.layerManager = new PcanvasLayers({cover, wrap, width, height}, workDetail.contens.layers)
+        this.layerManager = new PcanvasLayers({cover, wrap, width, height})
+        await this.layerManager.init(workDetail.contens.layers)
         this.context = new PCanvasContext(
             this.layerManager.getCanvas(),
             this.layerManager.getContext(),

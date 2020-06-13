@@ -1,12 +1,8 @@
-import React, { useRef, useEffect, MutableRefObject, useState, useMemo, Fragment } from 'react'
+import React, { useRef, useEffect } from 'react'
 import styles from './style.less'
-import { WorkDetail, LayerDetail, WorkInfo } from '../../../workStorage'
+import { WorkDetail } from '../../../workStorage'
 import useTransform from '../../../hooks/useTransform'
-import { RGBA } from '../top-tool-bar/tool-item/color-selector/rgba'
 import { PCanvasController, WrapInfo, CanvasEventData, CanvasEvent } from './pcnvas.controller'
-import { PCanvasContext } from './pcanvas.context'
-import { setContent } from '../../../util/canvas'
-import { Spin } from 'antd'
  
 
  interface PCanvasProps {
@@ -36,85 +32,15 @@ import { Spin } from 'antd'
 
   const wrapRef = useRef<HTMLDivElement>(null)
 
-  /**
-   * 解码后的layerDetail,在解码完成后canvas由img更新为canvas.
-   */
-  const [layerDetailList, setLayerDetailList] = useState<LayerDetail<HTMLImageElement|HTMLCanvasElement|null>[]>([])
   
-  const [ needUpdateLayerIdList, setNeedUpdateLayerIdList ] = useState<string[]>([])
-  /**
-   * layerId列表仅加载时使用.
-   */
-  const needUpdateCountRef = useRef({ updatedCount: 0 })  
-  /**
-   * canvas 元素的引用.
-   */
-  const canvasRef = useRef< { [layerId: string]: (HTMLCanvasElement|null) }>({})
-
-  const [workInfo, setWorkInfo] = useState<WorkInfo>()
-
-  const [ decodeing, setDecoding ] = useState(true)
-
-
-
-  const canvasList = useMemo(() => {
-    if(workInfo){
-      const { width,  height} = workInfo
-      return layerDetailList.map( ({layerId}, index) => {
-       return<canvas  
-            ref={ref => canvasRef.current[layerId]=ref}
-            key={layerId}
-            width={width}
-            height={height}
-            style={{zIndex: layerDetailList.length - index}}
-          />
-      })
-    }
-   
-  }, [layerDetailList])
-
-  useEffect(() => {
-    
-    if(needUpdateLayerIdList.length){
-      needUpdateLayerIdList.forEach( id => {
-        const layerDetail = layerDetailList.find(({layerId}) => id === layerId )
-        if(layerDetail){
-          const canvas = canvasRef.current[id]
-          if(canvas && layerDetail.canvas){
-            setContent(canvas, layerDetail.canvas as HTMLImageElement)
-            layerDetail.canvas = canvas
-            needUpdateCountRef.current.updatedCount++
-            if(layerDetailList.length === needUpdateCountRef.current.updatedCount){
-              setDecoding(false)
-            }
-          }
-        }
-      });
-      setNeedUpdateLayerIdList([])
-    }
-  }, [ needUpdateLayerIdList ])
-  
-  const processPromise = async ({canvas, layerId }:LayerDetail<Promise<HTMLImageElement>>, layerDetailList:LayerDetail<null|HTMLImageElement>[]) => {
-    const img = await canvas
-    const layerDetail = layerDetailList.find(({layerId: id}) => id === layerId)
-    if(layerDetail){
-      layerDetail.canvas = img
-    }
-    setNeedUpdateLayerIdList(pre => [...pre, layerId])
-  }
-
   useEffect(() => {
     if(pCanvasController&& wrapRef.current&&coverRef.current){
         const wrapInfo: WrapInfo = {
           wrap: wrapRef.current,
           cover: coverRef.current,
         }
-        const { workInfo, contens } = initValue
-        setWorkInfo(workInfo)
-        const lasyerDetailList =  contens.layers.map( ({canvas, ...rest}) => ({...rest, canvas: null}) )
-        setLayerDetailList(lasyerDetailList)
-          contens.layers.forEach( layerDetail => processPromise(layerDetail, lasyerDetailList) )
-      //  pCanvasController.init(wrapInfo, initValue)
+        // TODO 处理canvas异步问题.
+       pCanvasController.init(wrapInfo, initValue)
     }
   }, [])
 
@@ -137,10 +63,10 @@ import { Spin } from 'antd'
           pCanvasController.onPointerUp(pointEvent)
         }
       }
-      // cover.addEventListener('pointerdown', onPointerDown, {passive: false})
-      // cover.addEventListener('pointermove', onPointerMove, {passive: false})
-      // cover.addEventListener('pointerup', onPointerUp, {passive: false})
-      console.log('add....')
+      cover.addEventListener('pointerdown', onPointerDown, {passive: false})
+      cover.addEventListener('pointermove', onPointerMove, {passive: false})
+      cover.addEventListener('pointerup', onPointerUp, {passive: false})
+    console.log('add....')
 
       return () => {
         cover.removeEventListener('pointerdown', onPointerDown)
@@ -157,13 +83,9 @@ import { Spin } from 'antd'
     >
       <section
         ref={wrapRef}
-        style={{width: `${workInfo?.width}px`, height: `${workInfo?.height}px`}}
         className={styles.canvasWrap}
       >
-        { canvasList }
-        <div ref={coverRef} className={styles.cover} style={{zIndex: layerDetailList.length +1 }}>
-          { decodeing? <Spin  style={{ top:'50%', left:'50%', position: 'absolute', transform: 'translate3d(-50%, -50%, 0)' }}/>: null }
-        </div>
+        <div ref={coverRef} className={styles.cover}></div>
       </section>
     </main>
 }

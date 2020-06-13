@@ -15,6 +15,10 @@
     "moduleResolution": "Node",
     "allowJs": false,
     "strictFunctionTypes": true,
+    "baseUrl":"./",
+    "paths": {
+      "@/*": ["src/*"],
+    }
   },
-  "exclude": ["bak"]
+  "exclude": ["bak"],
 }

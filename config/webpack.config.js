@@ -24,6 +24,7 @@ module.exports = {
     chunkFilename: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'[id]-[hash].js': '[id]-[contenthash].js',
     filename: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'[name]-[hash].js': '[name]-[contenthash].js',
   },
+  devtool: 'eval-source-map',
   optimization: {
     minimizer: [
       new TerserJSPlugin({}), 
@@ -32,6 +33,9 @@ module.exports = {
   },
   resolve: {
     extensions: [ '.tsx', '.ts', '.js' ],
+    alias:{
+      '@': path.resolve(__dirname, '../src')
+    },
   },
   module: {
     

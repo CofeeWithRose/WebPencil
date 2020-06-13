@@ -1,4 +1,5 @@
 import { LayerDetail } from "../../../workStorage";
+import { copyCanvas } from '@/util/canvas'
 
 export type WrapInfo = { 
   readonly  wrap: HTMLElement,
@@ -14,26 +15,39 @@ export class PcanvasLayers{
      */
     protected tempLayer:LayerDetail;
 
+    public layers:  LayerDetail<HTMLCanvasElement>[] 
     /**
      * 当前绘制的图层.
      */
     protected focusedLayerDetail: LayerDetail;
 
-    constructor(public readonly wrapInfo: WrapInfo, public layers: LayerDetail[]){
-        const { wrap, cover } = wrapInfo
-        let lastElement: HTMLElement= cover
-        layers.forEach( (layer, index) => {
-            const { canvas, layerId, visible } = layer
-            wrap.insertBefore(canvas, lastElement);
-            lastElement = canvas
-            if(!visible){
-                canvas.className = 'unvisible'
-            }
-        })
-        this.tempLayer = LayerDetail.create(wrapInfo)
-        wrap.insertBefore( this.tempLayer.canvas, cover);
-        // console.log('this.tempLayer: ', this.tempLayer.layerId)
-        this.focusedLayerDetail = layers[0]
+    constructor(public readonly wrapInfo: WrapInfo){}
+
+
+    async init( layers: LayerDetail<Promise<HTMLImageElement>>[]): Promise<void>{
+      const wrapInfo = this.wrapInfo
+      const { wrap, cover } = wrapInfo
+      let lastElement: HTMLElement= cover
+      const newLayers:LayerDetail[] = []
+      for( let i =0; i< layers.length; i++){
+        const { canvas: imgPromise, ...rest } = layers[i]
+        const canvas = copyCanvas( await imgPromise )
+        newLayers.push({canvas, ...rest})
+      }
+      this.layers = newLayers
+      newLayers.forEach( (layer,index) => {
+      const { canvas, layerId, visible } = layer
+      wrap.insertBefore( canvas, lastElement);
+        lastElement = canvas
+        if(!visible){
+            canvas.className = 'unvisible'
+      }
+      } )
+
+      this.tempLayer = LayerDetail.create(wrapInfo)
+      wrap.insertBefore( this.tempLayer.canvas, cover);
+      // console.log('this.tempLayer: ', this.tempLayer.layerId)
+      this.focusedLayerDetail = newLayers[0]
     }
 
     getCanvas():HTMLCanvasElement{
