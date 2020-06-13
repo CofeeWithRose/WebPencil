@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react"
+import { useRef, useEffect, RefObject } from "react"
 import Hammer from 'hammerjs'
 import { Vector2 } from "../util/data/Vector2"
 import { throttle } from 'lodash'
@@ -9,9 +9,16 @@ export interface UseTransformProps {
 
     minScale? :number,
 
-    scaleEnable?: boolean
+    // scaleEnable?: boolean
 
-    rotateEnable?: boolean
+    // rotateEnable?: boolean
+    scaleRef?: RefObject<HTMLElement>,
+
+    transRef?: RefObject<HTMLElement>,
+
+    // rotateEle?: HTMLElement,
+
+    viewRef: RefObject<HTMLElement>,
 
 }
 
@@ -47,20 +54,20 @@ const getNewTranslate = (preCenter: Vector2, newCenter: Vector2, translate: Vect
 
 const TRANSACTION = 'transform 0.1s'
 
-export default function useTransform<WrapElement extends HTMLElement>(userTransformProps?: UseTransformProps){
+export default function useTransform(userTransformProps?: UseTransformProps){
     const {
         
         maxScale = 2,
 
         minScale = 0.5,
 
-        scaleEnable = true,
+        transRef,
 
-        rotateEnable = true,
+        viewRef,
 
     } = userTransformProps||{}
 
-    const wrapRef = useRef<WrapElement>(null)
+    // const wrapRef = useRef<WrapElement>(null)
     // const contentRef = useRef<ContentElement>(null)
     const transformInfoRef = useRef({
         /**
@@ -91,7 +98,7 @@ export default function useTransform<WrapElement extends HTMLElement>(userTransf
         /**
          * 渲染的缩放值.
          */
-        scale: 1,
+        scale: minScale,
 
         gestrueStartTranslate:new Vector2(),
 
@@ -106,12 +113,10 @@ export default function useTransform<WrapElement extends HTMLElement>(userTransf
     })
 
     useEffect(()=> {
-        if(
-            null !== wrapRef.current
-        ){
-
-            const computedStyle = getComputedStyle(wrapRef.current)
-
+      if(!viewRef?.current) return
+        if( transRef&&transRef.current ){
+         
+            const computedStyle = getComputedStyle(transRef.current)
             /**
              * 默认的transform中心点.
              */
@@ -120,20 +125,20 @@ export default function useTransform<WrapElement extends HTMLElement>(userTransf
             /**
              * 添加操作时的动画，增强体验流畅度.
              */
-            wrapRef.current.style.transition = TRANSACTION
-
-            const mainManager = new Hammer.Manager(wrapRef.current)
+            transRef.current.style.transition = TRANSACTION
+            const mainManager = new Hammer.Manager(viewRef.current)
             mainManager.add(new Hammer.Pan( { threshold: 0, pointers: 2}))
-            rotateEnable && mainManager.add(new Hammer.Rotate()).recognizeWith(mainManager.get('pan'))
-            scaleEnable && mainManager.add(new Hammer.Pinch()).recognizeWith([mainManager.get('pan'), mainManager.get('rotate') ])
+            // mainManager.add(new Hammer.Rotate()).recognizeWith(mainManager.get('pan'))
+            mainManager.add(new Hammer.Pinch()).recognizeWith([mainManager.get('pan') ])
 
 
             const requestUpdate =  throttle(() => 
                  new Promise(resolve => {
                     requestAnimationFrame(()=> {
+                      if(!transRef.current) return
                         const { rotate, scale, translate:{ x:transformX, y: transformY}, center } = transformInfoRef.current;
-                        (<WrapElement>wrapRef.current).style.transform = `translate3d( ${transformX}px, ${transformY}px, 0)  scale(${scale}) rotate(${rotate}deg)`;
-                        (<WrapElement>wrapRef.current).style.transformOrigin = `${center.x}px ${center.y}px`
+                        transRef.current.style.transform = `translate3d( ${transformX}px, ${transformY}px, 0)  scale(${scale}) rotate(${rotate}deg)`;
+                        // transRef.current.style.transformOrigin = `${center.x}px ${center.y}px`
                         resolve()
                         // console.log('translate: ', transformInfoRef.current.translate)
                         // console.log('center: ', transformInfoRef.current.center)
@@ -144,11 +149,11 @@ export default function useTransform<WrapElement extends HTMLElement>(userTransf
                 const { translate } = transformInfoRef.current
                 transformInfoRef.current.gestrueStartTranslate = new Vector2(deltaX, deltaY)
                 transformInfoRef.current.eleStartTanslate = translate;
-                if(wrapRef.current){
-                    wrapRef.current.style.transition = ''
+                if(transRef.current){
+                  transRef.current.style.transition = ''
                     requestAnimationFrame(() => {
-                        if(wrapRef.current){
-                            wrapRef.current.style.transition = TRANSACTION
+                        if(transRef.current){
+                          transRef.current.style.transition = TRANSACTION
                         }
                     } )
                 }
@@ -166,32 +171,32 @@ export default function useTransform<WrapElement extends HTMLElement>(userTransf
                 requestUpdate()
             }
           
-            const onRotateStart = async ({rotation, center}: HammerInput) => {
-                const { rotate, translate, center: preCenter, scale } = transformInfoRef.current
-                transformInfoRef.current.eleStartRotate = rotate
-                transformInfoRef.current.gestrueStartRotate = rotation
-                const newCenter = Vector2.subtract(center, translate)
-                transformInfoRef.current.translate = getNewTranslate(preCenter, newCenter, translate, scale, rotate)
-                transformInfoRef.current.center = newCenter
-                await requestUpdate()
-                if(wrapRef.current){
-                    wrapRef.current.style.transition = ''
-                    requestAnimationFrame(() => {
-                        if(wrapRef.current){
-                            wrapRef.current.style.transition = TRANSACTION
-                        }
-                    } )
-                }
+            // const onRotateStart = async ({rotation, center}: HammerInput) => {
+            //     const { rotate, translate, center: preCenter, scale } = transformInfoRef.current
+            //     transformInfoRef.current.eleStartRotate = rotate
+            //     transformInfoRef.current.gestrueStartRotate = rotation
+            //     const newCenter = Vector2.subtract(center, translate)
+            //     transformInfoRef.current.translate = getNewTranslate(preCenter, newCenter, translate, scale, rotate)
+            //     transformInfoRef.current.center = newCenter
+            //     await requestUpdate()
+            //     if(wrapRef.current){
+            //         wrapRef.current.style.transition = ''
+            //         requestAnimationFrame(() => {
+            //             if(wrapRef.current){
+            //                 wrapRef.current.style.transition = TRANSACTION
+            //             }
+            //         } )
+            //     }
                 
-            }
-            const onRotate = ({rotation}: HammerInput) => { 
-                const { gestrueStartRotate, eleStartRotate, translate } =  transformInfoRef.current
-                const deltaRotateion = rotation - gestrueStartRotate
-                const rotateVal = eleStartRotate +  deltaRotateion
-                transformInfoRef.current.rotate = getTargetValue(rotateVal, 0, 10 )
-                requestUpdate()
+            // }
+            // const onRotate = ({rotation}: HammerInput) => { 
+            //     const { gestrueStartRotate, eleStartRotate, translate } =  transformInfoRef.current
+            //     const deltaRotateion = rotation - gestrueStartRotate
+            //     const rotateVal = eleStartRotate +  deltaRotateion
+            //     transformInfoRef.current.rotate = getTargetValue(rotateVal, 0, 10 )
+            //     requestUpdate()
               
-            }
+            // }
 
             const onPinchStart = async ({ scale, center }: HammerInput) =>{
                 const { translate, scale: slScale, center:preCenter, rotate } = transformInfoRef.current
@@ -201,11 +206,11 @@ export default function useTransform<WrapElement extends HTMLElement>(userTransf
                 transformInfoRef.current.translate = getNewTranslate(preCenter, newCenter, translate, scale, rotate)
                 transformInfoRef.current.center = newCenter
                 await requestUpdate()
-                if(wrapRef.current){
-                    wrapRef.current.style.transition = ''
+                if(transRef.current){
+                  transRef.current.style.transition = ''
                     requestAnimationFrame(() => {
-                        if(wrapRef.current){
-                            wrapRef.current.style.transition = TRANSACTION
+                        if(transRef.current){
+                          transRef.current.style.transition = TRANSACTION
                         }
                     } )
                 }
@@ -224,8 +229,8 @@ export default function useTransform<WrapElement extends HTMLElement>(userTransf
             mainManager.on('panmove', onPan)
 
 
-            mainManager.on('rotatestart', onRotateStart)
-            mainManager.on('rotate', onRotate)
+            // mainManager.on('rotatestart', onRotateStart)
+            // mainManager.on('rotate', onRotate)
 
             mainManager.on('pinchstart', onPinchStart)
             mainManager.on('pinchmove', onPinchinMove)
@@ -236,16 +241,13 @@ export default function useTransform<WrapElement extends HTMLElement>(userTransf
                 mainManager.off('panmove', onPan)
     
     
-                mainManager.off('rotatestart', onRotateStart)
-                mainManager.off('rotate', onRotate)
+                // mainManager.off('rotatestart', onRotateStart)
+                // mainManager.off('rotate', onRotate)
     
                 mainManager.off('pinchstart', onPinchStart)
                 mainManager.off('pinchmove', onPinchinMove)
             }
         }
-    }, [wrapRef.current])
+    }, [])
 
-    return {
-        wrapRef,
-    }
 }

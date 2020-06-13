@@ -28,8 +28,12 @@ export const copyCanvas = (canvas: HTMLCanvasElement| HTMLImageElement) =>{
     newC.width = canvas.width
     newC.height = canvas.height
     const ctx = newC.getContext('2d')
-    ctx?.clearRect(0,0, newC.width, newC.height)
-    ctx?.drawImage(canvas, 0, 0, canvas.width, canvas.height)
+    if(ctx){
+      ctx.imageSmoothingEnabled = false
+      ctx.clearRect(0,0, newC.width, newC.height)
+      ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height)
+    }
+  
     return newC;
 }
 

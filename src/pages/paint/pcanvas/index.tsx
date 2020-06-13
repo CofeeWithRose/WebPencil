@@ -26,11 +26,15 @@ import { PCanvasController, WrapInfo, CanvasEventData, CanvasEvent } from './pcn
  const PCanvas = ({ initValue, pCanvasController }: PCanvasProps) =>{
    
 
-  // const { wrapRef } = useTransform<HTMLElement>({ maxScale: devicePixelRatio * 2 })
+
 
   const coverRef = useRef<HTMLDivElement>(null)
 
   const wrapRef = useRef<HTMLDivElement>(null)
+
+  const viewRef = useRef<HTMLElement>(null)
+
+  useTransform({ maxScale: 1, viewRef, transRef: wrapRef, scaleRef: wrapRef })
 
   
   useEffect(() => {
@@ -79,7 +83,9 @@ import { PCanvasController, WrapInfo, CanvasEventData, CanvasEvent } from './pcn
 
   
     return <main 
+        ref={viewRef}
         className={styles.pCanvas}
+
     >
       <section
         ref={wrapRef}
