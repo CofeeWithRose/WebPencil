@@ -31,8 +31,13 @@ export class PcanvasLayers{
       const newLayers:LayerDetail[] = []
       for( let i =0; i< layers.length; i++){
         const { canvas: imgPromise, ...rest } = layers[i]
-        const canvas = copyCanvas( await imgPromise )
-        newLayers.push({canvas, ...rest})
+        try{
+          const canvas = copyCanvas( await imgPromise )
+          newLayers.push({canvas, ...rest})
+        }catch(e){
+          console.error('decode error', layers[i].layerId)
+        }
+        
       }
       this.layers = newLayers
       newLayers.forEach( (layer,index) => {
@@ -41,8 +46,8 @@ export class PcanvasLayers{
         lastElement = canvas
         if(!visible){
             canvas.className = 'unvisible'
-      }
-      } )
+        }
+      })
 
       this.tempLayer = LayerDetail.create(wrapInfo)
       wrap.insertBefore( this.tempLayer.canvas, cover);

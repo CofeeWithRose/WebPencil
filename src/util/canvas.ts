@@ -37,12 +37,38 @@ export const copyCanvas = (canvas: HTMLCanvasElement| HTMLImageElement) =>{
     return newC;
 }
 
-export const createImageByFile = async (canvasFile: File)  => {
-    const img = new Image()
-    img.src = URL.createObjectURL(canvasFile)
-    await img.decode()
-    return img
+const deCodeImageTask: {file:File, cb: (img:HTMLImageElement) => void}[]  = []
+let decodingNumber = 0
+
+
+const handleDecodeTask = async () => {
+  if(decodingNumber<5){
+    let task = deCodeImageTask.shift()
+    while(task){
+      decodingNumber++
+      const { file, cb } = task
+      const img = new Image()
+      img.src = URL.createObjectURL(file)
+      await img.decode()
+      URL.revokeObjectURL(img.src)
+      cb(img)
+      decodingNumber--
+      task = deCodeImageTask.shift()
+    }
+  }
 }
+/**
+ * 由于浏览器img解码内存限制，控制解码的并发.
+ * @param canvasFile 
+ */
+export const createImageByFile = async (canvasFile: File)  => {
+  return new Promise(cb => {
+    deCodeImageTask.push( {file:canvasFile, cb} )
+    handleDecodeTask()
+  })
+    
+}
+
 
 export const toBlob = (canvas: HTMLCanvasElement) => {
     return new Promise<Blob | null>(resolve => {

@@ -4,6 +4,7 @@ import { RGBA } from './tool-item/color-selector/rgba'
 import style from './index.less'
 import { PCanvasController } from '../pcanvas'
 import LayerPannel from './tool-item/layer-pannel'
+import SaveTool from './tool-item/save'
 
 export interface TopToolBarProps{
     pCanvasController: PCanvasController
@@ -25,9 +26,10 @@ export default ({ pCanvasController }:TopToolBarProps) => {
 
     return <div className={style.topToolBar}>
         <LayerPannel pCanvasController={pCanvasController}/>
-       <ColorSelector
-            defaultValue={DEFAULT_COLOR}
-            onChange={changeColor}
-       />
+        <ColorSelector
+              defaultValue={DEFAULT_COLOR}
+              onChange={changeColor}
+        />
+        <SaveTool pCanvasController={pCanvasController} />
     </div>
 }

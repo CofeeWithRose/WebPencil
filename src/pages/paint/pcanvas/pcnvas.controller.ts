@@ -23,13 +23,13 @@ export interface CanvasEventData {
 
     colorchange: CanvasEvent<{color: RGBA}>
 
-    addLayer: CanvasEvent<{layerDetail: LayerDetail, index: number}>
+    addLayer: CanvasEvent<{workId:string, layerDetail: LayerDetail, index: number}>
 
-    contentChange: CanvasEvent<{ layerDetail: LayerDetail, preContent: HTMLCanvasElement, index: number }>
+    contentChange: CanvasEvent<{ workId:string , layerDetail: LayerDetail, preContent: HTMLCanvasElement, index: number }>
 
     focusLayer: CanvasEvent<{ layerDetail: LayerDetail }>
 
-    removeLayer: CanvasEvent<{ layerDetail: LayerDetail, index: number}>
+    removeLayer: CanvasEvent<{ workId:string, layerDetail: LayerDetail, index: number}>
 }
 
 
@@ -56,13 +56,15 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
 
     protected pointerIds: {[id:string]: boolean} = {}
 
+    protected workId: string
 
     async init( {wrap, cover}:  WrapInfo, workDetail: WorkDetail<Promise<HTMLImageElement>> ){
-        const { width, height } = workDetail.workInfo
+        const { width, height, workId } = workDetail.workInfo
         wrap.style.width = `${width}px`
         wrap.style.height = `${height}px`
+        this.workId = workId
         this.layerManager = new PcanvasLayers({cover, wrap, width, height})
-        await this.layerManager.init(workDetail.contens.layers)
+        await this.layerManager.init(workDetail.layers)
         this.context = new PCanvasContext(
             this.layerManager.getCanvas(),
             this.layerManager.getContext(),
@@ -100,7 +102,7 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
         const layerDetail =  this.layerManager.addLayer(LayerDetail.create(this.layerManager.wrapInfo))
         this.layerManager.focusLayer(layerDetail)
         const index = this.layerManager.layers.indexOf(layerDetail)
-        this.emit('addLayer',  new CanvasEvent({ layerDetail, index }))
+        this.emit('addLayer',  new CanvasEvent({workId: this.workId, layerDetail, index }))
         this.emit('focusLayer', new CanvasEvent({layerDetail}))
 
     }
@@ -111,7 +113,7 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
         const ctx = layerDetail.canvas.getContext('2d')
         ctx?.drawImage(canvas, 0,0, width, height)
         this.layerManager.addLayer(layerDetail, index)
-        this.emit('addLayer', new CanvasEvent({layerDetail, index}, creator))
+        this.emit('addLayer', new CanvasEvent({ workId: this.workId , layerDetail, index}, creator))
         return layerDetail
 
     }
@@ -124,7 +126,7 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
         const ctx = layerDetail.canvas.getContext('2d')
         ctx?.clearRect(0,0, width, height)
         ctx?.drawImage(canvas, 0,0,width, height)
-        this.emit('contentChange', new CanvasEvent({ layerDetail, index, preContent }, creator))
+        this.emit('contentChange', new CanvasEvent({ workId: this.workId , layerDetail, index, preContent,  }, creator))
         return layerDetail
     }
 
@@ -137,7 +139,7 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
 
     removeLayer(layerDetail: LayerDetail, creator: EvnetCreator='user'): void{
         const { index, isFocus } =  this.layerManager.removeLayer(layerDetail)
-        this.emit('removeLayer', new CanvasEvent({layerDetail, index}, creator))
+        this.emit('removeLayer', new CanvasEvent({workId: this.workId, layerDetail, index}, creator))
         if(isFocus){
             const layerDetail = this.layerManager.layers[0]
             this.focusLayer(layerDetail)
@@ -189,7 +191,7 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
         const preContent = copyCanvas(curLayerDetail.canvas)
         this.layerManager.applyTempCanvas()
         const index = this.layerManager.layers.indexOf(curLayerDetail)
-        this.emit('contentChange', new CanvasEvent({ layerDetail: curLayerDetail, preContent, index})) 
+        this.emit('contentChange', new CanvasEvent({ workId: this.workId , layerDetail: curLayerDetail, preContent, index})) 
     }
 
 
