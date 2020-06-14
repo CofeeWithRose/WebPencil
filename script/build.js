@@ -4,7 +4,7 @@ process.env.PUBLIC_PATH = process.env.PUBLIC_PATH || './'
 
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const WorkboxPlugin = require('workbox-webpack-plugin');
-const cdnConfigs = require('../config/cdn')
+const { scripts } = require('../config/cdn')
 
 
 const webpack = require('webpack')
@@ -18,9 +18,9 @@ const cfg = {
             clientsClaim: true,
             skipWaiting: true,
             maximumFileSizeToCacheInBytes: 1000*1000*4,
-            additionalManifestEntries: cdnConfigs.map(({productionCDNPath,devCDNPath})=> (
+            additionalManifestEntries: scripts().map((url)=> (
               {
-                url: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT? devCDNPath: productionCDNPath,
+                url,
                 revision: null,
               })
             ),
