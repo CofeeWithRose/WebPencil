@@ -3,7 +3,7 @@ const darkTheme = require('antd/dist/dark-theme')
 module.exports = {
     'hack': `true;@import "${require.resolve('antd/lib/style/color/colorPalette.less')}";`,
     ...darkTheme,
-    'primary-color': '#000', // 全局主色
+    'primary-color': '#8c8c8c', // 全局主色
     // 'link-color': ' #1890ff', // 链接色
     // 'success-color': ' #52c41a', // 成功色
     // 'warning-color': ' #faad14', // 警告色
