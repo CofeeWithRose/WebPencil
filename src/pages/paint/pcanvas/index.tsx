@@ -49,7 +49,7 @@ import { Spin } from 'antd'
           cover: coverRef.current,
         }
         const onInit = () => {
-          // setLoading(false)
+          setLoading(false)
         }
        pCanvasController.init(wrapInfo, initValue)
        pCanvasController.on('init', onInit)
