@@ -8,6 +8,8 @@ const TerserJSPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest')
 const mainifestConfig = require('./mainifest')
+const WorkboxPlugin = require('workbox-webpack-plugin');
+
 const defineds = require('./defines')
 const { BUILD_ENV } = require('../script/const')
 const { externals, scripts, css} = require('./cdn')
@@ -146,7 +148,17 @@ module.exports = {
       'collections': true,
       'paths': true
     }),
-    
+    new WorkboxPlugin.GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true,
+      maximumFileSizeToCacheInBytes: 1000*1000*4,
+      additionalManifestEntries: scripts().map((url)=> (
+        {
+          url,
+          revision: null,
+        })
+      ),
+    }),
     new HtmlWebpackPlugin({ 
       template:  path.resolve(__dirname, '../public/index.html'),
       favicon: path.resolve(__dirname, '../src/assets/favicon.ico'),

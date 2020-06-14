@@ -12,6 +12,7 @@ import { FileApi } from './workStorage/file-system'
 import 'antd/dist/antd.dark.less';
 
 import './style.less'
+const VERSION = (window as any ).VERSION = process.env.VERSION
 
 FileApi.init({
     permissionTip: (callback) => {
@@ -38,10 +39,11 @@ ReactDom.render(
 	document.querySelector('#root') 
 );
 
-if('serviceWorker' in navigator && process.env.BUILD_ENV !== 'development'){
-	const regist = () => {
+// if('serviceWorker' in navigator && process.env.BUILD_ENV !== 'development'){
+  if('serviceWorker' in navigator){
+    const regist = () => {
 		console.log('try resgist')
-		const workBox = new Workbox(`${process.env.PUBLIC_PATH||'./'}service-worker.js`);
+		const workBox = new Workbox(`${process.env.PUBLIC_PATH||'./'}service-worker.js?_=${VERSION}`);
 		workBox.addEventListener('activated', ({isUpdate}) => {
 			isUpdate && message.info(<span onPointerUp={() => window.location.reload()}>应用已更新，点击加载.</span>, 0)
 		})
@@ -84,5 +86,3 @@ window.addEventListener('load', () => {
 		e.preventDefault()
 	},{passive:false,})
 });
-
-(window as any ).VERSION = process.env.VERSION
