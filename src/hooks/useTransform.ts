@@ -117,6 +117,7 @@ export default function useTransform(userTransformProps?: UseTransformProps){
         if( transRef&&transRef.current ){
          
             const computedStyle = getComputedStyle(transRef.current)
+
             /**
              * 默认的transform中心点.
              */
@@ -127,9 +128,29 @@ export default function useTransform(userTransformProps?: UseTransformProps){
              */
             transRef.current.style.transition = TRANSACTION
             const mainManager = new Hammer.Manager(viewRef.current)
-            mainManager.add(new Hammer.Pan( { threshold: 0, pointers: 2}))
+            mainManager.add(new Hammer.Pan( { threshold: 0, pointers: 2, 
+              enable: (_, data) => {
+                if(data&&data.pointers.length >1){
+                  const { pointers: [ p1, p2 ] } = data
+                  console.log( Vector2.dist(p1,p2))
+                  return Vector2.dist(p1,p2)<200
+                 
+                }
+                return false
+              }
+            }))
             // mainManager.add(new Hammer.Rotate()).recognizeWith(mainManager.get('pan'))
-            mainManager.add(new Hammer.Pinch()).recognizeWith([mainManager.get('pan') ])
+            mainManager.add(new Hammer.Pinch({
+              enable: (_, data) => {
+                if(data&&data.pointers.length >1){
+                  const { pointers: [ p1, p2 ] } = data
+                  console.log( Vector2.dist(p1,p2))
+                  return Vector2.dist(p1,p2)> 200
+                 
+                }
+                return false
+              }
+            })).recognizeWith([mainManager.get('pan') ])
 
 
             const requestUpdate =  throttle(() => 
@@ -248,6 +269,6 @@ export default function useTransform(userTransformProps?: UseTransformProps){
                 mainManager.off('pinchmove', onPinchinMove)
             }
         }
-    }, [])
+    }, [...Object.values(userTransformProps||{})])
 
 }

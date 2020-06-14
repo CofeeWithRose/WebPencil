@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import styles from './style.less'
 import { WorkDetail } from '../../../workStorage'
 import useTransform from '../../../hooks/useTransform'
@@ -34,7 +34,9 @@ import { PCanvasController, WrapInfo, CanvasEventData, CanvasEvent } from './pcn
 
   const viewRef = useRef<HTMLElement>(null)
 
-  useTransform({ maxScale: 1, viewRef, transRef: wrapRef, scaleRef: wrapRef })
+  const [ minScale, setMinScale ] = useState(0.1)
+
+  useTransform({ minScale, maxScale: 1, viewRef, transRef: wrapRef, scaleRef: wrapRef })
 
   
   useEffect(() => {
@@ -43,10 +45,20 @@ import { PCanvasController, WrapInfo, CanvasEventData, CanvasEvent } from './pcn
           wrap: wrapRef.current,
           cover: coverRef.current,
         }
-        // TODO 处理canvas异步问题.
+        // const onInit = () => {
+        //   if(!viewRef.current) return
+        //   const { width, height } = viewRef.current.getBoundingClientRect()
+        //   const scale = Math.min(width, height)/Math.max( initValue.workInfo.width, initValue.workInfo.height )
+        //   setMinScale(  scale)
+        // }
        pCanvasController.init(wrapInfo, initValue)
+      //  pCanvasController.on('init', onInit)
+       return () => {
+        //  pCanvasController.off('init', onInit)
+       }
+
     }
-  }, [])
+  }, [setMinScale])
 
   useEffect(() => {
     const cover = coverRef.current
@@ -70,7 +82,6 @@ import { PCanvasController, WrapInfo, CanvasEventData, CanvasEvent } from './pcn
       cover.addEventListener('pointerdown', onPointerDown, {passive: false})
       cover.addEventListener('pointermove', onPointerMove, {passive: false})
       cover.addEventListener('pointerup', onPointerUp, {passive: false})
-    console.log('add....')
 
       return () => {
         cover.removeEventListener('pointerdown', onPointerDown)

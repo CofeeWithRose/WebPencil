@@ -54,6 +54,8 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
 
     protected color = RGBA.BLACK;
 
+    protected pointerIds: {[id:string]: boolean} = {}
+
 
     async init( {wrap, cover}:  WrapInfo, workDetail: WorkDetail<Promise<HTMLImageElement>> ){
         const { width, height } = workDetail.workInfo
@@ -162,11 +164,12 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
     }
 
     onPointerDown(p: PointerEvent){
-        
+        this.pointerIds[p.pointerId] = true
         this.context.brush.onStart(pointEvent2BrunshStatus(p),this.context)
     }
 
     onPointerMove(pointerEvent: PointerEvent):void{
+      if(Object.keys(this.pointerIds).length>1) return
         let ponterEvents: PointerEvent[];
         if((pointerEvent as any).getCoalescedEvents){
             ponterEvents = (pointerEvent as any ).getCoalescedEvents()
@@ -180,6 +183,7 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
     }
 
     onPointerUp(p: PointerEvent): void{
+        delete this.pointerIds[p.pointerId]
         this.context.brush.onEnd(pointEvent2BrunshStatus(p),this.context)
         const curLayerDetail = this.layerManager.getFocusDetail()
         const preContent = copyCanvas(curLayerDetail.canvas)
