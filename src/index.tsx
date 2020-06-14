@@ -43,7 +43,7 @@ ReactDom.render(
   if('serviceWorker' in navigator){
     const regist = () => {
 		console.log('try resgist')
-		const workBox = new Workbox(`${process.env.PUBLIC_PATH||'./'}service-worker.js?_=${VERSION}`);
+		const workBox = new Workbox(`${process.env.PUBLIC_PATH||'./'}service-worker.js`);
 		workBox.addEventListener('activated', ({isUpdate}) => {
 			isUpdate && message.info(<span onPointerUp={() => window.location.reload()}>应用已更新，点击加载.</span>, 0)
 		})
