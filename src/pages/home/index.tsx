@@ -69,7 +69,7 @@ export default () => {
             }
 
         </main>
-        <FileMenu isVisibale={isShowSetting} onComplete={newWork}/>
+        <FileMenu isVisibale={isShowSetting} onComplete={newWork} onCancel={ () => setIsShowSetting(false) } />
      
     </BasicLayout>
 }

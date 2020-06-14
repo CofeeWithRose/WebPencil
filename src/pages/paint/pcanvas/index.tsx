@@ -3,6 +3,7 @@ import styles from './style.less'
 import { WorkDetail } from '../../../workStorage'
 import useTransform from '../../../hooks/useTransform'
 import { PCanvasController, WrapInfo, CanvasEventData, CanvasEvent } from './pcnvas.controller'
+import { Spin } from 'antd'
  
 
  interface PCanvasProps {
@@ -36,6 +37,8 @@ import { PCanvasController, WrapInfo, CanvasEventData, CanvasEvent } from './pcn
 
   const [ minScale, setMinScale ] = useState(0.1)
 
+  const [ loading, setLoading ] = useState(true)
+
   useTransform({ minScale, maxScale: 1, viewRef, transRef: wrapRef, scaleRef: wrapRef })
 
   
@@ -45,20 +48,17 @@ import { PCanvasController, WrapInfo, CanvasEventData, CanvasEvent } from './pcn
           wrap: wrapRef.current,
           cover: coverRef.current,
         }
-        // const onInit = () => {
-        //   if(!viewRef.current) return
-        //   const { width, height } = viewRef.current.getBoundingClientRect()
-        //   const scale = Math.min(width, height)/Math.max( initValue.workInfo.width, initValue.workInfo.height )
-        //   setMinScale(  scale)
-        // }
+        const onInit = () => {
+          // setLoading(false)
+        }
        pCanvasController.init(wrapInfo, initValue)
-      //  pCanvasController.on('init', onInit)
+       pCanvasController.on('init', onInit)
        return () => {
-        //  pCanvasController.off('init', onInit)
+        pCanvasController.off('init', onInit)
        }
 
     }
-  }, [setMinScale])
+  }, [setLoading])
 
   useEffect(() => {
     const cover = coverRef.current
@@ -104,6 +104,11 @@ import { PCanvasController, WrapInfo, CanvasEventData, CanvasEvent } from './pcn
       >
         <div ref={coverRef} className={styles.cover}></div>
       </section>
+      { loading&&
+        <div className={styles.mask} onMouseMove={ ({nativeEvent}) => nativeEvent.stopPropagation()  }>
+          <Spin/> 
+        </div>
+      }
     </main>
 }
 
