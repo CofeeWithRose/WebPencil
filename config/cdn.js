@@ -47,6 +47,12 @@ const cdnConfigs = [
         productionCDNPath:'https://cdn.bootcss.com/antd/4.1.3/antd-with-locales.min.js',
         root: 'antd',
     },
+    {
+      libName: 'dexie',
+      devCDNPath: 'https://npmcdn.com/dexie@3.0.1/dist/dexie.min.js',
+      productionCDNPath: 'https://npmcdn.com/dexie@3.0.1/dist/dexie.min.js',
+      root: 'Dexie'
+    }
     
 ]
 

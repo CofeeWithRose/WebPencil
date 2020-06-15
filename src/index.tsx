@@ -39,8 +39,8 @@ ReactDom.render(
 	document.querySelector('#root') 
 );
 
-// if('serviceWorker' in navigator && process.env.BUILD_ENV !== 'development'){
-  if('serviceWorker' in navigator){
+if('serviceWorker' in navigator && process.env.BUILD_ENV !== 'development'){
+  // if('serviceWorker' in navigator){
     const regist = () => {
 		console.log('try resgist')
 		const workBox = new Workbox(`${process.env.PUBLIC_PATH||'./'}service-worker.js`);
@@ -82,7 +82,16 @@ window.addEventListener('load', () => {
 	/**
 	 * 禁用safari拖拽.
 	 */
-	document.body.addEventListener('touchmove', (e) => {
+	document.addEventListener('touchmove', (e) => {
 		e.preventDefault()
-	})
+  })
+  document.addEventListener('touchstart', (e) => {
+		e.preventDefault()
+  })
+  document.addEventListener('gesturestart', function (event) {
+    event.preventDefault();
+  });
+  document.addEventListener('pointermove', (e) => {
+    e.preventDefault()
+  })
 });
