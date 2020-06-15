@@ -82,7 +82,7 @@ window.addEventListener('load', () => {
 	/**
 	 * 禁用safari拖拽.
 	 */
-	document.addEventListener('touchmove', (e) => {
+	document.body.addEventListener('touchmove', (e) => {
 		e.preventDefault()
-	},{passive:false,})
+	})
 });

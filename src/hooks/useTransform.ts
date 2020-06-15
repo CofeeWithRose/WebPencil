@@ -41,7 +41,7 @@ const translateFun = (val: Vector2, center: Vector2, translate: Vector2, scale: 
 }
 
 const zero = new Vector2()
-console.log('translateFun: ', translateFun(new Vector2(0,1), zero, zero, 2, 90))
+// console.log('translateFun: ', translateFun(new Vector2(0,1), zero, zero, 2, 90))
 
 /**
  * 当transform-origin的改变（用户旋转操作时会发生）,此时scale或rotate有值会导致图像抖动，该方法可以获取修正后的transform。

@@ -42,19 +42,25 @@ let decodingNumber = 0
 
 
 const handleDecodeTask = async () => {
-  if(decodingNumber<5){
+  if(decodingNumber<1){
     let task = deCodeImageTask.shift()
     while(task){
       decodingNumber++
       const { file, cb } = task
       const img = new Image()
       img.src = URL.createObjectURL(file)
-      await img.decode()
+      try{
+        await img.decode()
+      }catch(e){
+        console.error(e, 'img decode error', e.message)
+      }
       URL.revokeObjectURL(img.src)
       cb(img)
       decodingNumber--
       task = deCodeImageTask.shift()
+      // console.log(decodingNumber,deCodeImageTask.length )
     }
+    
   }
 }
 /**
