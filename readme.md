@@ -11,3 +11,13 @@
 3、 启动 npm start
 
 本地地址： http://localhost/WebPencil/
+
+
+技术栈
+react 
+react-hooks
+typescript
+antd
+
+架构图：
+见intro.png
