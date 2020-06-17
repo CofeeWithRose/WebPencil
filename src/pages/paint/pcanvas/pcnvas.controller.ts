@@ -58,13 +58,13 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
 
     protected workId: string
 
-    async init( {wrap, cover}:  WrapInfo, workDetail: WorkDetail<Promise<HTMLImageElement>> ){
+    async init( {wrap, cover}:  WrapInfo, workDetail: WorkDetail ){
         const { width, height, workId } = workDetail.workInfo
         wrap.style.width = `${width}px`
         wrap.style.height = `${height}px`
         this.workId = workId
         this.layerManager = new PcanvasLayers({cover, wrap, width, height})
-        await this.layerManager.init(workDetail.layers)
+        this.layerManager.init(workDetail.layers)
         this.context = new PCanvasContext(
             this.layerManager.getCanvas(),
             this.layerManager.getContext(),

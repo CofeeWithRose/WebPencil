@@ -8,9 +8,11 @@ import { Spin } from 'antd'
 
  interface PCanvasProps {
 
-    initValue: WorkDetail<Promise<HTMLImageElement>>,
+    initValue: WorkDetail,
 
     pCanvasController?: PCanvasController
+
+    loading: boolean
 
 }
 
@@ -24,11 +26,8 @@ import { Spin } from 'antd'
 /**
  * 手绘编辑器的画板.
  */
- const PCanvas = ({ initValue, pCanvasController }: PCanvasProps) =>{
+ const PCanvas = ({ initValue, pCanvasController, loading }: PCanvasProps) =>{
    
-
-
-
   const coverRef = useRef<HTMLDivElement>(null)
 
   const wrapRef = useRef<HTMLDivElement>(null)
@@ -37,10 +36,8 @@ import { Spin } from 'antd'
 
   const [ minScale, setMinScale ] = useState(0.1)
 
-  const [ loading, setLoading ] = useState(true)
 
   useTransform({ minScale, maxScale: 1, viewRef, transRef: wrapRef, scaleRef: wrapRef })
-
   
   useEffect(() => {
     if(pCanvasController&& wrapRef.current&&coverRef.current){
@@ -48,17 +45,11 @@ import { Spin } from 'antd'
           wrap: wrapRef.current,
           cover: coverRef.current,
         }
-        const onInit = () => {
-          setLoading(false)
-        }
        pCanvasController.init(wrapInfo, initValue)
-       pCanvasController.on('init', onInit)
        return () => {
-        pCanvasController.off('init', onInit)
        }
-
     }
-  }, [setLoading])
+  }, [])
 
   useEffect(() => {
     const cover = coverRef.current

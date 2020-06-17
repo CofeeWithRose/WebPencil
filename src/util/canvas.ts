@@ -68,7 +68,7 @@ const handleDecodeTask = async () => {
  * @param canvasFile 
  */
 export const createImageByFile = async (canvasFile: File)  => {
-  return new Promise(cb => {
+  return new Promise<HTMLImageElement>(cb => {
     deCodeImageTask.push( {file:canvasFile, cb} )
     handleDecodeTask()
   })

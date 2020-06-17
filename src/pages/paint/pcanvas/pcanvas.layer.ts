@@ -24,23 +24,12 @@ export class PcanvasLayers{
     constructor(public readonly wrapInfo: WrapInfo){}
 
 
-    async init( layers: LayerDetail<Promise<HTMLImageElement>>[]): Promise<void>{
+    async init( layers: LayerDetail[]): Promise<void>{
       const wrapInfo = this.wrapInfo
       const { wrap, cover } = wrapInfo
       let lastElement: HTMLElement= cover
-      const newLayers:LayerDetail[] = []
-      for( let i =0; i< layers.length; i++){
-        const { canvas: imgPromise, ...rest } = layers[i]
-        try{
-          const canvas = copyCanvas( await imgPromise )
-          newLayers.push({canvas, ...rest})
-        }catch(e){
-          console.error('decode error', layers[i].layerId)
-        }
-        
-      }
-      this.layers = newLayers
-      newLayers.forEach( (layer,index) => {
+      this.layers = layers
+      layers.forEach( (layer,index) => {
       const { canvas, layerId, visible } = layer
       wrap.insertBefore( canvas, lastElement);
         lastElement = canvas
@@ -52,7 +41,7 @@ export class PcanvasLayers{
       this.tempLayer = LayerDetail.create(wrapInfo)
       wrap.insertBefore( this.tempLayer.canvas, cover);
       // console.log('this.tempLayer: ', this.tempLayer.layerId)
-      this.focusedLayerDetail = newLayers[0]
+      this.focusedLayerDetail = layers[0]
     }
 
     getCanvas():HTMLCanvasElement{

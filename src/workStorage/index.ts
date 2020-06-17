@@ -1,6 +1,6 @@
 import { WorkDetail, WorkInfo, LayerDetail } from "./work-data"
 import { FileApi } from "./file-system"
-import { createCanvas, createImageByFile, toBlob } from "../util/canvas"
+import { createCanvas, createImageByFile, toBlob, copyCanvas } from "../util/canvas"
 import { isNumber } from "lodash"
 export type WorkDetailFile = Omit<LayerDetail, 'canvas'> & { filePath: string }
 
@@ -153,12 +153,12 @@ export default class WorkStorage {
      * 
      * @param workId 作品ID.
      */
-    static async getWorkDetail(workId: string): Promise<WorkDetail<Promise<HTMLImageElement>>> {
+    static async getWorkDetail(workId: string): Promise<WorkDetail> {
         console.time('getWorkDetail')
         const [file] = await FileApi.get(`${workId}.json`,{isDir: false})
         const text = await file.text()
         const { workInfo, layers }: WorkDetailDesFile = JSON.parse(text)
-        const workLayers: LayerDetail<Promise<HTMLImageElement>>[] = []
+        const workLayers: LayerDetail[] = []
         const canvasFileMap: {[index: string]: File} = (await FileApi.get(getLayerPath(workId), { isDir: true}))
                 .reduce((map, file) => ({...map, [file.name]:file}), {})
         const infoList = []
@@ -167,8 +167,9 @@ export default class WorkStorage {
             const canvasFile = canvasFileMap[`${layerId}.png`]
             if(canvasFile){
                 try{
-                  const canvasPromise = createImageByFile(canvasFile)
-                  infoList.push({canvasPromise, name, visible, layerId})
+                  const img = await createImageByFile(canvasFile)
+                  const canvas = copyCanvas(img)
+                  infoList.push({canvas, name, visible, layerId})
                 }catch(e){
                   console.error(layerId, 'decode failed')
                 }
@@ -176,8 +177,8 @@ export default class WorkStorage {
                 console.error('no match file' + layerId)
             }
         }
-        infoList.forEach( ({canvasPromise, name, visible, layerId }, index) => {
-           const layerDetail = new LayerDetail<Promise<HTMLImageElement>>( canvasPromise , name, visible, layerId)
+        infoList.forEach( ({canvas, name, visible, layerId }, index) => {
+           const layerDetail = new LayerDetail( canvas , name, visible, layerId)
            workLayers.push(layerDetail)
         })
         console.timeEnd('getWorkDetail')

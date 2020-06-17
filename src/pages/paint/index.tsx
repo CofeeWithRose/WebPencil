@@ -8,19 +8,29 @@ import  qs from 'qs'
 import WorkStorage, { WorkInfo, WorkDetail } from '../../workStorage'
 import TopToolBar from './top-tool-bar'
 import AsideToolBar from './aside-tool-bar'
+import { useHistory } from 'react-router-dom'
 
 
 export default function Paint(){
 
-	const workStateHandle = useState<WorkDetail<Promise<HTMLImageElement>>>()
+	const workStateHandle = useState<WorkDetail>()
 	const [ workDetail, setWorkDetail ] = workStateHandle
-	const {pCanvas} = usePCanvas()
+  const {pCanvas} = usePCanvas()
+  const [loading, setLoading] = useState(true)
+  const { replace } = useHistory()
 
 	useEffect(() => {
 		(async () => {
 			const {workId} = qs.parse(history.location.search.substr(1)) as  (Pick<WorkInfo, 'workId'>)
-			const work = await WorkStorage.getWorkDetail(workId)
-			setWorkDetail(work)
+      setLoading(true)
+      const work = await WorkStorage.getWorkDetail(workId)
+      if(work){
+        setLoading(false)
+        setWorkDetail(work)
+      }else{
+        replace('./home')
+      }
+			
 		})()
 	},[])
 
@@ -43,7 +53,8 @@ export default function Paint(){
 			>
 				{
 					workDetail &&
-					<PCanvas 
+          <PCanvas 
+            loading={loading}
 						pCanvasController={pCanvas}   
 						initValue={workDetail}
 					/>
