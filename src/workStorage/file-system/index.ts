@@ -1,6 +1,7 @@
-import { FileData, FileInfo, FileOperate, FileApiOptions, GetFile } from "./data"
+import { FileData, FileInfo, FileOperate, FileApiOptions, GetFile, FileDes } from "./data"
 import Dexie from 'dexie'
 let db: any 
+
 
 export class FileApi {
 
@@ -15,9 +16,9 @@ export class FileApi {
         });
     }
 
-    static async save<T extends keyof FileData>({path, data }: FileInfo<T>): Promise<void>{
+    static async save<T extends keyof FileData>({path, data, type }: FileInfo<T>): Promise<void>{
         return new Promise( callback => {
-            const operte: FileOperate = { name: 'saveFile', params:[{path, data}], callback }
+            const operte: FileOperate = { name: 'saveFile', params:[{path, data, type}], callback }
             this.sheduleOperate(operte)
         })
     }
@@ -69,16 +70,17 @@ export class FileApi {
     }
 
     protected static async saveFile<T extends keyof FileData>({path, data, type }: FileInfo<T>): Promise<void>{
-        const {pathName, name} = this.analyzePath(path)
-        const oldFileItem = await db.files.where('[path+name]').equals([pathName, name]).first()
-        console.time('saveFile')
-        if(oldFileItem){
-            const { id } = oldFileItem
-            await db.files.put({ id, path: pathName, name, file:  new File([data], name)})
-        }else{
-            await db.files.add({path: pathName, name,   file:  new File([data], name)})
-        }
-        console.timeEnd('saveFile')
+      console.time('saveFile')  
+      const {pathName, name} = this.analyzePath(path)
+      const oldFileItem: FileDes<typeof type> = await db.files.where('[path+name]').equals([pathName, name]).first()
+      const file: FileDes<typeof type> = { path: pathName, name, type, file: data }
+      if(oldFileItem){
+          const { id } = oldFileItem
+          await db.files.put({ id, ...file })
+      }else{
+          await db.files.add(file)
+      }
+      console.timeEnd('saveFile')
     }
 
     protected static analyzePath(path:string){
@@ -90,17 +92,28 @@ export class FileApi {
 
     protected static getFile:GetFile = async (path, {isDir}) => {
         console.time('getFile')
-        let files: File[]
+        let files:File[]
         if(isDir){
             const res = await db.files.where('path').equals(path).toArray()
-            files = res.map(({file}: {file:File}) => file)
+            files= res.map((item:FileDes<keyof FileData>) => FileApi.transToFile(item))
         }else{
             const {name, pathName} = FileApi.analyzePath(path)
-            const res = await db.files.where('[path+name]').equals([pathName, name]).first()
-            files = [res&&res.file]
+            const res:FileDes<keyof FileData> = await db.files.where('[path+name]').equals([pathName, name]).first()
+            files = [ FileApi.transToFile(res) ]
         }
         console.timeEnd('getFile')
         return files
+    }
+
+    protected static transToFile = (res:FileDes<keyof FileData>) => {
+      if(res&&res.type === 'application/json'){
+        const { name, type , file} = res as FileDes<'application/json'>
+        return { text: () => file, name, type, size: file.length } as any
+      }
+      if(res&&res.type === 'image/png'){
+        const { file, name  } = res as FileDes<'image/png'>
+        return new File([file], name )
+      }
     }
 
     protected static async getFileNames(path: string): Promise<string[]>{

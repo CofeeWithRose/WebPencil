@@ -59,7 +59,7 @@ export default class WorkStorage {
             const data = await toBlob(canvas)
             if (data) {
                 await FileApi.save({
-                    type: 'blob',
+                    type: 'image/png',
                     path,
                     data,
                 })
@@ -70,7 +70,7 @@ export default class WorkStorage {
 
     static async saveWorkInfo(desFileDate: WorkDetailDesFile){
       await FileApi.save({
-          type: 'text',
+          type: 'application/json',
           path: `${desFileDate.workInfo.workId}.json`,
           data: JSON.stringify(desFileDate)
       })
@@ -116,7 +116,7 @@ export default class WorkStorage {
       const img = await toBlob(canvas)
         if(!img) return
         FileApi.save({ 
-          type:'blob',
+          type:'image/png',
           path: getLayerPath(workId, layerId),
           data: img,
         })

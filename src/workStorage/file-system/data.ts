@@ -1,6 +1,7 @@
+
 export interface FileData {
-    text:string
-    blob: Blob
+    'application/json': string
+    'image/png': Blob
 }
 
 export interface FileInfo<T extends keyof FileData> {
@@ -8,6 +9,9 @@ export interface FileInfo<T extends keyof FileData> {
     type: T
     data:FileData[T]
 }
+
+export type FileDes<T extends keyof FileData> = { id?: string, path: string, name: string, type: T, file: FileData[T]}
+
 
 export interface FileApiOptions {
     permissionTip: (callback: () => Promise<void>) => Promise<void>
