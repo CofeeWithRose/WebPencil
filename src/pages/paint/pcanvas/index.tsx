@@ -8,7 +8,7 @@ import { Spin } from 'antd'
 
  interface PCanvasProps {
 
-    initValue: WorkDetail,
+    initValue?: WorkDetail,
 
     pCanvasController?: PCanvasController
 
@@ -40,6 +40,7 @@ import { Spin } from 'antd'
   useTransform({ minScale, maxScale: 1, viewRef, transRef: wrapRef, scaleRef: wrapRef })
   
   useEffect(() => {
+    if(!initValue ) return
     if(pCanvasController&& wrapRef.current&&coverRef.current){
         const wrapInfo: WrapInfo = {
           wrap: wrapRef.current,
@@ -49,9 +50,10 @@ import { Spin } from 'antd'
        return () => {
        }
     }
-  }, [])
+  }, [initValue])
 
   useEffect(() => {
+    if(!initValue ) return
     const cover = coverRef.current
     if(cover){
 
@@ -81,7 +83,7 @@ import { Spin } from 'antd'
       }
     }
     
-  }, [coverRef.current])
+  }, [coverRef.current, initValue])
 
   
     return <main 

@@ -52,7 +52,6 @@ export default function Paint(){
 				}
 			>
 				{
-					workDetail &&
           <PCanvas 
             loading={loading}
 						pCanvasController={pCanvas}   
