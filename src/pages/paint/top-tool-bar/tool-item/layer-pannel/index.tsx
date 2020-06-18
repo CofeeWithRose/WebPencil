@@ -139,6 +139,7 @@ export default ({ pCanvasController }: LayerProps) => {
                     visible={showLayerDraw}
                     onClose={showLayerPannel}
                     mask={false}
+                    className={styles.layerDrawer}
                 >
                     <List
                         header={<span onPointerUp={addLayer}>addlayer +</span>}

@@ -2,14 +2,23 @@
     margin: 0 20px;
 
 }
+
+.layerDrawer{
+  :global{
+    .ant-drawer-body{
+      height: 100%;
+    }
+  }
+}
 .pannelWrap{
     height: 100%;
     :global{
+      
       .ant-spin-nested-loading{
         position: absolute;
         top: 47px;
         bottom: 0;
-        overflow: scroll;
+        overflow-y: scroll;
       }
     }
     .canvases{
