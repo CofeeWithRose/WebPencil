@@ -1,6 +1,6 @@
 import { FileData, FileInfo, FileOperate, FileApiOptions, GetFile, FileDes } from "./data"
 import Dexie from 'dexie'
-let db: any 
+let db: Dexie 
 
 
 export class FileApi {
@@ -10,10 +10,15 @@ export class FileApi {
     protected static isOperating = false
 
     static async init(option: FileApiOptions){
-         db = await new Dexie('WebPencilVitureFile')
-         await db.version(1).stores({
+        if(!localStorage.getItem('has_clean_db')){
+          await Dexie.delete('WebPencilVitureFile')
+          localStorage.setItem('has_clean_db', 'true')
+        }
+        db = await new Dexie('WebPencilVitureFile')
+        await db.version(1).stores({
             files: '++id, [path+name]'
         });
+       
     }
 
     static async save<T extends keyof FileData>({path, data, type }: FileInfo<T>): Promise<void>{
