@@ -3,7 +3,7 @@ export default class SConsole {
     logCache: any[][] = [] 
 
     constructor(){
-        const vconsole = new VConcole()
+        // const vconsole = new VConcole()
         // const plugin: VConsolePluginInstance = new (VConcole.VConsolePlugin as any)('sync_confole','vsync_log')
         // plugin.on('showConsole', async () => {
         //    let logs = this.logCache.shift()

@@ -73,7 +73,7 @@ export class FileApi {
       console.time('saveFile')  
       const {pathName, name} = this.analyzePath(path)
       const oldFileItem: FileDes<typeof type> = await db.files.where('[path+name]').equals([pathName, name]).first()
-      const file: FileDes<typeof type> = { path: pathName, name, type, file: data }
+      const file: FileDes<typeof type> = await FileApi.parseToStore({path, data,type})
       if(oldFileItem){
           const { id } = oldFileItem
           await db.files.put({ id, ...file })
@@ -81,6 +81,20 @@ export class FileApi {
           await db.files.add(file)
       }
       console.timeEnd('saveFile')
+    }
+
+    protected static parseToStore = async <T extends keyof FileData>({path, data, type }: FileInfo<T>) => {
+      const {pathName, name} = FileApi.analyzePath(path)
+      if(type === 'application/json'){
+        return { path: pathName, name, type, file: data }
+      }
+      if(type === 'image/png'){
+        const url = URL.createObjectURL(data);
+        // safari 不支持直接存储 Blob,转为arrayBuffer进行存储.
+        const buffer = await ( await fetch(url)).arrayBuffer()
+        return { path: pathName, name, type, file: buffer }
+      }
+      throw 'parse to stote error' + path
     }
 
     protected static analyzePath(path:string){
