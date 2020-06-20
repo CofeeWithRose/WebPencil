@@ -15,7 +15,7 @@ const cdnConfigs = [
       libName: 'history',
       devCDNPath: 'https://unpkg.com/history/history.production.min.js',
       productionCDNPath:'https://unpkg.com/history/history.production.min.js',
-      root: 'VConsole',
+      root: 'history',
     },
     {
         libName: 'hammerjs',
