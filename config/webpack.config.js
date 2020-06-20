@@ -31,8 +31,9 @@ module.exports = {
       new TerserJSPlugin({
         terserOptions: { 
           compress: {
-            drop_console: true
-          }
+            drop_console: true,
+          },
+          sourceMap: false,
       }
       }), 
       new OptimizeCSSAssetsPlugin({}),
