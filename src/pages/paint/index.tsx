@@ -3,7 +3,6 @@ import React, {  useEffect, useState } from 'react'
 import BasicLayout from '../../lauout/BasicLayout'
 import style from './style.less'
 import { usePCanvas, PCanvas } from './pcanvas'
-import {history} from '../../app'
 import  qs from 'qs'
 import WorkStorage, { WorkInfo, WorkDetail } from '../../workStorage'
 import TopToolBar from './top-tool-bar'
@@ -17,11 +16,11 @@ export default function Paint(){
 	const [ workDetail, setWorkDetail ] = workStateHandle
   const {pCanvas} = usePCanvas()
   const [loading, setLoading] = useState(true)
-  const { replace } = useHistory()
+  const { replace, location } = useHistory()
 
 	useEffect(() => {
 		(async () => {
-			const {workId} = qs.parse(history.location.search.substr(1)) as  (Pick<WorkInfo, 'workId'>)
+			const {workId} = qs.parse(location.search.substr(1)) as  (Pick<WorkInfo, 'workId'>)
       setLoading(true)
       const work = await WorkStorage.getWorkDetail(workId)
       if(work){

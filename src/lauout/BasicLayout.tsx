@@ -1,8 +1,8 @@
 import React, { ReactElement, ReactNode } from 'react'
 import style from './style.less'
-import { history } from '../app'
 import { Button } from 'antd'
 import { LeftOutlined } from '@ant-design/icons'
+import { useHistory } from 'react-router-dom'
 
 export interface BasicLayoutProps {
     contentClassName?: string,
@@ -25,10 +25,10 @@ export default function Home ({
     showBackButton =true,
     contentClassName='',
 }: BasicLayoutProps){
-    
+    const { goBack } = useHistory()
     const onGoBack = async () => {
         if((beforeBack && await beforeBack())|| !beforeBack){
-            history.goBack()
+            goBack()
         }
     }
 

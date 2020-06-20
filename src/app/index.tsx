@@ -1,12 +1,9 @@
 import { hot } from 'react-hot-loader/root'
 import React, { lazy, Suspense, ReactElement } from 'react'
-import { Switch, Route, Router, Redirect } from 'react-router-dom'
-import { createHashHistory } from 'history'
+import { Switch, HashRouter, Route, Redirect } from 'react-router-dom'
 import {routeConfig, RouteConfig} from '../config/route.config'
 import './index.less'
 import { Spin } from 'antd'
-
-export const history = createHashHistory()
 
 
 const getRoute = ( config: RouteConfig[], parentPath: string, res: ReactElement<Route>[] ) => {
@@ -24,11 +21,11 @@ const getRoute = ( config: RouteConfig[], parentPath: string, res: ReactElement<
 
 export const App: React.FC = hot(({ }) => {
 	return <Suspense fallback={<Spin style={{ top:'50%', left:'50%', position: 'absolute', transform: 'translate3d(-50%, -50%, 0)' }}/>} >
-		<Router history={history}>
+		<HashRouter>
 			<Switch>
 				{getRoute(routeConfig, '', []) }
 				<Redirect to="/home"></Redirect>
 			</Switch>
-		</Router>
+		</HashRouter>
 	</Suspense>
 })

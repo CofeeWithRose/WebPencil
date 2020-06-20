@@ -3,17 +3,17 @@ import BasicLayout from '../../lauout/BasicLayout'
 import style from './style.less'
 import WorkItem from './component/WorkItem'
 import { PlusOutlined } from '@ant-design/icons';
-import { history } from '../../app'
 import { FileMenu, WorkForm } from './FileMenu';
 import qs from 'qs'
 import WorkStorage, { WorkInfo, WorkDetail } from '../../workStorage';
 import { RGBA } from '../paint/top-tool-bar/tool-item/color-selector/rgba';
+import { useHistory } from 'react-router-dom';
 
 export default () => {
     
     const [ isShowSetting , setIsShowSetting ] = useState(false)
     const [ workList, setWorkList ] = useState<WorkInfo[]>([])
-    
+    const { push } = useHistory()
     
 
     useEffect(() => {
@@ -43,7 +43,7 @@ export default () => {
      * @param workId 到编辑页面.
      */
     const editWork = (workId: string) => {
-        history.push({pathname: '/paint', search:qs.stringify({workId}) })
+        push({pathname: '/paint', search:qs.stringify({workId}) })
     }
 
     return <BasicLayout

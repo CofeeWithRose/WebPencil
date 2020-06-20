@@ -12,12 +12,6 @@ const cdnConfigs = [
         root: 'VConsole',
     },
     {
-      libName: 'history',
-      devCDNPath: 'https://unpkg.com/history/umd/history.production.min.js',
-      productionCDNPath:'https://unpkg.com/history/umd/history.production.min.js',
-      root: 'HistoryLibrary',
-    },
-    {
         libName: 'hammerjs',
         devCDNPath: 'https://cdn.bootcss.com/hammer.js/2.0.8/hammer.js',
         productionCDNPath:'https://cdn.bootcss.com/hammer.js/2.0.8/hammer.min.js',
@@ -28,12 +22,6 @@ const cdnConfigs = [
         devCDNPath: 'https://unpkg.com/react@16/umd/react.development.js',
         productionCDNPath:'https://unpkg.com/react@16/umd/react.production.min.js',
         root: 'React',
-    },
-    {
-        libName: 'react-router',
-        devCDNPath: 'https://cdn.bootcss.com/react-router/5.1.2/react-router.js',
-        productionCDNPath:'https://cdn.bootcss.com/react-router/5.1.2/react-router.min.js',
-        root: 'ReactRouter',
     },
     {
         libName: 'react-dom',
@@ -64,9 +52,9 @@ const cdnConfigs = [
 
 exports.externals = () => {
   const cfgs = cdnConfigs.filter(({productionCDNPath}) => productionCDNPath)
-  if(process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT){
-    return cfgs.reduce( (externals ,{libName, root}) => ({...externals, [libName]: root}), {} )
-  }
+  // if(process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT){
+  //   return []
+  // }
   return cfgs.reduce( (externals ,{libName, root}) => ({...externals, [libName]: root}), {} )
 }
 
