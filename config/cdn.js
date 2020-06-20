@@ -8,7 +8,7 @@ const cdnConfigs = [
     {
         libName: 'vconsole',
         devCDNPath: 'https://cdn.bootcss.com/vConsole/3.3.4/vconsole.min.js',
-        // productionCDNPath:'https://cdn.bootcss.com/vConsole/3.3.4/vconsole.min.js',
+        productionCDNPath:'https://cdn.bootcss.com/vConsole/3.3.4/vconsole.min.js',
         root: 'VConsole',
     },
     {

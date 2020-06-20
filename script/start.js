@@ -10,8 +10,12 @@ const devPlugins = [
 ]
 
 function start(){
-  const webpackConfig = require('../config/webpack.config')
-  webpackConfig.plugins = [...webpackConfig.plugins, ...devPlugins]
+  const cfg = require('../config/webpack.config')
+  const webpackConfig = {
+    ...cfg,
+    devtool: 'eval-source-map',
+    plugins: [...webpackConfig.plugins, ...devPlugins],
+  }
   const devServerOptions = require('../config/devServerOptions')
   const compiler =  webpack({
     ...webpackConfig, 

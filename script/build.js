@@ -13,7 +13,6 @@ const {plugins, ...config} = require('../config/webpack.config')
 const cfg = { 
     ...config,
     mode: 'production',
-    devtool: 'eval-source-map',
     plugins: [
         ...plugins,
         new WorkboxPlugin.GenerateSW({
