@@ -29,7 +29,11 @@ module.exports = {
   devtool: 'eval-source-map',
   optimization: {
     minimizer: [
-      new TerserJSPlugin({}), 
+      new TerserJSPlugin({
+        terserOptions: { compress: {
+          drop_console: true
+        }}
+      }), 
       new OptimizeCSSAssetsPlugin({}),
     ],
   },

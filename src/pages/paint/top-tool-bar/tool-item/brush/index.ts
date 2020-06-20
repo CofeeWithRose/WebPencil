@@ -17,6 +17,8 @@ export class Brush  implements AbstractBrush {
 
     protected pathList: Vector2[] = []
 
+    protected animeHandle: number
+
     init(){}
 
     destory(){}
@@ -28,39 +30,43 @@ export class Brush  implements AbstractBrush {
         ctx.strokeStyle = color
         ctx.lineWidth = brushWidth
         ctx.lineCap ='round'
-       
+        ctx.lineJoin = "round";
     }
 
   
 
     onDraw(brushStatus: BrushStatus[], contx: PCanvasContext): void {
-        if(this.isPainting){
-            const  { curCanvasContext2D: ctx } = contx
-            for (let i = 0; i< brushStatus.length; i++){
-              this.pathList.push( brushStatus[i])
-            }
-            this.paintPath(ctx);
-        }
+      if(this.isPainting){
+          const  { curCanvasContext2D: ctx } = contx
+          for (let i = 0; i< brushStatus.length; i++){
+            this.pathList.push( brushStatus[i])
+          }
+          cancelAnimationFrame(this.animeHandle)
+
+          this.animeHandle = requestAnimationFrame(() => {
+          this.paintPath(ctx);
+          })
+      }
     }
 
-    protected paintPath(ctx: CanvasRenderingContext2D){
+    protected paintPath = (ctx: CanvasRenderingContext2D) => {
+      ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height)
+      ctx.beginPath()
+      const f = this.pathList[0]
+      ctx.moveTo(f.x, f.y )
+      for( let i =1; i< this.pathList.length; i++ ){
+        const {x, y} = this.pathList[i]
+        ctx.lineTo(x,y)
+      }
+      ctx.stroke()
+    }
+
+    onEnd(brushStatus: BrushStatus, {onBrushEnd}: PCanvasContext) {
       requestAnimationFrame(() => {
-        ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height)
-        ctx.beginPath()
-        const f = this.pathList[0]
-        ctx.moveTo(f.x, f.y )
-        for( let i =1; i< this.pathList.length; i++ ){
-          const {x, y} = this.pathList[i]
-          ctx.lineTo(x,y)
-        }
-        // ctx.closePath()
-        ctx.stroke()
-      })
-    }
-
-    onEnd(brushStatus: BrushStatus, contx: PCanvasContext) {
         this.isPainting = false
         this.pathList = []
+        onBrushEnd()
+      })
     }
 
 }

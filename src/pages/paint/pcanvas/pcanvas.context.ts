@@ -15,6 +15,8 @@ export class PCanvasContext {
         public width: number,
 
         public height: number,
+        
+        public onBrushEnd: () => void,
 
         public brush: Brush = new Brush(),
 

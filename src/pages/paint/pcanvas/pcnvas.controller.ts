@@ -71,6 +71,7 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
             this.layerManager.getContext(),
             width,
             height,
+            this.onBrushEnd,
         )
         this.emit('init', new CanvasEvent(null) )
         this.emit('focusLayer', new CanvasEvent({ layerDetail: this.layerManager.getFocusDetail() }))
@@ -95,7 +96,7 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
     }
 
 
-    getLayers(){
+    async getLayers(){
         return [...this.layerManager.layers]
     }
 
@@ -168,15 +169,19 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
 
     onPointerDown(p: PointerEvent){
         this.pointerIds[p.pointerId] = true
-        this.context.brush.onStart(pointEvent2BrunshStatus(p),this.context)
+        const s = pointEvent2BrunshStatus(p)
+        // console.log('f', s)
+        this.context.brush.onStart(s,this.context)
     }
 
     onPointerMove(pointerEvent: PointerEvent):void{
       if(Object.keys(this.pointerIds).length>1) return
         let ponterEvents: PointerEvent[];
         if((pointerEvent as any).getCoalescedEvents){
-            ponterEvents = (pointerEvent as any ).getCoalescedEvents()
+          // console.log('getCoalescedEvents')
+          ponterEvents = (pointerEvent as any ).getCoalescedEvents()
         }else{
+          // console.log('not getCoalescedEvents')
             ponterEvents =  [pointerEvent]
         }
         this.context.brush.onDraw(
@@ -188,7 +193,11 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
     onPointerUp(p: PointerEvent): void{
         delete this.pointerIds[p.pointerId]
         this.context.brush.onEnd(pointEvent2BrunshStatus(p),this.context)
-        const curLayerDetail = this.layerManager.getFocusDetail()
+        
+    }
+
+    protected onBrushEnd = () => {
+      const curLayerDetail = this.layerManager.getFocusDetail()
         const preContent = copyCanvas(curLayerDetail.canvas)
         this.layerManager.applyTempCanvas()
         const index = this.layerManager.layers.indexOf(curLayerDetail)

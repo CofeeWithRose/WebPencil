@@ -36,8 +36,8 @@ export default ({ pCanvasController }: LayerProps) => {
    
 
     useEffect(() => {
-        const init = () => {
-            const allLayers = pCanvasController.getLayers() 
+        const init = async () => {
+            const allLayers = await pCanvasController.getLayers() 
             let layers: LayerDetail[] =[...allLayers]
             needUpdateRef.current.push(...allLayers)
             setLayers(pre => [...pre,...layers])
