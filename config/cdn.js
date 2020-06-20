@@ -15,7 +15,7 @@ const cdnConfigs = [
       libName: 'history',
       devCDNPath: 'https://unpkg.com/history/umd/history.production.min.js',
       productionCDNPath:'https://unpkg.com/history/umd/history.production.min.js',
-      root: 'history',
+      root: 'HistoryLibrary',
     },
     {
         libName: 'hammerjs',
