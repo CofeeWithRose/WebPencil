@@ -4,12 +4,18 @@
 // console.log('pwd======>: ', process.env)
 const { BUILD_ENV } = require('../script/const')
 const cdnConfigs = [
-    
+  
     {
         libName: 'vconsole',
         devCDNPath: 'https://cdn.bootcss.com/vConsole/3.3.4/vconsole.min.js',
         // productionCDNPath:'https://cdn.bootcss.com/vConsole/3.3.4/vconsole.min.js',
         root: 'VConsole',
+    },
+    {
+      libName: 'history',
+      devCDNPath: 'https://unpkg.com/history/history.production.min.js',
+      productionCDNPath:'https://unpkg.com/history/history.production.min.js',
+      root: 'VConsole',
     },
     {
         libName: 'hammerjs',

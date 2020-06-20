@@ -26,13 +26,14 @@ module.exports = {
     chunkFilename: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'[id]-[hash].js': '[id]-[contenthash].js',
     filename: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'[name]-[hash].js': '[name]-[contenthash].js',
   },
-  devtool: 'eval-source-map',
   optimization: {
     minimizer: [
       new TerserJSPlugin({
-        terserOptions: { compress: {
-          drop_console: true
-        }}
+        terserOptions: { 
+          compress: {
+            drop_console: true
+          }
+      }
       }), 
       new OptimizeCSSAssetsPlugin({}),
     ],
@@ -72,7 +73,7 @@ module.exports = {
             presets: [
               [
                 "@babel/preset-env",
-                { targets: { browsers: "last 2 versions" } },
+                { targets: { browsers: "chrome >= 62" } },
               ],
               "@babel/preset-typescript",
               "@babel/preset-react"

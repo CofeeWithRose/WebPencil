@@ -1,5 +1,6 @@
 const { BUILD_ENV } = require('./const')
 process.env.BUILD_ENV = process.env.BUILD_ENV || BUILD_ENV.PRODUCTION
+process.env.NODE_ENV = BUILD_ENV.PRODUCTION
 process.env.PUBLIC_PATH = process.env.PUBLIC_PATH || './'
 
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
@@ -12,6 +13,7 @@ const {plugins, ...config} = require('../config/webpack.config')
 const cfg = { 
     ...config,
     mode: 'production',
+    devtool: 'eval-source-map',
     plugins: [
         ...plugins,
         new WorkboxPlugin.GenerateSW({
