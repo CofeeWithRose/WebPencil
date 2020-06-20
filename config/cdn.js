@@ -13,8 +13,8 @@ const cdnConfigs = [
     },
     {
       libName: 'history',
-      devCDNPath: 'https://unpkg.com/history/history.production.min.js',
-      productionCDNPath:'https://unpkg.com/history/history.production.min.js',
+      devCDNPath: 'https://unpkg.com/history/umd/history.production.min.js',
+      productionCDNPath:'https://unpkg.com/history/umd/history.production.min.js',
       root: 'history',
     },
     {
@@ -66,7 +66,8 @@ exports.externals = () => {
   if(process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT){
     return []
   }
-  return cdnConfigs.reduce( (externals ,{libName, root}) => ({...externals, [libName]: root}), {} )
+  return cdnConfigs.filter(({productionCDNPath}) => productionCDNPath)
+  .reduce( (externals ,{libName, root}) => ({...externals, [libName]: root}), {} )
 }
 
 exports.scripts = () => {
