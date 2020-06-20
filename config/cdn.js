@@ -25,8 +25,8 @@ const cdnConfigs = [
     },
     {
         libName: 'react',
-        devCDNPath: 'https://cdn.bootcss.com/react/16.13.1/umd/react.development.js',
-        productionCDNPath:'https://cdn.bootcss.com/react/16.13.1/umd/react.production.min.js',
+        devCDNPath: 'https://unpkg.com/react@16/umd/react.development.js',
+        productionCDNPath:'https://unpkg.com/react@16/umd/react.production.min.js',
         root: 'React',
     },
     {
@@ -37,13 +37,13 @@ const cdnConfigs = [
     },
     {
         libName: 'react-dom',
-        devCDNPath: 'https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.development.min.js',
-        productionCDNPath:'https://cdn.bootcss.com/react-dom/16.13.1/umd/react-dom.production.min.js',
+        devCDNPath: 'https://unpkg.com/react-dom@16/umd/react-dom.development.js',
+        productionCDNPath:'https://unpkg.com/react-dom@16/umd/react-dom.production.min.js',
         root: 'ReactDOM',
     },
     {
         libName: 'react-router-dom',
-        devCDNPath: 'https://cdn.bootcss.com/react-router-dom/5.1.2/react-router-dom.min.js',
+        devCDNPath: 'https://unpkg.com/react-router-dom@5.1.2/umd/react-router-dom.min.js',
         productionCDNPath:'https://cdn.bootcss.com/react-router-dom/5.1.2/react-router-dom.min.js',
         root: 'ReactRouterDOM',
     },
@@ -63,18 +63,19 @@ const cdnConfigs = [
 ]
 
 exports.externals = () => {
+  const cfgs = cdnConfigs.filter(({productionCDNPath}) => productionCDNPath)
   if(process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT){
-    return []
+    return cfgs.reduce( (externals ,{libName, root}) => ({...externals, [libName]: root}), {} )
   }
-  return cdnConfigs.filter(({productionCDNPath}) => productionCDNPath)
-  .reduce( (externals ,{libName, root}) => ({...externals, [libName]: root}), {} )
+  return cfgs.reduce( (externals ,{libName, root}) => ({...externals, [libName]: root}), {} )
 }
 
 exports.scripts = () => {
-  if(process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT){
-    return []
-  }
+  // if(process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT){
+  //   return []
+  // }
  return  cdnConfigs.map(({ devCDNPath, productionCDNPath }) => process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT? devCDNPath: productionCDNPath)
+ .filter(val => val)
 }
 
 exports.css = () => {

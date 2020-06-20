@@ -13,6 +13,6 @@
 </head>
 <body>
   <div id="root"></div>
-  <%= (htmlWebpackPlugin.options.scripts||[]).map( src => `<script type="text/javascript" src="${src}"></script>` ).join('|').replace(/\|/g,'') %>
+  <%= (htmlWebpackPlugin.options.scripts||[]).map( src => `<script crossorigin type="text/javascript" src="${src}"></script>` ).join('|').replace(/\|/g,'') %>
 </body>
 </html>
