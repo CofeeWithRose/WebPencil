@@ -52,16 +52,16 @@ const cdnConfigs = [
 
 exports.externals = () => {
   const cfgs = cdnConfigs.filter(({productionCDNPath}) => productionCDNPath)
-  // if(process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT){
-  //   return []
-  // }
+  if(process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT){
+    return []
+  }
   return cfgs.reduce( (externals ,{libName, root}) => ({...externals, [libName]: root}), {} )
 }
 
 exports.scripts = () => {
-  // if(process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT){
-  //   return []
-  // }
+  if(process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT){
+    return []
+  }
  return  cdnConfigs.map(({ devCDNPath, productionCDNPath }) => process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT? devCDNPath: productionCDNPath)
  .filter(val => val)
 }

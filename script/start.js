@@ -14,7 +14,7 @@ function start(){
   const webpackConfig = {
     ...cfg,
     devtool: 'eval-source-map',
-    plugins: [...webpackConfig.plugins, ...devPlugins],
+    plugins: [...cfg.plugins, ...devPlugins],
   }
   const devServerOptions = require('../config/devServerOptions')
   const compiler =  webpack({
