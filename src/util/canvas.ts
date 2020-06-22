@@ -80,18 +80,9 @@ let decodingNumber = 0
 //       }
 //       canvasWorker.addEventListener('message', listener )
 //       canvasWorker.postMessage({method: 'file2Image', params}, [file])
-//       try{
-//         // await canvas.decode()
-//       }catch(e){
-//         console.error(e, 'img decode error', e.message)
-//       }
-//       // URL.revokeObjectURL(canvas.src)
-//       // cb(canvas)
 //       decodingNumber--
 //       task = deCodeImageTask.shift()
-//       // console.log(decodingNumber,deCodeImageTask.length )
 //     }
-    
 //   }
 // }
 
@@ -117,7 +108,6 @@ const handleDecodeTask = async () => {
       cb(canvas)
       decodingNumber--
       task = deCodeImageTask.shift()
-      // console.log(decodingNumber,deCodeImageTask.length )
     }
     
   }
