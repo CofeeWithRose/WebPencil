@@ -1,7 +1,8 @@
 import { Reducer } from "react"
 import { PCanvasController } from "../../pcanvas"
 import { FileApi } from "../../../../workStorage/file-system"
-import { createImageByFile } from "../../../../util/canvas"
+import { createCanvasByFile } from "../../../../util/canvas"
+import { FileData, FileInfo } from "@/workStorage/file-system/data"
 
 export class RecordData {
     
@@ -16,18 +17,22 @@ const deleteRecordFile = async ({ type, data  }: RecordInfo<keyof RecordData>) =
     switch(type){
         case 'add':
             data = data as RecordData['add']
-            await FileApi.remove(data.canvasPath, {isFile: true})
+            const { path, name} = FileApi.analyzePath(data.canvasPath)
+            await FileApi.remove(path, name)
             break;
         case 'modify':
             const { fromCanvasPath, toCanvasPath} = data as RecordData['modify']
+            const { path: fpath, name:fname} = FileApi.analyzePath(toCanvasPath)
+            const { path:tPath, name: tName} = FileApi.analyzePath(fromCanvasPath)
             await Promise.all([ 
-                FileApi.remove(fromCanvasPath, {isFile: true}),
-                FileApi.remove(toCanvasPath, {isFile: true}),
+                FileApi.remove(fpath, fname),
+                FileApi.remove(tPath, tName),
              ])
             break;
         case 'remove': 
             const { canvasPath } = data as RecordData['remove']
-            await FileApi.remove(canvasPath, {isFile: true})
+            const { path: p, name: n} = FileApi.analyzePath(canvasPath)
+            await FileApi.remove(p, n)
             break;
     }
 }
@@ -57,19 +62,20 @@ const getRevertRecor =<T extends keyof RecordData>( {type, data} : RecordInfo<T>
 
 const  handleOperate = async <T extends keyof RecordData>( record : RecordInfo<T>, pCanvas: PCanvasController) => {
     const { type, data } = record
-    console.log('handleOperate: ', type)
     if(type === 'add'){
         const {index, canvasPath} = data as RecordData['add']
-        const [file] = await FileApi.get(canvasPath, {isDir:false})
-        const canvas = await createImageByFile(file)
+        const { path, name } = FileApi.analyzePath(canvasPath)
+        const [{ data: buffer }] = await FileApi.get<'image/png'>(path, name)
+        const canvas = await createCanvasByFile(buffer)
         const layerDetail = pCanvas.addLayerContent( index, canvas, 'history' )
         pCanvas.focusLayer(layerDetail)
         return
     }
     if(type === 'modify'){
         const {index, fromCanvasPath: from, toCanvasPath} = data as RecordData['modify']
-        const [file] = await FileApi.get(toCanvasPath, {isDir:false})
-        const to = await createImageByFile(file)
+        const { path, name } = FileApi.analyzePath(toCanvasPath)
+        const [{data: buffer}] = await FileApi.get<'image/png'>(path, name)
+        const to = await createCanvasByFile(buffer)
         const layerDetail = pCanvas.setLayerContent( index, to, 'history' )
         pCanvas.focusLayer(layerDetail)
         return

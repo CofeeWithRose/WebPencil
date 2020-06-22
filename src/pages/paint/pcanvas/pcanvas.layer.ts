@@ -1,5 +1,4 @@
 import { LayerDetail } from "../../../workStorage";
-import { copyCanvas } from '@/util/canvas'
 
 export type WrapInfo = { 
   readonly  wrap: HTMLElement,

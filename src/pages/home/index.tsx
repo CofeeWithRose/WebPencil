@@ -8,6 +8,7 @@ import qs from 'qs'
 import WorkStorage, { WorkInfo, WorkDetail } from '../../workStorage';
 import { RGBA } from '../paint/top-tool-bar/tool-item/color-selector/rgba';
 import { useHistory } from 'react-router-dom';
+import ss from '@/assets/favicon.png';
 
 export default () => {
     
@@ -21,6 +22,9 @@ export default () => {
             const list =  await WorkStorage.getWorkList()
             setWorkList(list)
         })()
+        return () => {
+          setWorkList([])
+        }
     }, [])
 
     /**
@@ -63,7 +67,10 @@ export default () => {
                     key={workId}
                     id={workId}
                     name={name}
-                    content={<img src={thumbnail} />}
+                    content={<img 
+                      src={thumbnail}  
+                      onLoad={ () => URL.revokeObjectURL(thumbnail) }
+                    />}
                     onPointerUp={() => editWork(workId)}
                 />)
             }

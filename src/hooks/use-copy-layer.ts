@@ -8,7 +8,8 @@ export const mapCanvas = (srcCanvas:HTMLCanvasElement, targetCanvas: HTMLCanvasE
     const targetCtx = targetCanvas.getContext('2d');
     if(targetCtx){
         targetCtx.clearRect(0,0,targetCanvas.width, targetCanvas.height)
-        targetCtx.drawImage(srcCanvas, 0, 0, srcCanvas.width, srcCanvas.height, 0, 0, targetCanvas.width, targetCanvas.height)
+        // targetCtx.drawImage(srcCanvas, 0, 0, srcCanvas.width, srcCanvas.height, 0, 0, targetCanvas.width, targetCanvas.height)
+        targetCtx.drawImage(srcCanvas, 0, 0, srcCanvas.width, srcCanvas.height)
     }
 }
 const copCanvas = (   

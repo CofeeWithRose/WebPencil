@@ -267,6 +267,7 @@ export default function useTransform(userTransformProps?: UseTransformProps){
     
                 mainManager.off('pinchstart', onPinchStart)
                 mainManager.off('pinchmove', onPinchinMove)
+                mainManager.destroy()
             }
         }
     }, [...Object.values(userTransformProps||{})])

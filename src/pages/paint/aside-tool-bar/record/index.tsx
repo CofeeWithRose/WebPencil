@@ -2,7 +2,7 @@ import React, {Fragment, useEffect, useState, useRef, useReducer, Reducer} from 
 import { Divider } from 'antd'
 import { PCanvasController, CanvasEventData } from '../../pcanvas'
 import styles from './index.less'
-import {  toBlob } from '../../../../util/canvas'
+import {  toArrayBuffer } from '../../../../util/canvas'
 import { recordListReducer, RecordInfo } from './reducer'
 import { uniqueId } from 'lodash'
 import { FileApi } from '../../../../workStorage/file-system'
@@ -12,10 +12,10 @@ export interface RecordProps {
 
 const saveRecordCanvas = async (canvas: HTMLCanvasElement) => {
     const fileName = `record_${Date.now()}_${uniqueId()}.png`
-    const blob = await toBlob(canvas)
+    const blob = await toArrayBuffer(canvas)
     const canvasPath = `record/${fileName}`
     if(blob){
-        await FileApi.save({ type: 'image/png', data: blob, path: canvasPath })
+        await FileApi.save({ type: 'image/png', data: blob, path: 'record/', name: fileName })
     }
     return  canvasPath
 }

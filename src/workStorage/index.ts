@@ -1,26 +1,12 @@
 import { WorkDetail, WorkInfo, LayerDetail } from "./work-data"
 import { FileApi } from "./file-system"
-import { createCanvas, createImageByFile, toBlob, copyCanvas } from "../util/canvas"
+import { createCanvas, createCanvasByFile, toArrayBuffer, copyCanvas } from "../util/canvas"
 import { isNumber } from "lodash"
 export type WorkDetailFile = Omit<LayerDetail, 'canvas'> & { filePath: string }
 
 const getLayerPath = (workId: string, layerId?:string) =>  layerId? `layers/${workId}/${layerId}.png`: `layers/${workId}`
 
 const getThumbnailPath = (workId: string) => `thumbnail/${workId}.png`
-
-// export class WorkLayerFile {
-
-//     public workLayersId: string
-
-//     public workDetailFiles: WorkDetailFile[] = []
-
-//     constructor({ workLayersId, layers }: WorkLayers) {
-//         this.workLayersId = workLayersId
-//         layers.forEach(({ canvas, layerId, ...rest }) => {
-//             this.workDetailFiles.push({ ...rest, layerId, filePath:  getLayerPath(workLayersId, layerId)})
-//         })
-//     }
-// }
 
 export class WorkDetailDesFile {
 
@@ -55,13 +41,15 @@ export default class WorkStorage {
         await this.saveWorkInfo(desFileDate)
         const canvasFileList = this.getCanvasFileList(workedetail, desFileDate)
         for (let i = 0; i < canvasFileList.length; i++) {
-            const { path, canvas } = canvasFileList[i]
-            const data = await toBlob(canvas)
+            const { path: filePath, canvas } = canvasFileList[i]
+            const { path, name } = FileApi.analyzePath(filePath)
+            const data = await toArrayBuffer(canvas)
             if (data) {
                 await FileApi.save({
                     type: 'image/png',
                     path,
                     data,
+                    name,
                 })
             }
         }
@@ -71,7 +59,8 @@ export default class WorkStorage {
     static async saveWorkInfo(desFileDate: WorkDetailDesFile){
       await FileApi.save({
           type: 'application/json',
-          path: `${desFileDate.workInfo.workId}.json`,
+          path:'',
+          name: `${desFileDate.workInfo.workId}.json`,
           data: JSON.stringify(desFileDate)
       })
     }
@@ -101,8 +90,9 @@ export default class WorkStorage {
         if (ctx) {
             for(let i = canvasList.length-1; i> -1; i--){
                 const canvas = canvasList[i]
-                ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, width, height)
-            }
+                // ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, width, height)
+                ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height)
+              }
         }
         return canvas
     }
@@ -113,15 +103,18 @@ export default class WorkStorage {
      */
     static async saveLayerDetail(workId: string, layer: LayerDetail, index?: number): Promise<void> {
       const {canvas, layerId, ...rest} = layer
-      const img = await toBlob(canvas)
+      const img = await toArrayBuffer(canvas)
+      
         if(!img) return
+        const { path, name } = FileApi.analyzePath(getLayerPath(workId, layerId))
         FileApi.save({ 
           type:'image/png',
-          path: getLayerPath(workId, layerId),
+          path,
+          name,
           data: img,
         })
-        const [file] = await FileApi.get(`${workId}.json`, {isDir: false})
-        const workDetailDesFile: WorkDetailDesFile = JSON.parse( await file.text() )
+        const [{data}] = await FileApi.get<'application/json'>('', `${workId}.json`)
+        const workDetailDesFile: WorkDetailDesFile = JSON.parse( data )
         const layertDetail = workDetailDesFile.layers.find(({layerId: id}) => id === layerId)
         if(!layertDetail&& isNumber(index)){
           workDetailDesFile.layers.splice(index, 0, { canvas: getLayerPath(workId, layerId), layerId, ...rest } )
@@ -155,20 +148,19 @@ export default class WorkStorage {
      */
     static async getWorkDetail(workId: string): Promise<WorkDetail> {
         console.time('getWorkDetail')
-        const [file] = await FileApi.get(`${workId}.json`,{isDir: false})
-        const text = await file.text()
+        const [{data: text}] = await FileApi.get<'application/json'>('',`${workId}.json`)
+        // const text = await file.text()
         const { workInfo, layers }: WorkDetailDesFile = JSON.parse(text)
         const workLayers: LayerDetail[] = []
-        const canvasFileMap: {[index: string]: File} = (await FileApi.get(getLayerPath(workId), { isDir: true}))
-                .reduce((map, file) => ({...map, [file.name]:file}), {})
+        const canvasFileMap: {[index: string]: ArrayBuffer} = (await FileApi.get<'image/png'>(getLayerPath(workId)))
+                .reduce((map, { data, name}) => ({...map, [name]:data}), {})
         const infoList = []
         for (let i = 0; i < layers.length; i++) {
             const { layerId, visible, name } = layers[i]
             const canvasFile = canvasFileMap[`${layerId}.png`]
             if(canvasFile){
                 try{
-                  const img = await createImageByFile(canvasFile)
-                  const canvas = copyCanvas(img)
+                  const canvas = await createCanvasByFile(canvasFile)
                   infoList.push({canvas, name, visible, layerId})
                 }catch(e){
                   console.error(layerId, 'decode failed')
@@ -191,16 +183,24 @@ export default class WorkStorage {
     static async getWorkList(): Promise<WorkInfo[]> {
         console.time('getWorkList')
         let workInfoList: WorkInfo[];
-        const [textFileList, imgFileList] =await Promise.all([FileApi.get('', {isDir: true}), FileApi.get('thumbnail', {isDir:true})])
-        const textList = await Promise.all( textFileList.map( textFile =>textFile.text() ) )
+        const [textFileList, imgFileList] =await Promise.all([
+          FileApi.get<'application/json'>(''), 
+          FileApi.get<'image/png'>('thumbnail')
+        ])
+        const textList = textFileList.map( ({data}) => data )
         workInfoList =  textList.map( text => {
             const { workInfo: { thumbnail, workId,...rest } }: WorkDetailDesFile = JSON.parse(text)
-           return {
-                ...rest,
-                workId,
-                thumbnail: URL.createObjectURL(imgFileList.find( ({name}) => name === `${workId}.png` ))
+           const  fileInfo =  imgFileList.find( ({name}) => name === `${workId}.png` )
+            if(fileInfo){
+              console.log(fileInfo.data)
+              return {
+                ...rest, workId,
+                thumbnail: URL.createObjectURL( new Blob([fileInfo.data]) )
+              }
+            }else{
+              throw 'workInfoList error '+ workId
             }
-        } )
+          })
         console.timeEnd('getWorkList')
         return workInfoList
     }
