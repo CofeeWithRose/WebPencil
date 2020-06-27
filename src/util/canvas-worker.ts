@@ -11,7 +11,7 @@ const handles = {
 
 ctx.addEventListener("message", ({data}) => {
     const {method, params} = data
-    console.log('method: ', method)
+    // console.log('method: ', method)
     const fun = (handles as any)[method]
     if(fun){
         fun(params)

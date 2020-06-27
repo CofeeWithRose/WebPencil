@@ -62,17 +62,21 @@ export default () => {
                 onPointerUp={addWork}
             />
             {
-                workList.map(({workId, name, thumbnail}: WorkInfo) => 
-                <WorkItem 
-                    key={workId}
-                    id={workId}
-                    name={name}
-                    content={<img 
-                      src={thumbnail}  
-                      onLoad={ () => URL.revokeObjectURL(thumbnail) }
-                    />}
-                    onPointerUp={() => editWork(workId)}
-                />)
+                workList.map(({workId, name, thumbnail}: WorkInfo) => {
+                  URL.revokeObjectURL(thumbnail)
+                  return  <WorkItem 
+                      key={workId}
+                      id={workId}
+                      name={name}
+                      content={
+                        <img 
+                          src={thumbnail}  
+                          onLoad={ () => URL.revokeObjectURL(thumbnail) }
+                        />
+                      }
+                      onPointerUp={() => editWork(workId)}
+                    />
+                })
             }
 
         </main>

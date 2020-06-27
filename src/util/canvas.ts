@@ -66,7 +66,7 @@ let decodingNumber = 0
 //       decodingNumber++
 //       const { file, cb } = task
 //       const canvas = document.createElement('canvas')
-//       const  postId = uniqueId('decode_png_')
+//       const  postId = uniqueId('decode_png_'+performance.now())
 //       const params: {canvasFile: ArrayBuffer,  postId: string} = { canvasFile: file, postId }
 //       const listener = ({data: {postId:rsPostId, width, height, data} }) => {
 //         width = width as number

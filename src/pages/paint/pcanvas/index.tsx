@@ -37,7 +37,7 @@ import { Spin } from 'antd'
   const [ minScale, setMinScale ] = useState(0.1)
 
 
-  useTransform({ minScale, maxScale: 1, viewRef, transRef: wrapRef, scaleRef: wrapRef })
+  // useTransform({ minScale, maxScale: 1, viewRef, transRef: wrapRef, scaleRef: wrapRef })
   
   useEffect(() => {
     if(!initValue ) return
@@ -55,31 +55,35 @@ import { Spin } from 'antd'
   useEffect(() => {
     if(!initValue ) return
     const cover = coverRef.current
-    if(cover){
-
-      const onPointerDown = (pointEvent: PointerEvent) => {
-        if(pCanvasController){
-          pCanvasController.onPointerDown(pointEvent)
-        }
+    const onPointerDown = (pointEvent: PointerEvent) => {
+      if(pCanvasController){
+        pCanvasController.onPointerDown(pointEvent)
       }
-      const onPointerMove = (pointEvent: PointerEvent) => {
-        if(pCanvasController){
-          pCanvasController.onPointerMove(pointEvent)
-        }
+    }
+    const onPointerMove = (pointEvent: PointerEvent) => {
+      if(pCanvasController){
+        pCanvasController.onPointerMove(pointEvent)
       }
-      const onPointerUp = (pointEvent: PointerEvent) => {
-        if(pCanvasController){
-          pCanvasController.onPointerUp(pointEvent)
-        }
+    }
+    const onPointerUp = (pointEvent: PointerEvent) => {
+      if(pCanvasController){
+        pCanvasController.onPointerUp(pointEvent)
       }
-      cover.addEventListener('pointerdown', onPointerDown, {passive: false})
-      cover.addEventListener('pointermove', onPointerMove, {passive: false})
-      cover.addEventListener('pointerup', onPointerUp, {passive: false})
-
-      return () => {
+    }
+    const init = () => {
+      if(cover){
+        cover.addEventListener('pointerdown', onPointerDown, {passive: false})
+        cover.addEventListener('pointermove', onPointerMove, {passive: false})
+        cover.addEventListener('pointerup', onPointerUp, {passive: false})
+      }
+    }
+    pCanvasController?.on('init', init)
+    return () => {
+      if(cover){
         cover.removeEventListener('pointerdown', onPointerDown)
         cover.removeEventListener('pointermove', onPointerMove)
         cover.removeEventListener('pointerup', onPointerUp)
+        pCanvasController?.off('init', init)
       }
     }
     
@@ -89,7 +93,7 @@ import { Spin } from 'antd'
     return <main 
         ref={viewRef}
         className={styles.pCanvas}
-
+        
     >
       <section
         ref={wrapRef}

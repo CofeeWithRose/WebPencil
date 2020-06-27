@@ -126,7 +126,7 @@ export default function useTransform(userTransformProps?: UseTransformProps){
             /**
              * 添加操作时的动画，增强体验流畅度.
              */
-            transRef.current.style.transition = TRANSACTION
+            // transRef.current.style.transition = TRANSACTION
             const mainManager = new Hammer.Manager(viewRef.current)
             mainManager.add(new Hammer.Pan( { threshold: 0, pointers: 2, 
               enable: (_, data) => {
@@ -170,14 +170,14 @@ export default function useTransform(userTransformProps?: UseTransformProps){
                 const { translate } = transformInfoRef.current
                 transformInfoRef.current.gestrueStartTranslate = new Vector2(deltaX, deltaY)
                 transformInfoRef.current.eleStartTanslate = translate;
-                if(transRef.current){
-                  transRef.current.style.transition = ''
-                    requestAnimationFrame(() => {
-                        if(transRef.current){
-                          transRef.current.style.transition = TRANSACTION
-                        }
-                    } )
-                }
+                // if(transRef.current){
+                //   transRef.current.style.transition = ''
+                //     requestAnimationFrame(() => {
+                //         if(transRef.current){
+                //           transRef.current.style.transition = TRANSACTION
+                //         }
+                //     } )
+                // }
             }
 
             const onPan = ({deltaX, deltaY, center }: HammerInput) =>{
@@ -227,14 +227,14 @@ export default function useTransform(userTransformProps?: UseTransformProps){
                 transformInfoRef.current.translate = getNewTranslate(preCenter, newCenter, translate, scale, rotate)
                 transformInfoRef.current.center = newCenter
                 await requestUpdate()
-                if(transRef.current){
-                  transRef.current.style.transition = ''
-                    requestAnimationFrame(() => {
-                        if(transRef.current){
-                          transRef.current.style.transition = TRANSACTION
-                        }
-                    } )
-                }
+                // if(transRef.current){
+                //   transRef.current.style.transition = ''
+                //     requestAnimationFrame(() => {
+                //         if(transRef.current){
+                //           transRef.current.style.transition = TRANSACTION
+                //         }
+                //     } )
+                // }
             }
 
             const onPinchinMove = ({ scale, center }: HammerInput) => { 
