@@ -173,6 +173,7 @@ export default function useTransform(userTransformProps?: UseTransformProps){
 
 			const onPanStart = ({deltaX, deltaY }: HammerInput) => {
 				statusRef.current.isTransForming = true
+				statusRef.current.isScaling = false
 				const { translate } = transformInfoRef.current
 				transformInfoRef.current.gestrueStartTranslate = new Vector2(deltaX, deltaY)
 				transformInfoRef.current.eleStartTanslate = translate
@@ -231,6 +232,7 @@ export default function useTransform(userTransformProps?: UseTransformProps){
 
 			const onPinchStart = async ({ scale, center }: HammerInput) =>{
 				statusRef.current.isScaling = true
+				statusRef.current.isTransForming = false
 				const { translate, scale: slScale, center:preCenter, rotate } = transformInfoRef.current
 				transformInfoRef.current.gestrueStartscale = scale
 				transformInfoRef.current.eleStartScale = slScale
