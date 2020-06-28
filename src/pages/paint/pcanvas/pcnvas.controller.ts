@@ -168,7 +168,10 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
     }
 
     onPointerDown(p: PointerEvent) {
-    	if(this.tracePointerId) return
+    	if(this.tracePointerId) {
+    		this.tracePointerId = -1
+    		return
+    	}
     		this.tracePointerId = p.pointerId
     	const s = pointEvent2BrunshStatus(p)
     	// console.log('f', s)
