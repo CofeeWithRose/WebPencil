@@ -14,21 +14,21 @@ export default function Paint(){
 
 	const workStateHandle = useState<WorkDetail>()
 	const [ workDetail, setWorkDetail ] = workStateHandle
-  const {pCanvas} = usePCanvas()
-  const [loading, setLoading] = useState(true)
-  const { replace, location } = useHistory()
+	const {pCanvas} = usePCanvas()
+	const [loading, setLoading] = useState(true)
+	const { replace, location } = useHistory()
 
 	useEffect(() => {
 		(async () => {
 			const {workId} = qs.parse(location.search.substr(1)) as  (Pick<WorkInfo, 'workId'>)
-      setLoading(true)
-      const work = await WorkStorage.getWorkDetail(workId)
-      if(work){
-        setLoading(false)
-        setWorkDetail(work)
-      }else{
-        replace('./home')
-      }
+			setLoading(true)
+			const work = await WorkStorage.getWorkDetail(workId)
+			if(work){
+				setLoading(false)
+				setWorkDetail(work)
+			}else{
+				replace('./home')
+			}
 			
 		})()
 	},[])
@@ -42,20 +42,20 @@ export default function Paint(){
 	},[workDetail])
 
 	return <BasicLayout 
-				contentClassName={style.layout} 
-				headNode={<TopToolBar pCanvasController={pCanvas} />}
-				asideNode={
-					<AsideToolBar 
-						pCanvasController={pCanvas}
-					/>
-				}
-			>
-				{
-          <PCanvas 
-            loading={loading}
-						pCanvasController={pCanvas}   
-						initValue={workDetail}
-					/>
-				}
+		contentClassName={style.layout} 
+		headNode={<TopToolBar pCanvasController={pCanvas} />}
+		asideNode={
+			<AsideToolBar 
+				pCanvasController={pCanvas}
+			/>
+		}
+	>
+		{
+			<PCanvas 
+				loading={loading}
+				pCanvasController={pCanvas}   
+				initValue={workDetail}
+			/>
+		}
 	</BasicLayout>
 }

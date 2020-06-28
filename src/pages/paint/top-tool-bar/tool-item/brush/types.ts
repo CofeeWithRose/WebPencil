@@ -1,7 +1,7 @@
-import { PCanvasContext } from "@/pages/paint/pcanvas/pcanvas.context"
+import { PCanvasContext } from '@/pages/paint/pcanvas/pcanvas.context'
 
 export class BrushStatus {
-  constructor(
+	constructor(
 
       public readonly x: number,
 
@@ -12,7 +12,7 @@ export class BrushStatus {
       public readonly tiltX: number,
 
       public readonly tiltY: number,
-  ) { }
+	) { }
 
 }
 
@@ -24,18 +24,18 @@ export enum BrushType {
 }
 
 export abstract class AbstractBrush {
-  constructor(
+	constructor(
     public readonly type: BrushType, 
     public readonly name: string
-  ) {}
+	) {}
 
-  init(): void {}
+	init(): void {}
 
-  destory(): void {}
+	destory(): void {}
 
-  onStart(status: BrushStatus, context: PCanvasContext): void {}
+	onStart(status: BrushStatus, context: PCanvasContext): void {}
 
-  onDraw(brushStatus: BrushStatus[], contx: PCanvasContext): void{}
+	onDraw(brushStatus: BrushStatus[], contx: PCanvasContext): void{}
 
-  onEnd(brushStatus: BrushStatus, contx: PCanvasContext): void {}
+	onEnd(brushStatus: BrushStatus, contx: PCanvasContext): void {}
 }

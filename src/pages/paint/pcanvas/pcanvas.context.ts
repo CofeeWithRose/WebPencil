@@ -1,9 +1,9 @@
-import { RGBA } from "../top-tool-bar/tool-item/color-selector/rgba";
-import { Brush } from "../top-tool-bar/tool-item/brush";
+import { RGBA } from '../top-tool-bar/tool-item/color-selector/rgba'
+import { Brush } from '../top-tool-bar/tool-item/brush'
 
 export class PCanvasContext {
 
-    constructor(
+	constructor(
 
         public curCanvas: HTMLCanvasElement,
 
@@ -25,5 +25,5 @@ export class PCanvasContext {
         public brushWidth: number = 100,
 
 
-    ){}
+	){}
 }

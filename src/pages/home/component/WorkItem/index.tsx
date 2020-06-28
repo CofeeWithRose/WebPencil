@@ -7,16 +7,16 @@ export interface WorkItemProps {
     content: ReactNode,
     onPointerUp?: (id: string) => void
 }
-export default ({name, content, id, onPointerUp }: WorkItemProps) => {
-    return <section 
-        className={style.workItem}
-        onPointerUp={() => onPointerUp && onPointerUp(id)}
-    >
-        <div 
-            className={style.imgBox}
-        >
-            {content}
-        </div>
-    <p>{name}</p>
-    </section>
+export default function WorkItem({name, content, id, onPointerUp }: WorkItemProps) {
+	return <section 
+		className={style.workItem}
+		onPointerUp={() => onPointerUp && onPointerUp(id)}
+	>
+		<div 
+			className={style.imgBox}
+		>
+			{content}
+		</div>
+		<p>{name}</p>
+	</section>
 }

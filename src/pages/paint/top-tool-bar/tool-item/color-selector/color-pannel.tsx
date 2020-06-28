@@ -198,7 +198,7 @@ export default ({ value, onChange }: ColorPannelProps) => {
 	const canvas = useRef<HTMLCanvasElement>(null)
 
 	useEffect(() => {
-        // TODO show position acording value.
+		// TODO show position acording value.
 		console.log(value)
 	}, [value])
 
@@ -248,7 +248,7 @@ export default ({ value, onChange }: ColorPannelProps) => {
 
 	const onPointDown = ( { nativeEvent: {offsetX: x, offsetY: y}}: React.PointerEvent) => {
 		if(cirleInfo ){
-			operateInfo.current.isSelecting = true;
+			operateInfo.current.isSelecting = true
 			setPointType(getPointType({x,y}, cirleInfo))
 			const positionType = getPointType({x,y}, cirleInfo)
 			if(positionType === 'circle'){
@@ -261,7 +261,7 @@ export default ({ value, onChange }: ColorPannelProps) => {
 	}
 
 	const onPointOut = () => {
-		operateInfo.current.isSelecting = false;
+		operateInfo.current.isSelecting = false
 		setPointType(null)
 	}
 

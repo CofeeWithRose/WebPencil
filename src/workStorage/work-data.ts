@@ -1,6 +1,6 @@
 import { uniqueId } from 'lodash'
-import { RGBA } from '../pages/paint/top-tool-bar/tool-item/color-selector/rgba';
-import { createCanvas, emptyUrl } from '../util/canvas';
+import { RGBA } from '../pages/paint/top-tool-bar/tool-item/color-selector/rgba'
+import { createCanvas, emptyUrl } from '../util/canvas'
 
 
 /**
@@ -8,7 +8,7 @@ import { createCanvas, emptyUrl } from '../util/canvas';
  */
 export class WorkInfo<T=string> {
 
-    constructor(
+	constructor(
         public width: number,
         public height: number,
         public name: string = '', 
@@ -16,7 +16,7 @@ export class WorkInfo<T=string> {
         public createTime: number = Date.now(),
         public updateTime: number = Date.now(),
         public readonly workId = uniqueId(`work_${Date.now()}_`),
-    ){}
+	){}
 }
 
 /**
@@ -24,23 +24,23 @@ export class WorkInfo<T=string> {
  */
 export class WorkDetail<T=HTMLCanvasElement> {
 
-    constructor(
+	constructor(
         public workInfo: WorkInfo,
         public layers: LayerDetail<T>[] = [], 
-    ){}
+	){}
 
-      /**
+	/**
      * 
      * @param width 
      * @param height 
      * @param background 
      */
-    static createEmpty(width: number, height: number, background: RGBA){
-        const workInfo = new WorkInfo(width,height,'new work', emptyUrl() )
-        const layers = []
-        layers.push(LayerDetail.create(workInfo, RGBA.WHITE))
-        return new WorkDetail(workInfo,layers)
-    }
+	static createEmpty(width: number, height: number, background: RGBA){
+		const workInfo = new WorkInfo(width,height,'new work', emptyUrl() )
+		const layers = []
+		layers.push(LayerDetail.create(workInfo, RGBA.WHITE))
+		return new WorkDetail(workInfo,layers)
+	}
 }
 
 // export enum  LayerDetailType{
@@ -55,7 +55,7 @@ export class WorkDetail<T=HTMLCanvasElement> {
  */
 export class LayerDetail<T=HTMLCanvasElement> {
     
-    constructor(
+	constructor(
         public canvas: T,
 
         public name = 'new layer',
@@ -64,13 +64,13 @@ export class LayerDetail<T=HTMLCanvasElement> {
 
         public readonly layerId = uniqueId(`layer-${Date.now()}-`)
 
-    ){}
+	){}
 
-    static create({width, height}: Pick<WorkInfo, 'width'| 'height'>, color?: RGBA){
-        const canvas = createCanvas(width, height, color)
-        const layer = new LayerDetail(canvas)
-        canvas.setAttribute('layerId', layer.layerId)
-        return layer
-    }
+	static create({width, height}: Pick<WorkInfo, 'width'| 'height'>, color?: RGBA){
+		const canvas = createCanvas(width, height, color)
+		const layer = new LayerDetail(canvas)
+		canvas.setAttribute('layerId', layer.layerId)
+		return layer
+	}
 
 }

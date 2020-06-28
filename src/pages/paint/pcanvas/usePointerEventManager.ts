@@ -1,4 +1,4 @@
-import { RefObject, useEffect } from "react"
+import { RefObject, useEffect } from 'react'
 
 export type PointerEventHandle = (e: PointerEvent) => void
 export type ManagerOptions = {
@@ -15,8 +15,8 @@ export default ({
 
 }: ManagerOptions) => {
 
-  useEffect(() => {
+	useEffect(() => {
     
-  },[])
+	},[])
 
 }

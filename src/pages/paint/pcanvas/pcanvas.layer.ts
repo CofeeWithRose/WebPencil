@@ -1,4 +1,4 @@
-import { LayerDetail } from "../../../workStorage";
+import { LayerDetail } from '../../../workStorage'
 
 export type WrapInfo = { 
   readonly  wrap: HTMLElement,
@@ -24,79 +24,79 @@ export class PcanvasLayers{
 
 
     async init( layers: LayerDetail[]): Promise<void>{
-      const wrapInfo = this.wrapInfo
-      const { wrap, cover } = wrapInfo
-      let lastElement: HTMLElement= cover
-      this.layers = layers
-      layers.forEach( (layer,index) => {
-      const { canvas, layerId, visible } = layer
-      wrap.insertBefore( canvas, lastElement);
-        lastElement = canvas
-        if(!visible){
-            canvas.className = 'unvisible'
-        }
-      })
+    	const wrapInfo = this.wrapInfo
+    	const { wrap, cover } = wrapInfo
+    	let lastElement: HTMLElement= cover
+    	this.layers = layers
+    	layers.forEach( (layer,index) => {
+    		const { canvas, layerId, visible } = layer
+    		wrap.insertBefore( canvas, lastElement)
+    		lastElement = canvas
+    		if(!visible){
+    			canvas.className = 'unvisible'
+    		}
+    	})
 
-      this.tempLayer = LayerDetail.create(wrapInfo)
-      wrap.insertBefore( this.tempLayer.canvas, cover);
-      // console.log('this.tempLayer: ', this.tempLayer.layerId)
-      this.focusedLayerDetail = layers[0]
+    	this.tempLayer = LayerDetail.create(wrapInfo)
+    	wrap.insertBefore( this.tempLayer.canvas, cover)
+    	// console.log('this.tempLayer: ', this.tempLayer.layerId)
+    	this.focusedLayerDetail = layers[0]
     }
 
     getCanvas():HTMLCanvasElement{
-        return this.tempLayer.canvas
+    	return this.tempLayer.canvas
     }
 
     applyTempCanvas(): void{
-        const ctx = this.focusedLayerDetail.canvas.getContext('2d')
-        const tempCtx = this.tempLayer.canvas.getContext('2d')
-        if(ctx && tempCtx){
-            const { width, height  } = this.tempLayer.canvas
-            ctx.drawImage(this.tempLayer.canvas, 0, 0, width, height)
-            tempCtx.clearRect(0, 0 ,width, height)
-        }
+    	const ctx = this.focusedLayerDetail.canvas.getContext('2d')
+    	const tempCtx = this.tempLayer.canvas.getContext('2d')
+    	if(ctx && tempCtx){
+    		const { width, height  } = this.tempLayer.canvas
+    		ctx.drawImage(this.tempLayer.canvas, 0, 0, width, height)
+    		tempCtx.clearRect(0, 0 ,width, height)
+    	}
     }
 
     getFocusDetail(): LayerDetail {
-        return this.focusedLayerDetail
+    	return this.focusedLayerDetail
     }
 
     focusLayer(layerDetail: LayerDetail){
-        const nextLayer = this.layers[this.layers.indexOf(layerDetail) - 1]
-        const nextCanvas = nextLayer&&nextLayer.canvas && nextLayer !== this.tempLayer ? nextLayer.canvas :  this.wrapInfo.cover
-        this.wrapInfo.wrap.insertBefore(this.tempLayer.canvas, nextCanvas)
-        this.focusedLayerDetail = layerDetail
-        // TOFIX: update templyer in layers.
+    	const nextLayer = this.layers[this.layers.indexOf(layerDetail) - 1]
+    	const nextCanvas = nextLayer&&nextLayer.canvas && nextLayer !== this.tempLayer ? nextLayer.canvas :  this.wrapInfo.cover
+    	this.wrapInfo.wrap.insertBefore(this.tempLayer.canvas, nextCanvas)
+    	this.focusedLayerDetail = layerDetail
+    	// TOFIX: update templyer in layers.
     }
 
     addLayer(newLayer: LayerDetail, index = 0){
-        const { wrap } = this.wrapInfo
-        const oldLayerDetail = this.layers[index-1]
-        const ele = oldLayerDetail&&oldLayerDetail.canvas || this.wrapInfo.cover
-        wrap.insertBefore(newLayer.canvas, ele)
-        this.layers.splice(index, 0, newLayer)
-        return newLayer
+    	const { wrap } = this.wrapInfo
+    	const oldLayerDetail = this.layers[index-1]
+    	const ele = oldLayerDetail&&oldLayerDetail.canvas || this.wrapInfo.cover
+    	wrap.insertBefore(newLayer.canvas, ele)
+    	this.layers.splice(index, 0, newLayer)
+    	return newLayer
     }
 
 
     removeLayer(layerDetail: LayerDetail){
-        const index = this.layers.indexOf(layerDetail)
-        if(index > -1){
-            this.wrapInfo.wrap.removeChild(layerDetail.canvas)
-            this.layers.splice(index, 1)
-        }else{
-            console.warn('layerDetail has been removed')
-        }
-        return { index, isFocus:  this.focusedLayerDetail === layerDetail}
+    	const index = this.layers.indexOf(layerDetail)
+    	if(index > -1){
+    		this.wrapInfo.wrap.removeChild(layerDetail.canvas)
+    		this.layers.splice(index, 1)
+    	}else{
+    		console.warn('layerDetail has been removed')
+    	}
+    	return { index, isFocus:  this.focusedLayerDetail === layerDetail}
     }
 
     getContext(){
-        const ctx = this.tempLayer.canvas.getContext('2d')
-        if(ctx === null){
-            throw 'get context faliled.'
-        }
-        ctx.imageSmoothingEnabled = false
-        return ctx;
+    	const ctx = this.tempLayer.canvas.getContext('2d')
+    	if(ctx === null){
+    		throw 'get context faliled.'
+    	}
+    	ctx.imageSmoothingEnabled = false
+    	return ctx
     }
 
 

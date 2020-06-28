@@ -16,55 +16,55 @@ export interface BasicLayoutProps {
 }
 
 export default function Home ({
-    className='', 
-    headNode=null, 
-    asideClass='', 
-    asideNode=null, 
-    children=null, 
-    beforeBack, 
-    showBackButton =true,
-    contentClassName='',
+	className='', 
+	headNode=null, 
+	asideClass='', 
+	asideNode=null, 
+	children=null, 
+	beforeBack, 
+	showBackButton =true,
+	contentClassName='',
 }: BasicLayoutProps){
-    const { goBack } = useHistory()
-    const onGoBack = async () => {
-        if((beforeBack && await beforeBack())|| !beforeBack){
-            goBack()
-        }
-    }
+	const { goBack } = useHistory()
+	const onGoBack = async () => {
+		if((beforeBack && await beforeBack())|| !beforeBack){
+			goBack()
+		}
+	}
 
-    return <section 
-        className={`${style.section} ${className}`}
-    >
-    <header>
-        {
-           showBackButton && 
+	return <section 
+		className={`${style.section} ${className}`}
+	>
+		<header>
+			{
+				showBackButton && 
            <Button 
-            ghost={true}
-            onPointerUp={onGoBack}
-            shape="circle"
-            size="small"
-            icon={<LeftOutlined />}
-            ></Button>
-        }
-        {
-            process.env.BUILD_ENV === 'development'&&
+           	ghost={true}
+           	onPointerUp={onGoBack}
+           	shape="circle"
+           	size="small"
+           	icon={<LeftOutlined />}
+           ></Button>
+			}
+			{
+				process.env.BUILD_ENV === 'development'&&
             <Button 
-            ghost={true}
-            onPointerUp={() => location.reload()}
-            shape="circle"
-            size="small"
+            	ghost={true}
+            	onPointerUp={() => location.reload()}
+            	shape="circle"
+            	size="small"
             >reload</Button>
-        }
+			}
         
-        {headNode}
-    </header>
-    <div className={style.wrapper}>
-        <aside className={asideClass} >
-            {asideNode}
-        </aside>
-        <main className={contentClassName}>
-            {children}
-        </main>
-    </div>
-</section>
+			{headNode}
+		</header>
+		<div className={style.wrapper}>
+			<aside className={asideClass} >
+				{asideNode}
+			</aside>
+			<main className={contentClassName}>
+				{children}
+			</main>
+		</div>
+	</section>
 }

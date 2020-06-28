@@ -11,80 +11,80 @@ export interface RecordProps {
 }
 
 const saveRecordCanvas = async (canvas: HTMLCanvasElement) => {
-    const fileName = `record_${Date.now()}_${uniqueId()}.png`
-    const blob = await toArrayBuffer(canvas)
-    const canvasPath = `record/${fileName}`
-    if(blob){
-        await FileApi.save({ type: 'image/png', data: blob, path: 'record/', name: fileName })
-    }
-    return  canvasPath
+	const fileName = `record_${Date.now()}_${uniqueId()}.png`
+	const blob = await toArrayBuffer(canvas)
+	const canvasPath = `record/${fileName}`
+	if(blob){
+		await FileApi.save({ type: 'image/png', data: blob, path: 'record/', name: fileName })
+	}
+	return  canvasPath
 }
 
 export default ({ pCanvasController }: RecordProps) => {
 
-    const [ {cursor, recorderList}, dispatchRecord ] = useReducer(recordListReducer, { cursor: -1, recorderList: []})
+	const [ {cursor, recorderList}, dispatchRecord ] = useReducer(recordListReducer, { cursor: -1, recorderList: []})
 
-    const canUndo = cursor >= 0
+	const canUndo = cursor >= 0
 
-    const canRedo = cursor < recorderList.length -1
+	const canRedo = cursor < recorderList.length -1
 
-    useEffect(() => {
+	useEffect(() => {
 
-        const onAddLayer = async (event: CanvasEventData['addLayer'] ) => {
-            const {data: {layerDetail: {canvas}, index}, tag: creator} = event
-            if(creator === 'history') return
-                const canvasPath = await saveRecordCanvas(canvas)
-                dispatchRecord({
-                    type: 'add',
-                    payload: new RecordInfo('add', {index, canvasPath })
-                })
-        }
+		const onAddLayer = async (event: CanvasEventData['addLayer'] ) => {
+			const {data: {layerDetail: {canvas}, index}, tag: creator} = event
+			if(creator === 'history') return
+			const canvasPath = await saveRecordCanvas(canvas)
+			dispatchRecord({
+				type: 'add',
+				payload: new RecordInfo('add', {index, canvasPath })
+			})
+		}
 
-        const onContentChange= async (event: CanvasEventData['contentChange']) => {
-            const {data: { layerDetail:  {canvas}, preContent, index}, tag: creator  } = event
-            if(creator === 'history') return
-            dispatchRecord({
-                type: 'add',
-                payload:new RecordInfo('modify', {
-                    index, 
-                    fromCanvasPath:  await saveRecordCanvas(preContent),  
-                    toCanvasPath: await saveRecordCanvas(canvas)
-                })
-            })
-        }
+		const onContentChange= async (event: CanvasEventData['contentChange']) => {
+			const {data: { layerDetail:  {canvas}, preContent, index}, tag: creator  } = event
+			if(creator === 'history') return
+			dispatchRecord({
+				type: 'add',
+				payload:new RecordInfo('modify', {
+					index, 
+					fromCanvasPath:  await saveRecordCanvas(preContent),  
+					toCanvasPath: await saveRecordCanvas(canvas)
+				})
+			})
+		}
 
-        const onRemoveLayer =  async (event: CanvasEventData['removeLayer']) => {
-            const {  data: {layerDetail:{canvas}, index}, tag: creator } = event
-            if(creator === 'history') return
-            const canvasPath = await saveRecordCanvas(canvas)
-            dispatchRecord({
-                type: 'add',
-                payload: new RecordInfo('remove', {index, canvasPath })
-            })
-        }
+		const onRemoveLayer =  async (event: CanvasEventData['removeLayer']) => {
+			const {  data: {layerDetail:{canvas}, index}, tag: creator } = event
+			if(creator === 'history') return
+			const canvasPath = await saveRecordCanvas(canvas)
+			dispatchRecord({
+				type: 'add',
+				payload: new RecordInfo('remove', {index, canvasPath })
+			})
+		}
 
-        pCanvasController.on('addLayer', onAddLayer)
-        pCanvasController.on('contentChange', onContentChange)
-        pCanvasController.on('removeLayer', onRemoveLayer)
-        return  () => {
-            pCanvasController.off('addLayer', onAddLayer)
-            pCanvasController.off('contentChange', onContentChange)
-            pCanvasController.off('removeLayer', onRemoveLayer)
-            FileApi.remove('record')
-        }
-    },[])
+		pCanvasController.on('addLayer', onAddLayer)
+		pCanvasController.on('contentChange', onContentChange)
+		pCanvasController.on('removeLayer', onRemoveLayer)
+		return  () => {
+			pCanvasController.off('addLayer', onAddLayer)
+			pCanvasController.off('contentChange', onContentChange)
+			pCanvasController.off('removeLayer', onRemoveLayer)
+			FileApi.remove('record')
+		}
+	},[])
 
-    const redo = () => {
-        dispatchRecord({ type:'redo',pCanvasController })
+	const redo = () => {
+		dispatchRecord({ type:'redo',pCanvasController })
        
-    }
+	}
 
-    const undo = () => {
-       dispatchRecord({ type: 'undo', pCanvasController })
-    }
-    return <Fragment>
-        <span className={ `${styles.recordBtn} ${canRedo&&styles.recordBtnActive||''} `} onPointerUp={canRedo&&redo|| undefined}>redo</span>
-        <Divider/>
-        <span className={`${styles.recordBtn} ${canUndo&&styles.recordBtnActive ||''}` } onPointerUp={canUndo&&undo||undefined} >undo</span>
-    </Fragment>
+	const undo = () => {
+		dispatchRecord({ type: 'undo', pCanvasController })
+	}
+	return <Fragment>
+		<span className={ `${styles.recordBtn} ${canRedo&&styles.recordBtnActive||''} `} onPointerUp={canRedo&&redo|| undefined}>redo</span>
+		<Divider/>
+		<span className={`${styles.recordBtn} ${canUndo&&styles.recordBtnActive ||''}` } onPointerUp={canUndo&&undo||undefined} >undo</span>
+	</Fragment>
 }

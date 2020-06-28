@@ -1,6 +1,6 @@
 import React, { useState, FC, useEffect } from 'react'
 import { Modal, InputNumber, Form, Button } from 'antd'
-import { WorkInfo } from '../../workStorage';
+import { WorkInfo } from '../../workStorage'
 
 export interface WorkForm {
 	width: number, height: number
@@ -23,7 +23,7 @@ export interface FileMenuProps {
 
 export const FileMenu: FC<FileMenuProps> = ( {className='', isVisibale, onComplete, onCancel }: FileMenuProps) => {
 
-  const [form] = Form.useForm();
+	const [form] = Form.useForm()
   
 
 
@@ -37,12 +37,12 @@ export const FileMenu: FC<FileMenuProps> = ( {className='', isVisibale, onComple
 	
 	return <div>
 		 <Form form={form} initialValues={{
-				width: 2048,
-				height: 2048,
+			width: 2048,
+			height: 2048,
 		 }}>
 			<Modal
-        visible={isVisibale}
-        onCancel={ onCancel }
+				visible={isVisibale}
+				onCancel={ onCancel }
 				title={'创建'}
 				className={className}
 				okButtonProps={{onPointerUp:onSubmit}}
@@ -86,7 +86,7 @@ export const FileMenu: FC<FileMenuProps> = ( {className='', isVisibale, onComple
 					/>
 				</Form.Item>
 			</Modal>
-			</Form>
+		</Form>
 
 
 	</div>

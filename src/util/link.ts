@@ -12,22 +12,22 @@ export class LinkNode<T> {
 
 export class Link<T> {
 
-//   protected map = new Map<Symbol, LinkNode<T>>()
+	//   protected map = new Map<Symbol, LinkNode<T>>()
 
   protected start: LinkNode<T>| null = null
 
   
 
   insertAfter(val: T,next?: Symbol): void{
-	// const newNode = new LinkNode(val)
-	// let nextNode: LinkNode<T> | null
+  	// const newNode = new LinkNode(val)
+  	// let nextNode: LinkNode<T> | null
   	// if(!next){
-	// 	if(!this.start){
-	// 		this.start = newNode
-	// 	}
-	// 	return
+  	// 	if(!this.start){
+  	// 		this.start = newNode
+  	// 	}
+  	// 	return
   	// }
-	// //   nextNode = this.map.get(next)
+  	// //   nextNode = this.map.get(next)
 	  
   	// // if(!nextNode){
   	// // 	throw 'error'
@@ -57,8 +57,8 @@ export class Link<T> {
   forEach(fun: (val:T, key: Symbol) => void){
   	// let curN: LinkNode<T> | null = this.start
   	// while(curN){
-	// 	fun(curN.value, curN.key)
-	// 	curN = curN.next
+  	// 	fun(curN.value, curN.key)
+  	// 	curN = curN.next
   	// }
   }
 

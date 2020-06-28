@@ -13,7 +13,7 @@ export interface ColorSelectorProps {
 	defaultValue?: RGBA,
 }
 
-export default  ({value, onChange, defaultValue}: ColorSelectorProps) => {
+export default  function ColorSelector({value, onChange, defaultValue}: ColorSelectorProps) {
 	const [showColorPanel, setShowColorPannel] = useState(false)
 	const [rgba, setRGBA] = useState(defaultValue|| RGBA.BLACK)
 
