@@ -24,13 +24,15 @@ export class Brush  implements AbstractBrush {
     destory(){}
 
     onStart(status: BrushStatus, context: PCanvasContext) {
-    	const {curCanvasContext2D: ctx, color, brushWidth} = context
-    	this.isPainting = true
-    	this.pathList.push(status)
-    	ctx.strokeStyle = color
-    	ctx.lineWidth = brushWidth
-    	ctx.lineCap ='round'
-    	ctx.lineJoin = 'round'
+    	requestAnimationFrame(() => {
+    		const {curCanvasContext2D: ctx, color, brushWidth} = context
+    		this.isPainting = true
+    		this.pathList.push(status)
+    		ctx.strokeStyle = color
+    		ctx.lineWidth = brushWidth
+    		ctx.lineCap ='round'
+    		ctx.lineJoin = 'round'
+    	})
     }
 
   

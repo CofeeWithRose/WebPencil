@@ -55,6 +55,11 @@ const getNewTranslate = (preCenter: Vector2, newCenter: Vector2, translate: Vect
 const TRANSACTION = 'transform 0.1s'
 
 export default function useTransform(userTransformProps?: UseTransformProps){
+
+	const statusRef = useRef({ 
+		isTransForming: false,
+		isScaling: false,
+	})
 	const {
         
 		maxScale = 2,
@@ -71,8 +76,8 @@ export default function useTransform(userTransformProps?: UseTransformProps){
 	// const contentRef = useRef<ContentElement>(null)
 	const transformInfoRef = useRef({
 		/**
-         * 旋转开始时手势的rotate, 用于计算手势的rotate差值.
-         */
+     * 旋转开始时手势的rotate, 用于计算手势的rotate差值.
+     */
 		gestrueStartRotate: 0,
         
 		/**
@@ -119,20 +124,20 @@ export default function useTransform(userTransformProps?: UseTransformProps){
 			const computedStyle = getComputedStyle(transRef.current)
 
 			/**
-             * 默认的transform中心点.
-             */
+       * 默认的transform中心点.
+       */
 			transformInfoRef.current.center = new Vector2(parseFloat(computedStyle.width) * 0.5, parseFloat(computedStyle.height) * 0.5)
 
 			/**
-             * 添加操作时的动画，增强体验流畅度.
-             */
+       * 添加操作时的动画，增强体验流畅度.
+       */
 			// transRef.current.style.transition = TRANSACTION
 			const mainManager = new Hammer.Manager(viewRef.current)
 			mainManager.add(new Hammer.Pan( { threshold: 0, pointers: 2, 
 				enable: (_, data) => {
 					if(data&&data.pointers.length >1){
 						const { pointers: [ p1, p2 ] } = data
-						console.log( Vector2.dist(p1,p2))
+						// console.log( Vector2.dist(p1,p2))
 						return Vector2.dist(p1,p2)<200
                  
 					}
@@ -144,7 +149,7 @@ export default function useTransform(userTransformProps?: UseTransformProps){
 				enable: (_, data) => {
 					if(data&&data.pointers.length >1){
 						const { pointers: [ p1, p2 ] } = data
-						console.log( Vector2.dist(p1,p2))
+						// console.log( Vector2.dist(p1,p2))
 						return Vector2.dist(p1,p2)> 200
                  
 					}
@@ -167,6 +172,7 @@ export default function useTransform(userTransformProps?: UseTransformProps){
 				}), 10)
 
 			const onPanStart = ({deltaX, deltaY }: HammerInput) => {
+				statusRef.current.isTransForming = true
 				const { translate } = transformInfoRef.current
 				transformInfoRef.current.gestrueStartTranslate = new Vector2(deltaX, deltaY)
 				transformInfoRef.current.eleStartTanslate = translate
@@ -190,6 +196,10 @@ export default function useTransform(userTransformProps?: UseTransformProps){
 				transformInfoRef.current.translate = translate
                 
 				requestUpdate()
+			}
+      
+			const onPanEnd = () => {
+				statusRef.current.isTransForming = false
 			}
           
 			// const onRotateStart = async ({rotation, center}: HammerInput) => {
@@ -220,6 +230,7 @@ export default function useTransform(userTransformProps?: UseTransformProps){
 			// }
 
 			const onPinchStart = async ({ scale, center }: HammerInput) =>{
+				statusRef.current.isScaling = true
 				const { translate, scale: slScale, center:preCenter, rotate } = transformInfoRef.current
 				transformInfoRef.current.gestrueStartscale = scale
 				transformInfoRef.current.eleStartScale = slScale
@@ -245,31 +256,39 @@ export default function useTransform(userTransformProps?: UseTransformProps){
 				requestUpdate()
                
 			}
+      
+			const onPinchEnd = () => {
+				statusRef.current.isScaling = false
+			}
 
 			mainManager.on('panstart', onPanStart)
 			mainManager.on('panmove', onPan)
-
+			mainManager.on('panend', onPanEnd)
 
 			// mainManager.on('rotatestart', onRotateStart)
 			// mainManager.on('rotate', onRotate)
 
 			mainManager.on('pinchstart', onPinchStart)
 			mainManager.on('pinchmove', onPinchinMove)
-            
+			mainManager.on('pinchend', onPinchEnd)
 			requestUpdate()
 			return () => {
 				mainManager.off('panstart', onPanStart)
 				mainManager.off('panmove', onPan)
-    
+				mainManager.off('panend', onPanEnd)
     
 				// mainManager.off('rotatestart', onRotateStart)
 				// mainManager.off('rotate', onRotate)
     
 				mainManager.off('pinchstart', onPinchStart)
 				mainManager.off('pinchmove', onPinchinMove)
+				mainManager.off('pinchend', onPinchEnd)
 				mainManager.destroy()
 			}
 		}
 	}, [...Object.values(userTransformProps||{})])
-
+  
+	return {
+		status: statusRef.current
+	}
 }

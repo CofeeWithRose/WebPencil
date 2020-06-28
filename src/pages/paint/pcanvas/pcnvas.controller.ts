@@ -55,7 +55,7 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
 
     protected color = RGBA.BLACK;
 
-    protected pointerIds: { [id: string]: boolean } = {}
+    protected tracePointerId: number;
 
     protected workId: string
 
@@ -168,14 +168,15 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
     }
 
     onPointerDown(p: PointerEvent) {
-    	this.pointerIds[p.pointerId] = true
+    	if(this.tracePointerId) return
+    		this.tracePointerId = p.pointerId
     	const s = pointEvent2BrunshStatus(p)
     	// console.log('f', s)
     	this.context.brush.onStart(s, this.context)
     }
 
     onPointerMove(pointerEvent: PointerEvent): void {
-    	if (Object.keys(this.pointerIds).length > 1) return
+    	if(this.tracePointerId !== pointerEvent.pointerId) return
     	let ponterEvents: PointerEvent[]
     	if ((pointerEvent as any).getCoalescedEvents) {
     		// console.log('getCoalescedEvents')
@@ -191,9 +192,8 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
     }
 
     onPointerUp(p: PointerEvent): void {
-    	delete this.pointerIds[p.pointerId]
+    	this.tracePointerId = 0
     	this.context.brush.onEnd(pointEvent2BrunshStatus(p), this.context)
-
     }
 
     protected onBrushEnd = () => {

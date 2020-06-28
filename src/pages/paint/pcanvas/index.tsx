@@ -3,6 +3,7 @@ import styles from './style.less'
 import { WorkDetail } from '../../../workStorage'
 import { PCanvasController, WrapInfo, CanvasEventData, CanvasEvent } from './pcnvas.controller'
 import { Spin } from 'antd'
+import useTransform from '@/hooks/useTransform'
  
 
  interface PCanvasProps {
@@ -36,7 +37,7 @@ const PCanvas = ({ initValue, pCanvasController, loading }: PCanvasProps) =>{
 	const [ minScale, setMinScale ] = useState(0.1)
 
 
-	// useTransform({ minScale, maxScale: 1, viewRef, transRef: wrapRef, scaleRef: wrapRef })
+	const {status} = useTransform({ minScale, maxScale: 1, viewRef, transRef: wrapRef, scaleRef: wrapRef })
   
 	useEffect(() => {
 		if(!initValue ) return
@@ -56,11 +57,13 @@ const PCanvas = ({ initValue, pCanvasController, loading }: PCanvasProps) =>{
 		const cover = coverRef.current
 		const onPointerDown = (pointEvent: PointerEvent) => {
 			if(pCanvasController){
+				if(status.isScaling || status.isTransForming) return
 				pCanvasController.onPointerDown(pointEvent)
 			}
 		}
 		const onPointerMove = (pointEvent: PointerEvent) => {
 			if(pCanvasController){
+				if(status.isScaling || status.isTransForming) return
 				pCanvasController.onPointerMove(pointEvent)
 			}
 		}
