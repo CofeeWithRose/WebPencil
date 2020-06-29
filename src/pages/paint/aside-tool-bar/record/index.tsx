@@ -15,7 +15,7 @@ const saveRecordCanvas = async (canvas: HTMLCanvasElement) => {
 	const blob = await toArrayBuffer(canvas)
 	const canvasPath = `record/${fileName}`
 	if(blob){
-		await FileApi.save({ type: 'image/png', data: blob, path: 'record/', name: fileName })
+		await FileApi.save({ type: 'image/png', data: blob, path: 'record', name: fileName })
 	}
 	return  canvasPath
 }
