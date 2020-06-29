@@ -95,7 +95,8 @@ export class PcanvasLayers{
     	if(ctx === null){
     		throw 'get context faliled.'
     	}
-    	ctx.imageSmoothingEnabled = false
+    	ctx.imageSmoothingEnabled = false;
+    	(ctx as any).webkitImageSmoothingEnabled = false
     	return ctx
     }
 

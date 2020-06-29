@@ -34,7 +34,8 @@ export const copyCanvas = (canvas: HTMLCanvasElement|OffscreenCanvas) =>{
 	const ctx = newC.getContext('2d')
 	const oldCtx = canvas.getContext('2d')
 	if(ctx&&oldCtx){
-		ctx.imageSmoothingEnabled = false
+		ctx.imageSmoothingEnabled = false;
+		(ctx as any).webkitImageSmoothingEnabled = false
 		ctx.putImageData(oldCtx.getImageData(0,0, canvas.width, canvas.height),0,0 )
 		// ctx.clearRect(0,0, newC.width, newC.height)
 		// ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height)

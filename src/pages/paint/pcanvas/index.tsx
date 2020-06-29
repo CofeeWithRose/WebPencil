@@ -35,9 +35,16 @@ const PCanvas = ({ initValue, pCanvasController, loading }: PCanvasProps) =>{
 	const viewRef = useRef<HTMLElement>(null)
 
 	const [ minScale, setMinScale ] = useState(0.1)
+	const [ info, setInfo ] = useState({width: 0, height: 0})
 
 
-	const {status} = useTransform({ minScale, maxScale: 1, viewRef, transRef: wrapRef, scaleRef: wrapRef })
+	const {status} = useTransform({ 
+		minScale, maxScale: 10, 
+		viewRef, transRef: wrapRef,
+		scaleRef: wrapRef,
+		srcScaleWidth: info.width,
+		srcScaleHeight: info.height 
+	})
   
 	useEffect(() => {
 		if(!initValue ) return
@@ -72,11 +79,12 @@ const PCanvas = ({ initValue, pCanvasController, loading }: PCanvasProps) =>{
 				pCanvasController.onPointerUp(pointEvent)
 			}
 		}
-		const init = () => {
+		const init = ({ data }: CanvasEventData['init']) => {
 			if(cover){
 				cover.addEventListener('pointerdown', onPointerDown, {passive: false})
 				cover.addEventListener('pointermove', onPointerMove, {passive: false})
 				cover.addEventListener('pointerup', onPointerUp, {passive: false})
+				setInfo({...data})
 			}
 		}
     pCanvasController?.on('init', init)

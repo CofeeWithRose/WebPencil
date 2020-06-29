@@ -1,7 +1,7 @@
 import { RGBA } from '../top-tool-bar/tool-item/color-selector/rgba'
 import { PCanvasContext } from './pcanvas.context'
 import { Brush } from '../top-tool-bar/tool-item/brush'
-import { WorkDetail, LayerDetail } from '../../../workStorage'
+import { WorkDetail, LayerDetail, WorkInfo } from '../../../workStorage'
 import { PcanvasLayers } from './pcanvas.layer'
 import PEventEmiter from '../../../util/event'
 import { copyCanvas } from '../../../util/canvas'
@@ -20,7 +20,7 @@ export class CanvasEvent<T = null> {
 
 export interface CanvasEventData {
 
-    init: CanvasEvent
+    init: CanvasEvent<WorkInfo>
 
     colorchange: CanvasEvent<{ color: RGBA }>
 
@@ -73,7 +73,7 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
     		height,
     		this.onBrushEnd,
     	)
-    	this.emit('init', new CanvasEvent(null))
+    	this.emit('init', new CanvasEvent(workDetail.workInfo))
     	this.emit('focusLayer', new CanvasEvent({ layerDetail: this.layerManager.getFocusDetail() }))
     	// logCanvasData('init: ', this.layerManager.layers[0].canvas)
     }

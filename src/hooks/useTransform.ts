@@ -20,10 +20,11 @@ export interface UseTransformProps {
 
     viewRef: RefObject<HTMLElement>,
 
-}
+    srcScaleWidth: number
 
-const getValueFromRange = (val: number, min: number, max: number) => Math.min( Math.max(min, val), max )
+    srcScaleHeight: number
 
+  }
 const getTargetValue = ( val: number, targetVal: number, dt: number ) => Math.abs(val - targetVal) < dt? targetVal:val
 
 const scaleFun = (val: Vector2, center: Vector2,  scale: number) => {
@@ -52,7 +53,18 @@ const getNewTranslate = (preCenter: Vector2, newCenter: Vector2, translate: Vect
 	return Vector2.add(Vector2.subtract(newVec, preVec), translate)
 }
 
-const TRANSACTION = 'transform 0.1s'
+const getValueFromRange = (val: number, min: number, max: number) => Math.min( Math.max(min, val), max )
+
+
+const getLimitedTranslate = ( viewwidth: number, viewHeight:number, scale:number) => {
+	const halfWidth = viewwidth * scale * 0.5
+	const halfHeight = viewHeight * scale * 0.5
+	return {
+		max: new Vector2(halfWidth, halfHeight),
+		min: new Vector2(-halfWidth, -halfHeight)
+	}
+}
+
 
 export default function useTransform(userTransformProps?: UseTransformProps){
 
@@ -62,14 +74,17 @@ export default function useTransform(userTransformProps?: UseTransformProps){
 	})
 	const {
         
-		maxScale = 2,
+		maxScale = 3,
 
-		minScale = 0.5,
+		minScale = 0.3,
 
 		transRef,
 
 		viewRef,
 
+		srcScaleWidth = 0,
+		srcScaleHeight = 0
+  
 	} = userTransformProps||{}
 
 	// const wrapRef = useRef<WrapElement>(null)
@@ -127,7 +142,7 @@ export default function useTransform(userTransformProps?: UseTransformProps){
        * 默认的transform中心点.
        */
 			transformInfoRef.current.center = new Vector2(parseFloat(computedStyle.width) * 0.5, parseFloat(computedStyle.height) * 0.5)
-
+			console.log('transRef.current: ',computedStyle.width, computedStyle.height)
 			/**
        * 添加操作时的动画，增强体验流畅度.
        */
@@ -138,8 +153,8 @@ export default function useTransform(userTransformProps?: UseTransformProps){
 					if(data&&data.pointers.length >1){
 						const { pointers: [ p1, p2 ] } = data
 						// console.log( Vector2.dist(p1,p2))
-						return Vector2.dist(p1,p2)<200
-                 
+						// return Vector2.dist(p1,p2)<200
+						return true
 					}
 					return false
 				}
@@ -150,8 +165,8 @@ export default function useTransform(userTransformProps?: UseTransformProps){
 					if(data&&data.pointers.length >1){
 						const { pointers: [ p1, p2 ] } = data
 						// console.log( Vector2.dist(p1,p2))
-						return Vector2.dist(p1,p2)> 200
-                 
+						// return Vector2.dist(p1,p2)> 200
+						return true
 					}
 					return false
 				}
@@ -177,14 +192,6 @@ export default function useTransform(userTransformProps?: UseTransformProps){
 				const { translate } = transformInfoRef.current
 				transformInfoRef.current.gestrueStartTranslate = new Vector2(deltaX, deltaY)
 				transformInfoRef.current.eleStartTanslate = translate
-				// if(transRef.current){
-				//   transRef.current.style.transition = ''
-				//     requestAnimationFrame(() => {
-				//         if(transRef.current){
-				//           transRef.current.style.transition = TRANSACTION
-				//         }
-				//     } )
-				// }
 			}
 
 			const onPan = ({deltaX, deltaY, center }: HammerInput) =>{
@@ -194,7 +201,12 @@ export default function useTransform(userTransformProps?: UseTransformProps){
 				const translate = scale ==1? 
 					new Vector2( getTargetValue(valX, 0, 10 ),  getTargetValue(valY, 0, 10)):
 					new Vector2(valX, valY)
-				transformInfoRef.current.translate = translate
+				const {min, max} = getLimitedTranslate(srcScaleWidth, srcScaleHeight, scale)
+        
+				transformInfoRef.current.translate = new Vector2( 
+					getValueFromRange(translate.x, min.x, max.x),
+					getValueFromRange(translate.y, min.y, max.y)
+				)
                 
 				requestUpdate()
 			}
@@ -240,21 +252,13 @@ export default function useTransform(userTransformProps?: UseTransformProps){
 				transformInfoRef.current.translate = getNewTranslate(preCenter, newCenter, translate, scale, rotate)
 				transformInfoRef.current.center = newCenter
 				await requestUpdate()
-				// if(transRef.current){
-				//   transRef.current.style.transition = ''
-				//     requestAnimationFrame(() => {
-				//         if(transRef.current){
-				//           transRef.current.style.transition = TRANSACTION
-				//         }
-				//     } )
-				// }
 			}
 
 			const onPinchinMove = ({ scale, center }: HammerInput) => { 
 				const { eleStartScale, gestrueStartscale, translate } = transformInfoRef.current
 				const deltaScale = scale - gestrueStartscale
-				const scaleVal = getValueFromRange(eleStartScale + deltaScale, minScale, maxScale)
-				transformInfoRef.current.scale = getTargetValue(scaleVal, 1, 0.2)
+				const scaleVal = getValueFromRange(scale * eleStartScale, minScale, maxScale)
+				transformInfoRef.current.scale = scaleVal
 				requestUpdate()
                
 			}
