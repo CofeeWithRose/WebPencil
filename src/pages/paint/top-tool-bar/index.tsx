@@ -5,6 +5,7 @@ import style from './index.less'
 import { PCanvasController } from '../pcanvas'
 import LayerPannel from './tool-item/layer-pannel'
 import SaveTool from './tool-item/save'
+import { Export } from './tool-item/export'
 
 export interface TopToolBarProps{
     pCanvasController: PCanvasController
@@ -31,5 +32,6 @@ export default function TopToolBar({ pCanvasController }:TopToolBarProps) {
 			onChange={changeColor}
 		/>
 		<SaveTool pCanvasController={pCanvasController} />
+		<Export pCanvasController={pCanvasController}/>
 	</div>
 }

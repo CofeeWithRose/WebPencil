@@ -141,6 +141,11 @@ export const toArrayBuffer = (canvas: HTMLCanvasElement) => {
 		canvas.toBlob( blob => toArrayBufferHandle(blob, resolve), 'image/png', 1)
 	})
 }
+export const toBlob = (canvas: HTMLCanvasElement) => {
+	return new Promise<Blob | null>(resolve => {
+		canvas.toBlob( resolve )
+	})
+}
  
 let _emptyUrl = ():string => {
 	const canvas = createCanvas(0,0)
