@@ -9,10 +9,10 @@
   <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <script>
-    <%= `(window as any ).VERSION = process.env.VERSION1` %>
-  </script
-  <%= (htmlWebpackPlugin.options.css||[]).map( href => `<link rel="stylesheet" href="${href}"/>` ).join('|').replace(/\|/g,'') %>
-  <title>WebPencil</title>
+    <%= `window.VERSION = '${process.env.VERSION}'` %>
+  </script>
+    <%= (htmlWebpackPlugin.options.css||[]).map( href => `<link rel="stylesheet" href="${href}"/>` ).join('|').replace(/\|/g,'') %>
+    <title>WebPencil</title>
 </head>
 <body>
   <div id="root"></div>
