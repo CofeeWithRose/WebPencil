@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[22],{29:function(e,c,n){"use strict";n.r(c);var s=n(0);c.default=({})=>{Object(s.useEffect)(()=>{},[])}}}]);
