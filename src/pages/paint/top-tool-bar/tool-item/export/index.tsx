@@ -42,14 +42,14 @@ export function Export({pCanvasController}:ExportProps){
 			const link = document.createElement('a')
 			link.href = canvas.toDataURL()
 			link.download = `${name}.png`
-			link.onclick = () => {
-				link.onload = null
-				const {destroy} =  Modal.info({
-					title: 'export',
-					content: 'success',
-					onOk: () => destroy()
-				})
-			} 
+			// link.onclick = () => {
+			// 	link.onload = null
+			// 	const {destroy} =  Modal.info({
+			// 		title: 'export',
+			// 		content: 'success',
+			// 		onOk: () => destroy()
+			// 	})
+			// } 
 			link.click()
 		}
 	}
