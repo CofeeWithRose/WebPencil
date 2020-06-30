@@ -35,9 +35,10 @@ export function Export({pCanvasController}:ExportProps){
 			const layers = await pCanvasController.getLayers()
 			const ctx = canvas.getContext('2d')
 			if(ctx){
-				layers.forEach( ({canvas}) => {
+                
+				layers.reduceRight( (_: any, {canvas}) => {
 					ctx.drawImage(canvas, 0, 0, width, height)
-				})
+				}, {})
 			}
 			const uri = URL.createObjectURL( await toBlob(canvas) )
 			const link = document.createElement('a')
