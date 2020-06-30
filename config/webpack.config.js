@@ -23,7 +23,7 @@ module.exports = {
   output: {
     publicPath: process.env.PUBLIC_PATH,
     path: path.resolve(__dirname, '../docs'),
-    chunkFilename: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'[id]-[hash].js': '[id]-[contenthash].js',
+    chunkFilename: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'[id]-[hash].js': '[name]-[contenthash].js',
     filename: process.env.BUILD_ENV === BUILD_ENV.DEVELOPMENT?'[name]-[hash].js': '[name]-[contenthash].js',
   },
   optimization: {
@@ -56,7 +56,7 @@ module.exports = {
             use: { 
               loader: 'worker-loader',
               options: {
-                name: 'WorkerName.[hash].js'  
+                name: '[name].[contenthash].js'  
               }
             },
             
