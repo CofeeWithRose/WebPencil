@@ -2,8 +2,10 @@ import React, { useEffect, useState, useMemo, useRef, MutableRefObject, RefObjec
 import { Tooltip, List, Drawer, Tag, Divider } from 'antd'
 import { PCanvasController, CanvasEventData } from '../../../pcanvas/pcnvas.controller'
 import { LayerDetail } from '../../../../../workStorage'
-import styles from './style.less'
+import styles from './index.less'
 import useCopyLayer from '../../../../../hooks/use-copy-layer'
+import LayerList from './LayerList'
+import LayerItem from './LayerItem'
 
 export interface  LayerProps{
     pCanvasController: PCanvasController
@@ -141,14 +143,28 @@ export default ({ pCanvasController }: LayerProps) => {
 			mask={false}
 			className={styles.layerDrawer}
 		>
-			<List
+			<LayerList
+				title={<span onPointerUp={addLayer}>addlayer +</span>}
+			>
+				{
+					layers.map(({layerId}) => 
+						<LayerItem  
+							key={layerId}
+							canvasRef={(ref:HTMLCanvasElement)=> {
+								canvasesRef.current[layerId] = ref
+							}}
+						/>
+					)
+				}
+			</LayerList>
+			{/* <List
 				header={<span onPointerUp={addLayer}>addlayer +</span>}
 				className={styles.pannelWrap}
 				itemLayout="horizontal"
 				dataSource={layers}
 				rowKey="layerId"
 				renderItem={listItemLRender}
-			/>
+			/> */}
 		</Drawer>
 	</div>
 }
