@@ -1,6 +1,6 @@
 import React, { Fragment, useRef, useEffect } from 'react'
 import { PCanvasController, CanvasEventData } from '@/pages/paint/pcanvas'
-import { Button, Modal, Spin } from 'antd'
+import { Button, Modal } from 'antd'
 import styles from './index.less'
 import { WorkInfo } from '@/workStorage'
 import { createCanvas, toArrayBuffer, toBlob } from '@/util/canvas'
@@ -35,20 +35,22 @@ export function Export({pCanvasController}:ExportProps){
 			const layers = await pCanvasController.getLayers()
 			const ctx = canvas.getContext('2d')
 			if(ctx){
-                
 				layers.reduceRight( (_: any, {canvas}) => {
 					ctx.drawImage(canvas, 0, 0, width, height)
 				}, {})
 			}
-			const uri = URL.createObjectURL( await toBlob(canvas) )
 			const link = document.createElement('a')
-			link.href = uri
+			link.href = canvas.toDataURL()
 			link.download = `${name}.png`
-			link.click()
-			link.onload = () => {
-				URL.revokeObjectURL(uri)
+			link.onclick = () => {
 				link.onload = null
+				const {destroy} =  Modal.info({
+					title: 'export',
+					content: 'success',
+					onOk: () => destroy()
+				})
 			} 
+			link.click()
 		}
 	}
 
