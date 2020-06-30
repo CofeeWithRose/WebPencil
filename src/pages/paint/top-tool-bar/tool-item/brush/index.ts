@@ -66,11 +66,8 @@ export class Brush  implements AbstractBrush {
     onEnd(brushStatus: BrushStatus, {onBrushEnd}: PCanvasContext) {
     	requestAnimationFrame(() => {
     		this.isPainting = false
-    		if(this.pathList.length >1){
-    			onBrushEnd()
-    			console.log('onBrushEnd: ', this.pathList.length)
-    		}
     		this.pathList = []
+    		onBrushEnd()
     	})
     }
 
