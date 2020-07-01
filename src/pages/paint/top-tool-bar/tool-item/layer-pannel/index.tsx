@@ -143,7 +143,7 @@ export default ({ pCanvasController }: LayerProps) => {
 			mask={false}
 			className={styles.layerDrawer}
 		>
-			<LayerList
+			{/* <LayerList
 				title={<span onPointerUp={addLayer}>addlayer +</span>}
 			>
 				{
@@ -156,15 +156,15 @@ export default ({ pCanvasController }: LayerProps) => {
 						/>
 					)
 				}
-			</LayerList>
-			{/* <List
+			</LayerList> */}
+			<List
 				header={<span onPointerUp={addLayer}>addlayer +</span>}
 				className={styles.pannelWrap}
 				itemLayout="horizontal"
 				dataSource={layers}
 				rowKey="layerId"
 				renderItem={listItemLRender}
-			/> */}
+			/>
 		</Drawer>
 	</div>
 }
