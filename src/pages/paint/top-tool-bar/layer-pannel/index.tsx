@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useMemo, useRef, MutableRefObject, RefObject } from 'react'
 import { Tooltip, List, Drawer, Tag, Divider } from 'antd'
-import { PCanvasController, CanvasEventData } from '../../../pcanvas/pcnvas.controller'
-import { LayerDetail } from '../../../../../workStorage'
+import { PCanvasController, CanvasEventData } from '../../pcanvas/pcnvas.controller'
+import { LayerDetail } from '../../../../workStorage'
 import styles from './index.less'
-import useCopyLayer from '../../../../../hooks/use-copy-layer'
+import useCopyLayer from '../../../../hooks/use-copy-layer'
 import LayerList from './LayerList'
 import LayerItem from './LayerItem'
 

@@ -1,11 +1,11 @@
-import { RGBA } from '../top-tool-bar/tool-item/color-selector/rgba'
+import { RGBA } from '../top-tool-bar/color-selector/rgba'
 import { PCanvasContext } from './pcanvas.context'
-import { Brush } from '../top-tool-bar/tool-item/brush'
+import { Brush } from '../top-tool-bar/brush'
 import { WorkDetail, LayerDetail, WorkInfo } from '../../../workStorage'
 import { PcanvasLayers } from './pcanvas.layer'
 import PEventEmiter from '../../../util/event'
 import { copyCanvas } from '../../../util/canvas'
-import { BrushStatus } from '../top-tool-bar/tool-item/brush/types'
+import { BrushStatus } from '../top-tool-bar/brush/types'
 
 export type EvnetCreator = 'user' | 'history'
 

@@ -1,11 +1,11 @@
 import React, { Fragment, ReactNode, ReactNodeArray, Component, useEffect } from 'react'
-import ColorSelector from './tool-item/color-selector'
-import { RGBA } from './tool-item/color-selector/rgba'
+import ColorSelector from './color-selector'
+import { RGBA } from './color-selector/rgba'
 import style from './index.less'
 import { PCanvasController } from '../pcanvas'
-import LayerPannel from './tool-item/layer-pannel'
-import SaveTool from './tool-item/save'
-import { Export } from './tool-item/export'
+import LayerPannel from './layer-pannel'
+import SaveTool from './save'
+import { Export } from './export'
 
 export interface TopToolBarProps{
     pCanvasController: PCanvasController

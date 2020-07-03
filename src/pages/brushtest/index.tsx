@@ -4,7 +4,7 @@ const data = [{'x':460.1426335722099,'y':316.0869281926862,'pressure':0.03809523
 
 
 
-import {Brush} from '@/pages/paint/top-tool-bar/tool-item/brush'
+import {Brush} from '@/pages/paint/top-tool-bar/brush/index.brush'
 import { PCanvasContext } from '../paint/pcanvas/pcanvas.context'
 
 const brush = new Brush()

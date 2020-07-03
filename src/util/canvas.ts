@@ -1,4 +1,4 @@
-import { RGBA } from '../pages/paint/top-tool-bar/tool-item/color-selector/rgba'
+import { RGBA } from '../pages/paint/top-tool-bar/color-selector/rgba'
 import {uniqueId} from 'lodash'
 import CanvasWorker from './canvas-worker.ts'
 const canvasWorker = new CanvasWorker()

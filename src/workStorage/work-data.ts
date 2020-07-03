@@ -1,5 +1,5 @@
 import { uniqueId } from 'lodash'
-import { RGBA } from '../pages/paint/top-tool-bar/tool-item/color-selector/rgba'
+import { RGBA } from '../pages/paint/top-tool-bar/color-selector/rgba'
 import { createCanvas, emptyUrl } from '../util/canvas'
 
 

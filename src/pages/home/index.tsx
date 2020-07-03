@@ -6,7 +6,7 @@ import { PlusOutlined } from '@ant-design/icons'
 import { FileMenu, WorkForm } from './FileMenu'
 import qs from 'qs'
 import WorkStorage, { WorkInfo, WorkDetail } from '../../workStorage'
-import { RGBA } from '../paint/top-tool-bar/tool-item/color-selector/rgba'
+import { RGBA } from '../paint/top-tool-bar/color-selector/rgba'
 import { useHistory } from 'react-router-dom'
 import ss from '@/assets/favicon.png'
 
