@@ -6,6 +6,13 @@ export const routeConfig: RouteConfig[] =  [
 	},
 	{
 		path: 'home',
-	}
+	},
+  
+	
 
 ]
+if(process.env.BUILD_ENV === 'development'){
+	routeConfig.push({
+		path: 'brushtest',
+	})
+}

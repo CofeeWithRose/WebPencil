@@ -19,6 +19,8 @@ export class Brush  implements AbstractBrush {
     lastNormalizedDirection: Vector2;
     // protected lastVerPath: [ Vector2, Vector2]|null;
 
+    protected pointList:BrushStatus[] = []
+
     protected pathList: [ Vector2[], Vector2[] ] = [[], []]
 
     init(){
@@ -34,6 +36,7 @@ export class Brush  implements AbstractBrush {
     	this. lastBrush = status
     	this.isPainting = true
     	ctx.fillStyle = color
+    	this.pointList.push(status)
     }
 
     protected getVerticalPath = (point:Vector2, verticalVect:Vector2): [Vector2, Vector2] => {
@@ -45,6 +48,7 @@ export class Brush  implements AbstractBrush {
     onDraw(brushStatus: BrushStatus[], contx: PCanvasContext): void {
     	if(this.isPainting){
     		const  { curCanvasContext2D: ctx, brushWidth } = contx
+    		this.pointList.push(...brushStatus)
     		brushStatus.forEach( p => {
     			const {x,y, pressure} = p
     			let halfWidth: number
@@ -89,6 +93,8 @@ export class Brush  implements AbstractBrush {
     onEnd(brushStatus: BrushStatus, contx: PCanvasContext) {
     	this.isPainting = false
     	this.pathList = [[],[]]
+    	// console.log(JSON.stringify(this.pointList))
+    	this.pointList=[]
     }
 
 }
