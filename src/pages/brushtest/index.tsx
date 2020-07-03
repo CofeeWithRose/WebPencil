@@ -4,7 +4,7 @@ const data = [{'x':460.1426335722099,'y':316.0869281926862,'pressure':0.03809523
 
 
 
-import {Brush} from '@/pages/paint/top-tool-bar/brush/index.brush'
+import {Brush} from '@/pages/paint/top-tool-bar/brush/new.brush'
 import { PCanvasContext } from '../paint/pcanvas/pcanvas.context'
 
 const brush = new Brush()
@@ -12,12 +12,12 @@ export default function BrushTest() {
 
 	const draw = async (ctx: Pick<PCanvasContext, 'color'|'brushWidth'|'curCanvasContext2D'>) => {
 		brush.onStart(data[0], ctx as any)
-		for( let i =1; i< data.length; i++ ){
+		for( let i =100; i< data.length; i++ ){
 			await new Promise(resolve => {
 				setTimeout(() => {
 					brush.onDraw([data[i]], ctx as any)
 					resolve()
-				}, 30)
+				}, 300)
 			})
 		}
 	}
@@ -27,7 +27,7 @@ export default function BrushTest() {
 		if(canvasRef.current){
 			const ctx = canvasRef.current.getContext('2d')
 			if(ctx){
-				draw({brushWidth: 80, curCanvasContext2D: ctx, color: 'rgba(0,0,0, 0.5)'})
+				draw({brushWidth: 300, curCanvasContext2D: ctx, color: 'rgba(0,0,0, 0.5)'})
 			}
 		}
 	},[])

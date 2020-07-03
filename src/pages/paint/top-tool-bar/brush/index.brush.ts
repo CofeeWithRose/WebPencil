@@ -11,7 +11,7 @@ export class Brush  implements AbstractBrush {
 
     readonly type: BrushType = BrushType.pen
 
-    readonly name = 'default'
+    readonly name = 'index'
 
     protected isPainting = false
 

@@ -1,5 +1,5 @@
-import { PCanvasContext } from '../../../pcanvas/pcanvas.context'
-import { Vector2 } from '../../../../../util/data/Vector2'
+import { PCanvasContext } from '../../pcanvas/pcanvas.context'
+import { Vector2 } from '../../../../util/data/Vector2'
 import { BrushType, BrushStatus, AbstractBrush } from './types'
 
 /**
@@ -10,7 +10,7 @@ export class Brush  implements AbstractBrush {
 
     type: BrushType = BrushType.pen
 
-    name = 'default'
+    name = 'test'
 
     isPainting = false
 
