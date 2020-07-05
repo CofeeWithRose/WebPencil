@@ -70,6 +70,7 @@ export class Brush  implements AbstractBrush {
     			curStatus.x - this.lastBrushStatus.x,
     			curStatus.y - this.lastBrushStatus.y
     		)
+    		if(direction.x === 0 && direction.y ===0) continue
     		const normalizedDirection = Vector2.normalize(direction)
     		const rightDirection = Vector2.multipy(Vector2.vertical(normalizedDirection), halfWidth) as Vector2 
     		let rightPoint:Vector2 = Vector2.add( curStatus,  rightDirection)
@@ -92,18 +93,19 @@ export class Brush  implements AbstractBrush {
     			])
     			this.isFirst = false
     			this.lastBrushStatus = curStatus
-    			break
+    			continue
     		}
     		const isRightIn = this.isPointInPath(rightPoint)
     		const isLeftIn = this.isPointInPath(leftPoint)
     		if(isRightIn){
     			rightPoint = this.getCorssPoint(rightPoint, leftPoint)
+    			
     		}
-    		if(!isLeftIn){
+    		if(isLeftIn){
     			leftPoint = this.getCorssPoint(rightPoint, leftPoint)
     		}
-    		this.pathInfo.right.push(rightPoint)
-    			angles.push([
+    		right.push(rightPoint)
+    		angles.push([
     				left[left.length-1],
     				right[right.length-1],
     				right[right.length - 2 ]
@@ -177,54 +179,102 @@ export class Brush  implements AbstractBrush {
     	const {k,b} = this.getKb(p1, p2)
     	let maxX: number = p1.x > p2.x?  p1.x: p2.x
     	let minX: number = p1.x <= p2.x?   p1.x: p2.x
-    	const line = { maxX, minX, k, b }
-    	let v : Vector2 |undefined
+    	const line = { maxX, minX, k, b, p1, p2 }
     	const { angles } = this.pathInfo
     	for(let i = 0; i< angles.length; i++){
     		const angle = angles[i]
     		let c: Vector2|null
-    		c =  this.getCross({maxX, minX,k, b, p1, p2}, { p1: angle[0], p2: angle[1]})
+    		c =  this.getCross(line, { p1: angle[0], p2: angle[1]})
     		if(c) return c
-    		c =  this.getCross({maxX, minX,k, b, p1, p2}, { p1: angle[0], p2: angle[2]})
+    		c =  this.getCross(line, { p1: angle[0], p2: angle[2]})
     		if(c) return c
-    		c =  this.getCross({maxX, minX,k, b, p1, p2}, { p1: angle[2], p2: angle[1]})
+    		c =  this.getCross(line, { p1: angle[2], p2: angle[1]})
     		if(c) return c
     	}
-    	return Vector2.ZERO
+    	return p1
     }
 	
 	protected getCross = (line1: {maxX: number, minX: number, k: number, b: number, p1:Vector2, p2:Vector2}, line2:{p1:Vector2, p2:Vector2}) => {
 		const {k: k1, b: b1} = this.getKb(line2.p1, line2.p2 )
-		// if(isNaN(line1.k)&& isNaN(k1)){
-		// 	return line1.
-		// }
-		const x = (line1.b-b1)/(k1-line1.k)
+		// const isLine1Horizontal = line1.k === 0
+		// const isLine2Horizontal = k1 ===0
+		const isLine1Vertical = line1.k === Infinity || line1.k === -Infinity
+		const isLine2Vertical = k1 === Infinity || k1 === -Infinity
 		const max2 = line2.p1.x > line2.p2.x? line2.p1.x: line2.p2.x
 		const min2 = line2.p1.x <= line2.p2.x? line2.p1.x: line2.p2.x
 		const max = Math.min(max2, line1.maxX)
 		const min = Math.max(min2, line1.minX )
+		// if(isLine1Horizontal){
+		// 	if(isLine2Horizontal){
+		// 		// if(line1.p1.y === line2.p1.y){
+		// 		// 	// 水平重合认为没有交点. 
+		// 		// }
+		// 		return null
+		// 	}
+		// 	if(isLine2Vertical){
+		// 		return new Vector2(line2.p1.x, line1.p1.y)
+		// 	}
+		// 	return new Vector2( (line1.p1.y-b1)/k1 ,line1.p1.y)
+		// }
+		if(isLine1Vertical){
+			if(isLine2Vertical){
+				// if(line1.p1.x === line2.p1.x){
+				// 	// 竖线重合认为没有交点. 
+				// }
+				return null
+			}
+			const x = line1.p1.x
+			if(x >= min && x <= max){
+				const y = x * k1 + b1
+			
+				return new Vector2( x, y)
+			}else{
+				return null
+			}
+			
+		}
+		if(isLine2Vertical){
+			if(isLine1Vertical){
+				// if(line1.p1.x === line2.p1.x){
+				// 	// 竖线重合认为没有交点. 
+				// }
+				return null
+			}
+			const x = line2.p1.x
+			if(x >= min && x <= max){
+				const y = x * line1.k + line1.b
+				return new Vector2( x, y)
+			}else{
+				return null
+			}
+			
+		}
+		if(k1 === line1.k){
+			return null
+		}
+		const x = (line1.b-b1)/(k1-line1.k)
+		
 		if(x >= min && x <= max ){
 			const c = new Vector2( x, k1*x + b1 )
+			if(k1*x + b1 <0) {
+				console.log(x, k1*x + b1,  line1, line2)
+				debugger
+			}
 			return c
 		}
 		return null
 	}
  
     protected getKb = (v1: Vector2, v2:Vector2) => {
-    	const k = (v1.y-v2.y)/v1.x-v2.x
+    	const k = (v1.y-v2.y)/(v1.x-v2.x)
     	const b = v1.y - k * v1.x
-    	if(isNaN(k)){
-    		console.log('getKb: ',v1, v2)
-    		throw '123'
-    	}
     	return { k, b }
     }
 
     protected fillPath(ctx: CanvasRenderingContext2D){
-    	const { right, left } = this.pathInfo
+    	const { right, left, angles } = this.pathInfo
+    	if(!right.length || !left.length) return
     	ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height)
-    	
-		
     	ctx.beginPath()
     	ctx.moveTo( left[0].x, left[0].y )
     	for(let i = 1; i< left.length; i++){
@@ -237,6 +287,15 @@ export class Brush  implements AbstractBrush {
     	}
     	ctx.closePath()
     	ctx.stroke()
+    	// angles.forEach( ([p1,p2,p3]) => {
+    	// 	ctx.beginPath()
+    	// 	ctx.moveTo( p1.x, p1.y )
+    	// 	ctx.lineTo(p2.x, p2.y)
+    	// 	ctx.lineTo(p3.x, p3.y)
+    	// 	ctx.closePath()
+    	// 	ctx.stroke()
+    	// } )
+    	
     }
 
     onEnd(brushStatus: BrushStatus, {onBrushEnd}: PCanvasContext) {
