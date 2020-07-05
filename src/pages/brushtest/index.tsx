@@ -12,13 +12,14 @@ export default function BrushTest() {
 
 	const draw = async (ctx: Pick<PCanvasContext, 'color'|'brushWidth'|'curCanvasContext2D'>) => {
 		brush.onStart(data[0], ctx as any)
-		for( let i =100; i< data.length; i++ ){
+		for( let i =0; i< data.length; i++ ){
 			await new Promise(resolve => {
 				setTimeout(() => {
 					brush.onDraw([data[i]], ctx as any)
 					resolve()
-				}, 300)
+				}, 50)
 			})
+			// brush.onDraw([data[i]], ctx as any)
 		}
 	}
 
@@ -27,7 +28,10 @@ export default function BrushTest() {
 		if(canvasRef.current){
 			const ctx = canvasRef.current.getContext('2d')
 			if(ctx){
-				draw({brushWidth: 300, curCanvasContext2D: ctx, color: 'rgba(0,0,0, 0.5)'})
+				setTimeout(() => {
+					draw({brushWidth: 300, curCanvasContext2D: ctx, color: 'rgba(0,0,0, 0.5)'})
+				}, 1000)
+				
 			}
 		}
 	},[])

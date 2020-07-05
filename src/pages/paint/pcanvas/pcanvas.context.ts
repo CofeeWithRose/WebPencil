@@ -1,5 +1,5 @@
 import { RGBA } from '../top-tool-bar/color-selector/rgba'
-import { Brush } from '../top-tool-bar/brush/index.brush'
+import { Brush } from '../top-tool-bar/brush/new.brush'
 
 export class PCanvasContext {
 
