@@ -17,7 +17,7 @@ export default function BrushTest() {
 				setTimeout(() => {
 					brush.onDraw([data[i]], ctx as any)
 					resolve()
-				}, 50)
+				}, 5)
 			})
 			// brush.onDraw([data[i]], ctx as any)
 		}

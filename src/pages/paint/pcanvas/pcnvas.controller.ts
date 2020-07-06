@@ -57,9 +57,11 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
 
     protected tracePointerId: number;
 
-    protected workId: string
+	protected workId: string
+	
+	protected animHandle: number
 
-    async init({ wrap, cover }: WrapInfo, workDetail: WorkDetail) {
+	async init({ wrap, cover }: WrapInfo, workDetail: WorkDetail) {
     	const { width, height, workId } = workDetail.workInfo
     	wrap.style.width = `${width}px`
     	wrap.style.height = `${height}px`
@@ -76,40 +78,40 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
     	this.emit('init', new CanvasEvent(workDetail.workInfo))
     	this.emit('focusLayer', new CanvasEvent({ layerDetail: this.layerManager.getFocusDetail() }))
     	// logCanvasData('init: ', this.layerManager.layers[0].canvas)
-    }
+	}
 
-    setColor({ r, g, b }: RGBA) {
+	setColor({ r, g, b }: RGBA) {
     	const color = new RGBA(r, g, b, this.color.a)
     	this.setRGBA(color)
-    }
+	}
 
-    setRGBA(color: RGBA): void {
+	setRGBA(color: RGBA): void {
     	this.context.color = color.toRGBAString()
     	this.color = color
     	this.emit('colorchange', new CanvasEvent({ color }))
-    }
+	}
 
-    setOpacity(opacity: number) {
+	setOpacity(opacity: number) {
     	const { r, g, b } = this.color
     	const color = new RGBA(r, g, b, opacity)
     	this.setRGBA(color)
-    }
+	}
 
 
-    async getLayers() {
+	async getLayers() {
     	return [...this.layerManager.layers]
-    }
+	}
 
-    addLayer() {
+	addLayer() {
     	const layerDetail = this.layerManager.addLayer(LayerDetail.create(this.layerManager.wrapInfo))
     	this.layerManager.focusLayer(layerDetail)
     	const index = this.layerManager.layers.indexOf(layerDetail)
     	this.emit('addLayer', new CanvasEvent({ workId: this.workId, layerDetail, index }))
     	this.emit('focusLayer', new CanvasEvent({ layerDetail }))
 
-    }
+	}
 
-    addLayerContent(index: number, canvas: HTMLCanvasElement | HTMLImageElement, creator: EvnetCreator = 'user'): LayerDetail {
+	addLayerContent(index: number, canvas: HTMLCanvasElement | HTMLImageElement, creator: EvnetCreator = 'user'): LayerDetail {
     	const { width, height } = canvas
     	const layerDetail = LayerDetail.create({ width, height })
     	const ctx = layerDetail.canvas.getContext('2d')
@@ -118,9 +120,9 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
         this.emit('addLayer', new CanvasEvent({ workId: this.workId, layerDetail, index }, creator))
         return layerDetail
 
-    }
+	}
 
-    setLayerContent(index: number, canvas: HTMLCanvasElement | HTMLImageElement, creator: EvnetCreator = 'user') {
+	setLayerContent(index: number, canvas: HTMLCanvasElement | HTMLImageElement, creator: EvnetCreator = 'user') {
     	const layerDetail = this.layerManager.layers[index]
     	const oldCanvas = layerDetail.canvas
     	const { width, height } = oldCanvas
@@ -130,16 +132,16 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
         ctx?.drawImage(canvas, 0, 0, width, height)
         this.emit('contentChange', new CanvasEvent({ workId: this.workId, layerDetail, index, preContent, }, creator))
         return layerDetail
-    }
+	}
 
 
 
-    focusLayer(layerDetail: LayerDetail): void {
+	focusLayer(layerDetail: LayerDetail): void {
     	this.layerManager.focusLayer(layerDetail)
     	this.emit('focusLayer', new CanvasEvent({ layerDetail }))
-    }
+	}
 
-    removeLayer(layerDetail: LayerDetail, creator: EvnetCreator = 'user'): void {
+	removeLayer(layerDetail: LayerDetail, creator: EvnetCreator = 'user'): void {
     	const { index, isFocus } = this.layerManager.removeLayer(layerDetail)
     	this.emit('removeLayer', new CanvasEvent({ workId: this.workId, layerDetail, index }, creator))
     	if (isFocus) {
@@ -147,57 +149,64 @@ export class PCanvasController extends PEventEmiter<CanvasEventData> {
     		this.focusLayer(layerDetail)
     		this.emit('focusLayer', new CanvasEvent({ layerDetail }, creator))
     	}
-    }
+	}
 
-    removeLayerByIndex(index: number, creator: EvnetCreator = 'user'): void {
+	removeLayerByIndex(index: number, creator: EvnetCreator = 'user'): void {
     	const layerDetail = this.layerManager.layers[index]
     	this.removeLayer(layerDetail, creator)
-    }
+	}
 
-    setBrushWidth(width: number) {
+	setBrushWidth(width: number) {
     	this.context.brushWidth = width
-    }
+	}
 
 
-    setBrush(brush: Brush) {
+	setBrush(brush: Brush) {
     	if (this.context.brush) {
     		this.context.brush.destory()
     	}
     	brush.init()
     	this.context.brush = brush
-    }
+	}
 
-    onPointerDown(p: PointerEvent) {
-    	if(this.tracePointerId) {
-    		this.tracePointerId = -1
-    		return
-    	}
+	onPointerDown(p: PointerEvent) {
+    	requestAnimationFrame(() => {
+    		if(this.tracePointerId) {
+    			this.tracePointerId = -1
+    			return
+    		}
     		this.tracePointerId = p.pointerId
-    	const s = pointEvent2BrunshStatus(p)
-    	// console.log('f', s)
-    	this.context.brush.onStart(s, this.context)
-    }
+    		const s = pointEvent2BrunshStatus(p)
+    		// console.log('f', s)
+    		this.context.brush.onStart(s, this.context)
+    	})
+	}
 
-    onPointerMove(pointerEvent: PointerEvent): void {
-    	if(this.tracePointerId !== pointerEvent.pointerId) return
-    	let ponterEvents: PointerEvent[]
-    	if ((pointerEvent as any).getCoalescedEvents) {
-    		// console.log('getCoalescedEvents')
-    		ponterEvents = (pointerEvent as any).getCoalescedEvents()
-    	} else {
-    		// console.log('not getCoalescedEvents')
-    		ponterEvents = [pointerEvent]
-    	}
-    	this.context.brush.onDraw(
-    		ponterEvents.map(p => pointEvent2BrunshStatus(p)),
-    		this.context
-    	)
-    }
+	onPointerMove(pointerEvent: PointerEvent): void {
+		cancelAnimationFrame(this.animHandle)
+    	this.animHandle =  requestAnimationFrame(() => {
+    		if(this.tracePointerId !== pointerEvent.pointerId) return
+    		let ponterEvents: PointerEvent[]
+    		if ((pointerEvent as any).getCoalescedEvents) {
+    			// console.log('getCoalescedEvents')
+    			ponterEvents = (pointerEvent as any).getCoalescedEvents()
+    		} else {
+    			// console.log('not getCoalescedEvents')
+    			ponterEvents = [pointerEvent]
+    		}
+    		this.context.brush.onDraw(
+    			ponterEvents.map(p => pointEvent2BrunshStatus(p)),
+    			this.context
+    		)
+    	})
+	}
 
-    onPointerUp(p: PointerEvent): void {
-    	this.tracePointerId = 0
-    	this.context.brush.onEnd(pointEvent2BrunshStatus(p), this.context)
-    }
+	onPointerUp(p: PointerEvent): void {
+		requestAnimationFrame(() => {
+    		this.tracePointerId = 0
+    		this.context.brush.onEnd(pointEvent2BrunshStatus(p), this.context)
+    	})
+	}
 
     protected onBrushEnd = () => {
     	const curLayerDetail = this.layerManager.getFocusDetail()
