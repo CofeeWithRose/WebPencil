@@ -8,7 +8,6 @@ import qs from 'qs'
 import WorkStorage, { WorkInfo, WorkDetail } from '../../workStorage'
 import { RGBA } from '../paint/top-tool-bar/color-selector/rgba'
 import { useHistory } from 'react-router-dom'
-import ss from '@/assets/favicon.png'
 
 export default function Home(){
     
