@@ -1,5 +1,7 @@
 目标：h5的本地存储问题解决后的pwa手绘应用.
 
+转到 https://github.com/CofeeWithRose/WebPen 进行重构 
+
 访问地址： https://cofeewithrose.github.io/WebPencil/
 
 首次启动步骤：
